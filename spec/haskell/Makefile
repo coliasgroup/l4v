@@ -17,49 +17,41 @@ CUSTOM_BOOT_FILES = src/SEL4/Object/Structures.lhs-boot
 # However, cabal refuses to run when the GHC_PACKAGE_PATH
 # variable is set, so we use `stack-path` to clear
 # GHC_PACKAGE_PATH first.
-CABAL=stack exec -- ./stack-path cabal
+CABAL=cabal
 
 CABAL_CONFIGURE=$(CABAL) v1-configure
 CABAL_BUILD=$(CABAL) v1-build
-CABAL_SANDBOX=$(CABAL) v1-sandbox
-CABAL_UPDATE=$(CABAL) v1-update
-CABAL_INSTALL=$(CABAL) v1-install
 
 # warnings that are useless during large Haskell updates
 GHC_DEV_OPTS=--ghc-options=""
 
 all: build-riscv build-arm build-arm-hyp-nosmmu build-x64
 
-sandbox: .stack-work
-	$(CABAL_SANDBOX) init
-	$(CABAL_UPDATE)
-	$(CABAL_INSTALL) --dependencies-only
-
-build-arm: sandbox $(BOOT_FILES)
+build-arm: $(BOOT_FILES)
 	$(CABAL_CONFIGURE) --configure-option="arm-kzm" \
 	    --flags="ArchArm" \
 	    --builddir="dist/arm"
 	$(CABAL_BUILD) --builddir="dist/arm"
 
-build-arm-hyp: sandbox $(BOOT_FILES) $(CUSTOM_BOOT_FILES)
+build-arm-hyp: $(BOOT_FILES) $(CUSTOM_BOOT_FILES)
 	$(CABAL_CONFIGURE) --configure-option="arm-tk1" \
 	    --flags="ArchArmHyp -FFI" \
 	    --builddir="dist/arm-hyp"
 	$(CABAL_BUILD) --builddir="dist/arm-hyp"
 
-build-arm-hyp-nosmmu: sandbox $(BOOT_FILES) $(CUSTOM_BOOT_FILES)
+build-arm-hyp-nosmmu: $(BOOT_FILES) $(CUSTOM_BOOT_FILES)
 	$(CABAL_CONFIGURE) --configure-option="arm-tk1-nosmmu" \
 	    --flags="ArchArmHyp -FFI" \
 	    --builddir="dist/arm-hyp-nosmmu"
 	$(CABAL_BUILD) --builddir="dist/arm-hyp-nosmmu"
 
-build-x64: sandbox $(BOOT_FILES)
+build-x64: $(BOOT_FILES)
 	$(CABAL_CONFIGURE) --configure-option="x64-pc99" \
 	    --flags="ArchX64 -FFI" \
 	    --builddir="dist/x64"
 	$(CABAL_BUILD) --builddir="dist/x64"
 
-build-riscv: sandbox $(BOOT_FILES)
+build-riscv: $(BOOT_FILES)
 	$(CABAL_CONFIGURE) --configure-option="riscv-hifive" \
 	    --flags="ArchRiscV -FFI" \
 	    --builddir="dist/riscv"
@@ -73,10 +65,6 @@ build-riscv: sandbox $(BOOT_FILES)
 # However, this means that if .stack-work exists, but the
 # cabal package database is missing, the build will fail.
 
-.stack-work:
-	mkdir -p ~/.stack
-	stack --install-ghc build cabal-install
-
 $(CUSTOM_BOOT_FILES):
 	echo "never run mkhsboot for hand-crafted lhs-boot files"
 
@@ -88,6 +76,6 @@ clean:
 	$(CABAL) clean
 
 realclean:
-	rm -rf $(BOOT_FILES) dist .stack-work .cabal-sandbox cabal.sandbox.config
+	rm -rf $(BOOT_FILES) dist
 
-.PHONY: all build-arm build-arm-hyp build-x64 clean sandbox realclean
+.PHONY: all build-arm build-arm-hyp build-x64 clean realclean
