@@ -6,9 +6,9 @@
 
 name:                   SEL4
 version:                1.5
-cabal-version:          1.18
+cabal-version:          2.4
 build-type:             Custom
-license:                GPL
+-- license:                GPL
 author:                 Philip Derrin et. al., NICTA
 synopsis:               Executable specification for the seL4 Kernel
 tested-with:            GHC == 7.8.3
@@ -198,3 +198,7 @@ Library
 
     Default-Language: Haskell98
 
+custom-setup
+    setup-depends:
+        base,
+        Cabal
