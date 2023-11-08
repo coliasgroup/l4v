@@ -36,9 +36,9 @@ else ifeq ($(SML_COMPILER),poly)
 
 
 $(MLYACC_PFX)/mlyacc: $(MLYACC_PFX)/mlyacc0
-	/bin/echo "#! /bin/sh" > $@
-	/bin/echo >> $@
-	/bin/echo "$(TOOLRUN_PFX)$< \"\$$@\"" >> $@
+	echo "#! /bin/sh" > $@
+	echo >> $@
+	echo "$(TOOLRUN_PFX)$< \"\$$@\"" >> $@
 	chmod +x $@
 
 $(MLYACC_PFX)/mlyacc0: $(MLYACC_PFX)/mlyacc.o
