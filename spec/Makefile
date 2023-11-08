@@ -43,14 +43,10 @@ $(ASPEC_VERSION_FILE): $(SEL4_VERSION)
 	cp $< $@
 
 $(GIT_ROOT_FILE):
-	git rev-parse --show-toplevel > $@
-	perl -p -i -e "s/\n//" $@
+	echo -n $(abspath ..) > $@
 
 $(ASPEC_GITREV_FILE): .FORCE
-	git rev-parse --short=15 HEAD > $@ || echo unknown > $@
-	git diff --no-ext-diff --quiet || echo "*" >> $@
-	git diff --no-ext-diff --quiet --cached || echo "+" >> $@
-	perl -p -i -e "s/\n//" $@
+	echo -n unknown > $@
 
 # NOTE: the install_C_file in Kernel_C.thy invocation generates a spurious
 #       umm_types.txt file in this folder. This file is never used nor
