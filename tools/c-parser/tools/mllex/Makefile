@@ -35,9 +35,9 @@ else ifeq ($(SML_COMPILER),poly)
 # set POLY_CC_FLAGS to -m32 if you are using 32bit poly on a 64bit architecture
 
 $(MLLEX): $(MLLEX)0
-	/bin/echo "#! /bin/sh" > $@
-	/bin/echo >> $@
-	/bin/echo "$(TOOLRUN_PFX)$< \"\$$@\"" >> $@
+	echo "#! /bin/sh" > $@
+	echo >> $@
+	echo "$(TOOLRUN_PFX)$< \"\$$@\"" >> $@
 	chmod +x $@
 
 
