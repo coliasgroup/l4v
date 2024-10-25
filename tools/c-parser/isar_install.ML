@@ -92,7 +92,7 @@ fun mk_thy_relative thy s =
 
 val cpp_path = let
   val (cpp_path_config, cpp_path_setup) =
-      Attrib.config_string (Binding.name "cpp_path") (K "/usr/bin/cpp")
+      Attrib.config_string (Binding.name "cpp_path") (K "cpp")
 in
   Context.>>(Context.map_theory cpp_path_setup);
   cpp_path_config
