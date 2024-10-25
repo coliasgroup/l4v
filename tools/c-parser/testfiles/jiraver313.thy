@@ -19,7 +19,7 @@ ML \<open>
 local
 open Absyn
 val cpp_record =
-    {cpp_path = SOME "/usr/bin/cpp", error_detail = 10}
+    {cpp_path = SOME "cpp", error_detail = 10}
 val (decls, _) =
   StrictCParser.parse (IsarInstall.do_cpp cpp_record) 15 []
     (IsarInstall.mk_thy_relative @{theory} "jiraver313.c");
