@@ -145,7 +145,7 @@ fun get_Csyntax thy s = let
   val cpp_option =
       case Config.get_global thy cpp_path of
           "" => NONE
-        | s => SOME (if Path.is_absolute (Path.explode s)
+        | s => SOME (if Path.is_absolute (Path.explode s) orelse Char.notContains s #"/"
                      then s
                      else Path.implode (Path.append (Resources.master_directory thy) (Path.explode s)))
   val cpp_error_count = Config.get_global thy report_cpp_errors
