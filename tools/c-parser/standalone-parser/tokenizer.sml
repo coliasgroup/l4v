@@ -27,7 +27,7 @@ fun lexit (includes : string list) (fname : string) = let
     open OS.FileSys OS.Process
     val tmpname = tmpName()
   in
-    if isSuccess (system ("/usr/bin/cpp " ^ includes_string ^ " -CC " ^ fname ^
+    if isSuccess (system ("cpp " ^ includes_string ^ " -CC " ^ fname ^
                           " > " ^ tmpname))
     then
       tmpname
