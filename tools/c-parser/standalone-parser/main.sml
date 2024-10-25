@@ -449,7 +449,7 @@ val verbosity = Feedback.verbosity_level
 fun add_analysis f = analyses := f :: !analyses
 fun add_cse_analysis f = analyses := (fn cse => fn ast => f cse) :: !analyses
 
-val cpp = ref (SOME "/usr/bin/cpp")
+val cpp = ref (SOME "cpp")
 val parse_only = ref false
 val underscore_idents = ref false
 val show_help = ref false
