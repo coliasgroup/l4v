@@ -32,19 +32,18 @@ ExecSpec DSpec : design-spec
 
 ASPEC_VERSION_FILE=abstract/document/VERSION.tex
 ASPEC_GITREV_FILE=abstract/document/gitrev.tex
-GIT_ROOT_FILE=abstract/document/git-root.tex
+ASPEC_GITREV_PATH_FILE=abstract/document/gitrev-path.tex
 
 # NOTE: The abstract spec imports Events from Haskell hence the dependency
 ASpec: ASpec-files design-spec
 
-ASpec-files: $(ASPEC_VERSION_FILE) $(GIT_ROOT_FILE) $(ASPEC_GITREV_FILE)
+ASpec-files: $(ASPEC_VERSION_FILE) $(ASPEC_GITREV_PATH_FILE) $(ASPEC_GITREV_FILE)
 
 $(ASPEC_VERSION_FILE): $(SEL4_VERSION)
 	cp $< $@
 
-$(GIT_ROOT_FILE):
-	git rev-parse --show-toplevel > $@
-	perl -p -i -e "s/\n//" $@
+$(ASPEC_GITREV_PATH_FILE):
+	echo -n $(abspath $(ASPEC_GITREV_FILE)) > $@
 
 $(ASPEC_GITREV_FILE): .FORCE
 	git rev-parse --short=15 HEAD > $@ || echo unknown > $@
