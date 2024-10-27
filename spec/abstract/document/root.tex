@@ -98,18 +98,18 @@
 % if that changes, everything changes anyway. From there we can find the rest,
 % which we do below:
 
-\newcommand\gitroot{}
+\newcommand\gitrevpath{}
 \newcommand\gitrev{}
 
 \makeatletter\let\myfilehandle\@inputcheck\makeatother
-\openin\myfilehandle=git-root.tex\relax
+\openin\myfilehandle=gitrev-path.tex\relax
 \begingroup\endlinechar-1
-  \global\read\myfilehandle to \gitroot
+  \global\read\myfilehandle to \gitrevpath
 \endgroup
 \closein\myfilehandle
 
 \makeatletter\let\myfilehandle\@inputcheck\makeatother
-\openin\myfilehandle=\gitroot/spec/abstract/document/gitrev.tex\relax
+\openin\myfilehandle=\gitrevpath\relax
 \begingroup\endlinechar-1
   \global\read\myfilehandle to \gitrev
 \endgroup
