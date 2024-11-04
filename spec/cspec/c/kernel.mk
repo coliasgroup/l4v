@@ -218,4 +218,4 @@ ${KERNEL_EXPORT_DIR}/binutils.version:
 	${OBJDUMP} --version > $@
 
 kernel_export: ${KERNEL_EXPORT_ARTIFACT_PATHS} ${KERNEL_EXPORT_EXTRAS}
-.PHONY: kernel_build_export
+.PHONY: kernel_export
