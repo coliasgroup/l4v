@@ -2948,6 +2948,9 @@ lemma cancelIPC_ccorres1:
                    (UNIV \<inter> {s. tptr_' s = tcb_ptr_to_ctcb_ptr thread}) []
           (cancelIPC thread) (Call cancelIPC_'proc)"
   apply (cinit lift: tptr_' simp: Let_def cong: call_ignore_cong)
+  apply (rule ccorres_move_c_guard_tcb)
+  apply csymbr
+  apply (rule ccorres_move_c_guard_tcb)
 sorry (* FIXME RT: cancelIPC_ccorres1 *) (*
    apply (rule ccorres_move_c_guard_tcb)
    apply csymbr
