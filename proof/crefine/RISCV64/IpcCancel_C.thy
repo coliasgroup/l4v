@@ -2948,9 +2948,24 @@ lemma cancelIPC_ccorres1:
                    (UNIV \<inter> {s. tptr_' s = tcb_ptr_to_ctcb_ptr thread}) []
           (cancelIPC thread) (Call cancelIPC_'proc)"
   apply (cinit lift: tptr_' simp: Let_def cong: call_ignore_cong)
-  apply (rule ccorres_move_c_guard_tcb)
-  apply csymbr
-  apply (rule ccorres_move_c_guard_tcb)
+    apply (rule ccorres_move_c_guard_tcb)
+    apply (rule ccorres_stateAssert)
+    apply (rule ccorres_stateAssert)
+    apply csymbr
+    apply (rule ccorres_move_c_guard_tcb)
+    apply (subst heap_update_commute)
+sorry
+
+    apply (rule getThreadState_ccorres_foo)
+    apply (rule ccorres_symb_exec_r)
+    
+      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
+      apply (rule_tac P="rv' = thread_state_to_tsType rv" in ccorres_gen_asm2)
+      apply (rule ccorres_symb_exec_l)
+      apply wpc
+             \<comment> \<open>BlockedOnReceive\<close>
+
+
 sorry (* FIXME RT: cancelIPC_ccorres1 *) (*
    apply (rule ccorres_move_c_guard_tcb)
    apply csymbr
