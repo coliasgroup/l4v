@@ -2952,6 +2952,10 @@ lemma cancelIPC_ccorres1:
     apply (rule ccorres_stateAssert)
     apply (rule ccorres_stateAssert)
     apply csymbr
+    apply (rule getThreadState_ccorres_foo)
+    apply (rule ccorres_symb_exec_r)
+    apply (rule ccorres_move_c_guard_tcb)
+
     apply (rule ccorres_move_c_guard_tcb)
     apply (subst heap_update_commute)
 sorry
