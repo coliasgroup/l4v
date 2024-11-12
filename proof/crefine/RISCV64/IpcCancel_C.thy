@@ -2953,6 +2953,40 @@ lemma cancelIPC_ccorres1:
     apply (rule ccorres_stateAssert)
     apply csymbr
     apply (rule getThreadState_ccorres_foo)
+    apply csymbr
+
+    apply (csymbr (trace))
+    (*apply (rule ccorres_symb_exec_r)*)
+
+    (*apply (rule ccorres_rhs_assoc2)*)    
+    (*apply (rule seL4_Fault_NullFault_new_spec)*)
+    (*apply (rule ccorres_rhs_assoc2)+*)
+
+      (*apply (csymbr, clarsimp, ccorres_rewrite)*)
+
+    (*apply (simp only: kernel_all_substitute.seL4_Fault_NullFault_new_spec)*)
+    (*apply (rule ccorres_symb_exec_r_known_rv)*)
+    (*apply csymbr*)
+
+    apply (rule ccorres_move_c_guard_tcb)+
+
+           apply (rule ccorres_split_nothrow_novcg)
+
+(*apply (rule_tac Q="\<lambda>s tcb. {s'. (s, s') \<in> rf_sr \<and> ko_at' tcb tcbPtr s}"
+                               in threadSet_ccorres_lemma3[where P=\<top> and P'=\<top>, simplified])
+*)
+
+               apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
+                apply vcg
+               apply (clarsimp simp: typ_heap_simps')
+               apply (erule(1) rf_sr_tcb_update_no_queue2,
+                 (simp add: typ_heap_simps')+)[1]
+                apply (rule ball_tcb_cte_casesI, simp_all)[1]
+               apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+                                     cfault_rel_def cthread_state_relation_def)
+               apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
+              apply ceqv
+sorry
     apply (rule ccorres_symb_exec_r)
     apply (rule ccorres_move_c_guard_tcb)
 
