@@ -820,7 +820,7 @@ fun corres_symb_rhs_exec_tac (trace : trace_opts)
                                              3, [proc_spec, proc_mod] @ [@{thm TrueI}] @ spec_rules @ [@{thm TrueI}] @ lift_rhss
                                                  @[@{thm TrueI}] @ xs)
 in
-    prim_trace_tac' (#trace_this trace) depth ("CSYMBR (" ^ proc_name ^ ") " ^ (print_term (Thm.prop_of rule))) ctxt
+    prim_trace_tac' (#trace_this trace) depth ("CSYMBR (" ^ proc_name ^ ") " ^ (Syntax.string_of_term ctxt (Thm.prop_of rule))) ctxt
                     (Rule_Insts.res_inst_tac ctxt insts [] rule
                      THEN_ALL_NEW ccorres_rename_cleanup trace depth' xf ctxt) n t
 end; (* handle TERM  e => no_tac
