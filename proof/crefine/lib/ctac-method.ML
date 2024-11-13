@@ -811,6 +811,12 @@ fun corres_symb_rhs_exec_tac (trace : trace_opts)
     val proc_spec  = Proof_Context.get_thm ctxt (suffix "_spec" proc_name)
     val proc_mod   = Proof_Context.get_thm ctxt (suffix "_modifies" proc_name)
 
+    val _ = if #trace_this trace then tracing ("proc_spec: " ^ Thm.string_of_thm ctxt proc_spec) else ();
+    val _ = if #trace_this trace then tracing ("proc_mod: " ^ Thm.string_of_thm ctxt proc_mod) else ();
+
+    val _ = if #trace_this trace then tracing ("lift_rhss len: " ^ Int.toString (length lift_rhss)) else ();
+    val _ = if #trace_this trace then tracing ("lift_rhss hd: " ^ Thm.string_of_thm ctxt (hd lift_rhss)) else ();
+
     val spec_rules = [proc_spec] RLN (3, lift_rhss)
     val rule       = case ([proc_mod] RLN (3, spec_rules)) of
                          [rule] => rule
@@ -818,9 +824,13 @@ fun corres_symb_rhs_exec_tac (trace : trace_opts)
                                              3, [proc_spec, proc_mod] @ [@{thm TrueI}] @ spec_rules @ [@{thm TrueI}] @ lift_rhss)
                        | xs  => raise THM ("corres_symb_rhs_exec_tac: Multiple unifiers for " ^ proc_name,
                                              3, [proc_spec, proc_mod] @ [@{thm TrueI}] @ spec_rules @ [@{thm TrueI}] @ lift_rhss
-                                                 @[@{thm TrueI}] @ xs)
+                                                 @[@{thm TrueI}] @ xs);
+
+    val _ = if #trace_this trace then tracing ("spec_rules len: " ^ Int.toString (length spec_rules)) else ();
+    val _ = if #trace_this trace then tracing ("rule: " ^ Thm.string_of_thm ctxt (hd spec_rules)) else ();
+
 in
-    prim_trace_tac' (#trace_this trace) depth ("CSYMBR (" ^ proc_name ^ ") " ^ (Syntax.string_of_term ctxt (Thm.prop_of rule))) ctxt
+    prim_trace_tac' (#trace_this trace) depth ("CSYMBR (" ^ proc_name ^ ")") ctxt
                     (Rule_Insts.res_inst_tac ctxt insts [] rule
                      THEN_ALL_NEW ccorres_rename_cleanup trace depth' xf ctxt) n t
 end; (* handle TERM  e => no_tac
