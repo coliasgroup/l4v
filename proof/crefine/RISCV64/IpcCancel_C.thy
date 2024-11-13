@@ -2954,7 +2954,14 @@ lemma cancelIPC_ccorres1:
     apply csymbr
     apply (rule getThreadState_ccorres_foo)
     apply csymbr
+    (*apply (erule ssubst)*)
+     (*apply (rule_tac P="tcb_ptr_to_ctcb_ptr thread = tptr" in ccorres_gen_asm)*)
 
+    apply (csymbr (trace))
+sorry
+    apply (subst seL4_Fault_NullFault_new_spec)
+
+apply (rule ccorres_symb_exec_r [where R=\<top>, OF _ spec])
     apply (csymbr (trace))
     (*apply (rule ccorres_symb_exec_r)*)
 
