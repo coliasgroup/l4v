@@ -2954,6 +2954,7 @@ lemma cancelIPC_ccorres1:
     apply csymbr
     apply (rule getThreadState_ccorres_foo)
     apply csymbr
+    apply (rule ccorres_symb_exec_r)
     apply (csymbr (trace))
 
     (*apply (erule ssubst)*)
