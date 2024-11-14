@@ -2983,7 +2983,8 @@ apply (rule ccorres_move_c_guard_tcb)+
 
 apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
-apply (simp add: blockedCancelIPC_def word_sle_def ccorres_cond_iffs cong: call_ignore_cong)
+apply (simp add: word_sle_def ccorres_cond_iffs cong: call_ignore_cong)
+apply (simpl add: blockedCancelIPC_def)
 
             apply (simp add: word_sle_def ccorres_cond_iffs cong: call_ignore_cong)
             apply (rule ccorres_rhs_assoc)+
