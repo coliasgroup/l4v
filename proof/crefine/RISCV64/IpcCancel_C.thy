@@ -2954,12 +2954,19 @@ lemma cancelIPC_ccorres1:
     apply csymbr
     apply (rule getThreadState_ccorres_foo)
 
+   apply (rule ccorres_symb_exec_r)
+     apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
+     apply (rule_tac P="rv' = thread_state_to_tsType rv" in ccorres_gen_asm2)
+
     apply csymbr
-           apply (simp add: ThreadState_defs ccorres_cond_iffs
+          (*apply (simp add: ThreadState_defs ccorres_cond_iffs
                             Collect_False Collect_True word_sle_def
                       cong: call_ignore_cong del: Collect_const)
 
-    apply (csymbr (trace))
+     apply (csymbr (trace))*)
+
+  
+
 
     (*apply (erule ssubst)*)
      (*apply (rule_tac P="tcb_ptr_to_ctcb_ptr thread = tptr" in ccorres_gen_asm)*)
