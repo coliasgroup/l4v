@@ -2713,7 +2713,7 @@ lemma cancelIPC_ccorres1:
            apply (rule ccorres_rhs_assoc)+
            apply csymbr
            apply csymbr
-           apply csymbr
+           apply (csymbr (trace))
            apply (rule ccorres_move_c_guard_tcb)+
            apply (rule ccorres_split_nothrow_novcg)
                apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
