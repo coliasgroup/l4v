@@ -815,7 +815,8 @@ fun corres_symb_rhs_exec_tac (trace : trace_opts)
     val _ = if #trace_this trace then tracing ("proc_mod: " ^ Thm.string_of_thm ctxt proc_mod) else ();
 
     val _ = if #trace_this trace then tracing ("lift_rhss len: " ^ Int.toString (length lift_rhss)) else ();
-    val _ = if #trace_this trace then tracing ("lift_rhss hd: " ^ Thm.string_of_thm ctxt (hd lift_rhss)) else ();
+    val _ = if #trace_this trace then tracing ("lift_rhss 0: " ^ Thm.string_of_thm ctxt (nth lift_rhss 0)) else ();
+    val _ = if #trace_this trace then tracing ("lift_rhss 1: " ^ Thm.string_of_thm ctxt (nth lift_rhss 1)) else ();
 
     val spec_rules = [proc_spec] RLN (3, lift_rhss)
     val rule       = case ([proc_mod] RLN (3, spec_rules)) of
@@ -827,7 +828,8 @@ fun corres_symb_rhs_exec_tac (trace : trace_opts)
                                                  @[@{thm TrueI}] @ xs);
 
     val _ = if #trace_this trace then tracing ("spec_rules len: " ^ Int.toString (length spec_rules)) else ();
-    val _ = if #trace_this trace then tracing ("rule: " ^ Thm.string_of_thm ctxt (hd spec_rules)) else ();
+    val _ = if #trace_this trace then tracing ("spec_rule: " ^ Thm.string_of_thm ctxt (hd spec_rules)) else ();
+    val _ = if #trace_this trace then tracing ("rule: " ^ Thm.string_of_thm ctxt rule) else ();
 
 in
     prim_trace_tac' (#trace_this trace) depth ("CSYMBR (" ^ proc_name ^ ")") ctxt
