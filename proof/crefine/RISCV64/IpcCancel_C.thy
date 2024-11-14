@@ -2979,6 +2979,11 @@ apply (rule ccorres_move_c_guard_tcb)+
                apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
               apply ceqv
 
+
+
+apply wpc
+
+
     (*apply (erule ssubst)*)
      (*apply (rule_tac P="tcb_ptr_to_ctcb_ptr thread = tptr" in ccorres_gen_asm)*)
 
