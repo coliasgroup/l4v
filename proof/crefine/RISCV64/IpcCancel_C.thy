@@ -2959,11 +2959,6 @@ lemma cancelIPC_ccorres1:
      apply (rule_tac P="ts_type = thread_state_to_tsType rv" in ccorres_gen_asm2)
 
     apply csymbr
-          (*apply (simp add: ThreadState_defs ccorres_cond_iffs
-                            Collect_False Collect_True word_sle_def
-                      cong: call_ignore_cong del: Collect_const)
-
-     apply (csymbr (trace))*)
 
 apply (rule ccorres_move_c_guard_tcb)+
 
