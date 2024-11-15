@@ -3093,52 +3093,39 @@ lemma cancelIPC_ccorres1:
                    (UNIV \<inter> {s. tptr_' s = tcb_ptr_to_ctcb_ptr thread}) []
           (cancelIPC thread) (Call cancelIPC_'proc)"
   apply (cinit lift: tptr_' simp: Let_def cong: call_ignore_cong)
-    apply (rule ccorres_move_c_guard_tcb)
-    apply (rule ccorres_stateAssert)
-    apply (rule ccorres_stateAssert)
-    apply csymbr
-
-
-    apply (rule getThreadState_ccorres_foo)
-
-
-    apply csymbr
-
-apply (rule ccorres_move_c_guard_tcb)+
-
-           apply (rule ccorres_split_nothrow_novcg)
-               apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
-                apply vcg
-               apply (clarsimp simp: typ_heap_simps')
-               apply (erule(1) rf_sr_tcb_update_no_queue2,
-                 (simp add: typ_heap_simps')+)[1]
-                apply (rule ball_tcb_cte_casesI, simp_all)[1]
-               apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
-                                     cfault_rel_def cthread_state_relation_def)
-               apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
-              apply ceqv
-
-
+   apply (rule ccorres_move_c_guard_tcb)
+   apply (rule ccorres_stateAssert)
+   apply (rule ccorres_stateAssert)
+   apply csymbr
+   apply (rule getThreadState_ccorres_foo)
+   apply csymbr
+   apply (rule ccorres_move_c_guard_tcb)+
+   apply (rule ccorres_split_nothrow_novcg)
+       apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
+        apply vcg
+       apply (clarsimp simp: typ_heap_simps')
+       apply (erule(1) rf_sr_tcb_update_no_queue2,
+         (simp add: typ_heap_simps')+)[1]
+        apply (rule ball_tcb_cte_casesI, simp_all)[1]
+       apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+                             cfault_rel_def cthread_state_relation_def)
+       apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
+      apply ceqv
    apply (rule ccorres_symb_exec_r)
      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
      apply (rule_tac P="rv'a = thread_state_to_tsType rv" in ccorres_gen_asm2)
-
-apply wpc
+     apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
-unfolding blockedCancelIPC_def
-apply (simp add: word_sle_def ccorres_cond_iffs Let_def cong: call_ignore_cong)
-
-              apply (simp only: bind_assoc)
-
+            unfolding blockedCancelIPC_def
+            apply (simp add: word_sle_def ccorres_cond_iffs Let_def cong: call_ignore_cong)
+            apply (simp only: bind_assoc)
             apply (rule ccorres_symb_exec_l)
-     apply (rule_tac P="epptr = x11" in ccorres_gen_asm2)
-
+            (*?*) apply (rule_tac P="epptr = x11" in ccorres_gen_asm2)
             apply (rule ccorres_rhs_assoc)+
             apply csymbr
             apply csymbr
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
-
             apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
               apply (rule ccorres_symb_exec_r)
                 apply (simp only: fun_app_def simp_list_case_return
@@ -3146,7 +3133,6 @@ apply (simp add: word_sle_def ccorres_cond_iffs Let_def cong: call_ignore_cong)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
-
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 
 (* ! *)
