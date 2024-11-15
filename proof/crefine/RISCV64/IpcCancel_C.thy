@@ -2955,7 +2955,7 @@ lemma cancelIPC_ccorres1:
     apply (rule getThreadState_ccorres_foo)
 
    apply (rule ccorres_symb_exec_r)
-     apply (rule_tac xf'=ts_type' in ccorres_abstract, ceqv, rename_tac foo)
+     apply (rule_tac xf'=ts_type' in ccorres_abstract, ceqv)
      apply (rule_tac P="ts_type = thread_state_to_tsType rv" in ccorres_gen_asm2)
 
     apply csymbr
