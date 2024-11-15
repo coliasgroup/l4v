@@ -3079,6 +3079,18 @@ lemma cancelIPC_ccorres_helper2:
    subgoal by (simp add: objBits_simps)
   by assumption
 
+
+lemma cancelIPC_ccorres1_helper_x_1:
+  "\<And>a b c. (case Structures_H.thread_state.BlockedOnReceive a b c of
+                Structures_H.thread_state.BlockedOnReceive a _ _ \<Rightarrow> Just a
+                | Structures_H.thread_state.BlockedOnSend a _ _ _ _  \<Rightarrow> Just a
+                | _ \<Rightarrow> Nothing) = Just a"
+  by (simp_all)
+
+lemma cancelIPC_ccorres1_helper_x_2:
+  "\<And>a. (fromJust (Just a)) = a"
+  by (simp_all)
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3126,6 +3138,19 @@ apply (rule ccorres_guard_imp2)
 unfolding getBlockingObject_def
 apply (simp only: bind_assoc)
 unfolding epBlocked_def
+apply (unfold cancelIPC_ccorres1_helper_x_1)
+apply (simp only: return_bind simp_list_case_return fun_app_def)
+apply (simp only: K_bind_def)
+apply (simp only: haskell_assert_def)
+apply (rule ccorres_assert)
+apply (simp only: return_bind simp_list_case_return fun_app_def)
+apply (unfold cancelIPC_ccorres1_helper_x_2)
+
+(*
+apply (simp only: return_bind simp_list_case_return simp_list_case_return fun_app_def)
+apply simp
+apply (unfold return_bind)
+
 apply (case_tac "BlockedOnReceive x11 x12 x13")
 
    apply (simp only: fun_app_def)
@@ -3146,6 +3171,8 @@ apply (case_tac "Structures_H.thread_state.BlockedOnReceive x11 x12 x13")
                                   return_bind ccorres_seq_skip)
 
             apply (rule ccorres_symb_exec_l)
+*)
+
             (* ? apply (rule_tac P="epptr = x11" in ccorres_gen_asm2) *)
             apply (rule ccorres_rhs_assoc)+
             apply csymbr
