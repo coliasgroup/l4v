@@ -3120,7 +3120,7 @@ lemma cancelIPC_ccorres1:
             apply (simp add: word_sle_def ccorres_cond_iffs Let_def cong: call_ignore_cong)
             apply (simp only: bind_assoc)
             apply (rule ccorres_symb_exec_l)
-            (*?*) apply (rule_tac P="epptr = x11" in ccorres_gen_asm2)
+            (* ? *) apply (rule_tac P="epptr = x11" in ccorres_gen_asm2)
             apply (rule ccorres_rhs_assoc)+
             apply csymbr
             apply csymbr
@@ -3134,16 +3134,14 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-
-(* ! *)
-apply (rule ccorres_symb_exec_r)
-apply (rule ccorres_symb_exec_r)
+                (* ! *)
+                apply (rule ccorres_symb_exec_r)
+                apply (rule ccorres_symb_exec_r)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper2)
-
                   apply (ctac add: setThreadState_ccorres)
                  apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
-apply (simp add: ThreadState_defs)
- (*
+                apply (simp add: ThreadState_defs)
+(*
 https://github.com/seL4/l4v/commit/9766f1ca43214350d691cd9c71535adf7b5f9861#diff-ee961da2de7c703b7a91163db6688ac3a9cdb09ac80bc5bf18b73932e5ad9342R2478
 *)
 defer
