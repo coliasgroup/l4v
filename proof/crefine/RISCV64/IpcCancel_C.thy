@@ -3153,6 +3153,14 @@ lemma cancelIPC_ccorres1:
 
 apply csymbr
 
+(*
+    apply (fastforce simp: typ_heap_simps ctcb_relation_def carch_tcb_relation_def
+                           option_to_ptr_NULL_eq
+                     dest: ko_at'_tcb_vcpu_not_NULL
+*)
+
+sorry
+
    apply (rule ccorres_symb_exec_r)
      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
      apply (rule_tac P="rv'b = thread_state_to_tsType rv" in ccorres_gen_asm2)
