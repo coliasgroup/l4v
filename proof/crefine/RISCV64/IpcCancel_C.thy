@@ -3004,6 +3004,10 @@ apply (simp add: word_sle_def ccorres_cond_iffs Let_def cong: call_ignore_cong)
 
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 
+(* ! *)
+
+    apply (rule ccorres_move_c_guard_tcb)
+apply csymbr
 
 sorry
                   apply (ctac add: setThreadState_ccorres_valid_queues')
