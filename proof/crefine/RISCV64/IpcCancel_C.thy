@@ -3156,6 +3156,27 @@ apply (rule ccorres_symb_exec_r)
 
                   apply (ctac add: setThreadState_ccorres)
                  apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+apply (simp add: ThreadState_defs)
+ (*
+https://github.com/seL4/l4v/commit/9766f1ca43214350d691cd9c71535adf7b5f9861#diff-ee961da2de7c703b7a91163db6688ac3a9cdb09ac80bc5bf18b73932e5ad9342R2478
+*)
+defer
+defer
+apply vcg
+apply (rule conseqPre, vcg)
+apply clarsimp
+apply clarsimp
+             apply (rule conseqPre, vcg)
+             apply (rule subset_refl)
+            apply (rule conseqPre, vcg)
+            apply clarsimp
+
+sorry
+ apply (simp add: "StrictC'_thread_state_defs")
+    apply (wp hoare_vcg_all_lift set_ep_valid_objs')
+   apply (simp add: "StrictC'_thread_state_defs")
+
+                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
                 apply (simp add: ThreadState_defs)
                apply vcg
               apply (rule conseqPre, vcg)
