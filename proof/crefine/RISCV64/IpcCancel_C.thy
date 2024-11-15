@@ -3122,6 +3122,14 @@ lemma cancelIPC_ccorres1:
 (*
 apply (rule ccorres_guard_imp2)
 *)
+
+unfolding getBlockingObject_def
+apply (simp only: bind_assoc)
+unfolding epBlocked_def
+apply (simp only: return_bind simp_list_case_return simp_list_case_return fun_app_def)
+                apply (simp only: fun_app_def simp_list_case_return
+                                  return_bind ccorres_seq_skip)
+
             apply (rule ccorres_symb_exec_l)
             (* ? apply (rule_tac P="epptr = x11" in ccorres_gen_asm2) *)
             apply (rule ccorres_rhs_assoc)+
