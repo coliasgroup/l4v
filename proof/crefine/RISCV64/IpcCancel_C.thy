@@ -3127,6 +3127,14 @@ unfolding getBlockingObject_def
 apply (simp only: bind_assoc)
 unfolding epBlocked_def
 apply (simp only: return_bind simp_list_case_return simp_list_case_return fun_app_def)
+   apply (unfold fun_app_def)
+            apply (rule ccorres_symb_exec_l)
+ apply (simp only: K_bind_def)
+ apply (simp only: return_bind)
+            apply (rule ccorres_symb_exec_l)
+            apply (rule ccorres_assert)
+            apply (rule ccorres_symb_exec_l)
+
                 apply (simp only: fun_app_def simp_list_case_return
                                   return_bind ccorres_seq_skip)
 
