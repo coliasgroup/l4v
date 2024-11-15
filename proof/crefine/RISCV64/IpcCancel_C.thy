@@ -3150,6 +3150,14 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
                 (* ! *)
+
+apply csymbr
+
+   apply (rule ccorres_symb_exec_r)
+     apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
+     apply (rule_tac P="rv'b = thread_state_to_tsType rv" in ccorres_gen_asm2)
+apply csymbr
+
                 apply (rule ccorres_symb_exec_r)
                 apply (rule ccorres_symb_exec_r)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper2)
