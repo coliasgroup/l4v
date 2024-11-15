@@ -2952,11 +2952,10 @@ lemma cancelIPC_ccorres1:
     apply (rule ccorres_stateAssert)
     apply (rule ccorres_stateAssert)
     apply csymbr
+
+
     apply (rule getThreadState_ccorres_foo)
 
-   apply (rule ccorres_symb_exec_r)
-     apply (rule_tac xf'=ts_type' in ccorres_abstract, ceqv)
-     apply (rule_tac P="ts_type = thread_state_to_tsType rv" in ccorres_gen_asm2)
 
     apply csymbr
 
@@ -2975,10 +2974,17 @@ apply (rule ccorres_move_c_guard_tcb)+
               apply ceqv
 
 
+   apply (rule ccorres_symb_exec_r)
+     apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
+     apply (rule_tac P="rv'a = thread_state_to_tsType rv" in ccorres_gen_asm2)
 
 apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
 apply (simp add: word_sle_def ccorres_cond_iffs cong: call_ignore_cong)
+
+
+sorry
+
 apply (simp add: blockedCancelIPC_def)
 
 
@@ -2994,7 +3000,6 @@ apply (simp add: blockedCancelIPC_def)
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
 
-sorry
 (**)
 
 
