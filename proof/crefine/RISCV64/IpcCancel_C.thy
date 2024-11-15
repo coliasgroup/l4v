@@ -2988,6 +2988,28 @@ apply (simp add: word_sle_def ccorres_cond_iffs Let_def cong: call_ignore_cong)
             apply (rule ccorres_symb_exec_l)
      apply (rule_tac P="epptr = x11" in ccorres_gen_asm2)
 
+            apply (rule ccorres_rhs_assoc)+
+            apply csymbr
+            apply csymbr
+            apply (rule ccorres_pre_getEndpoint)
+            apply (rule ccorres_assert)
+
+            apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
+              apply (rule ccorres_symb_exec_r)
+                apply (simp only: fun_app_def simp_list_case_return
+                                  return_bind ccorres_seq_skip)
+                apply (rule ccorres_rhs_assoc2)
+                apply (rule ccorres_rhs_assoc2)
+                apply (rule ccorres_rhs_assoc2)
+sorry
+                apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+                  apply (ctac add: setThreadState_ccorres_valid_queues')
+                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+                apply (simp add: ThreadState_defs)
+               apply vcg
+              apply (rule conseqPre, vcg)
+              apply clarsimp
+
 sorry
 
 apply (simp add: blockedCancelIPC_def)
