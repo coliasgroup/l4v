@@ -3222,6 +3222,61 @@ defer
                 cong: call_ignore_cong,
             rule ccorres_return_Skip)
 
+    \<comment> \<open>Post wp proofs\<close>
+    apply vcg
+   apply clarsimp
+   apply (rule conseqPre, vcg)
+   apply clarsimp
+  apply clarsimp
+  apply (drule(1) obj_at_cslift_tcb)
+  apply clarsimp
+  apply (frule obj_at_valid_objs', clarsimp+)
+  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def)
+  apply (rule conjI, clarsimp)
+   apply (rule conjI, clarsimp)
+    apply (rule conjI)
+     subgoal by (auto simp: projectKOs obj_at'_def pred_tcb_at'_def split: thread_state.splits)[1]
+    apply (clarsimp)
+    apply (rule conjI)
+     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def valid_state'_def
+                     isTS_defs cte_wp_at_ctes_of
+                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                     split: thread_state.splits)
+    apply clarsimp
+    apply (frule (2) ep_blocked_in_queueD_recv)
+    apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
+    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def valid_state'_def
+                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                    split: thread_state.splits endpoint.splits)
+   apply (rule conjI)
+    apply (clarsimp simp: inQ_def)
+   apply clarsimp
+   apply (rule conjI)
+    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def valid_state'_def
+                         isTS_defs cte_wp_at_ctes_of
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                    split: thread_state.splits)
+   apply clarsimp
+   apply (rule conjI)
+    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def valid_state'_def
+                         isTS_defs cte_wp_at_ctes_of
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                    split: thread_state.splits)
+   apply clarsimp
+   apply (frule (2) ep_blocked_in_queueD_send)
+   apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
+   subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def valid_state'_def
+                        isTS_defs cte_wp_at_ctes_of isSendEP_def
+                        cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                   split: thread_state.splits endpoint.splits)[1]
+  apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
+  apply (case_tac ts,
+           auto simp: isTS_defs cthread_state_relation_def typ_heap_simps)
+  done
+
 
 (*
     apply (fastforce simp: typ_heap_simps ctcb_relation_def carch_tcb_relation_def
