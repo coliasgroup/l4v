@@ -2870,6 +2870,19 @@ lemma cancelIPC_ccorres_helper:
    subgoal by (simp add: objBits_simps)
   by assumption
 
+lemma cancelIPC_ccorres_helper_x_2:
+  "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
+         st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
+                            \<and> blockingObject st = ep) thread
+        and ko_at' ep' ep)
+        {s. epptr_' s = Ptr ep}
+        []
+        (case replyOpt of None \<Rightarrow> return () | Some reply \<Rightarrow> replyUnlink reply thread)
+        (IF \<acute>reply \<noteq> NULL THEN
+            CALL reply_unlink_'proc(\<acute>reply,tcb_ptr_to_ctcb_ptr thread)
+        FII)"
+sorry
+
 declare empty_fail_get[iff]
 
 lemma getThreadState_ccorres_foo:
@@ -3008,6 +3021,8 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
                 (* ! *)
+                apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
+                  apply (rule ccorres_symb_exec_r)
 
 (* apply csymbr *)
 
