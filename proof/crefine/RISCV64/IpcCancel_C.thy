@@ -3008,6 +3008,9 @@ apply (simp add: word_sle_def ccorres_cond_iffs Let_def cong: call_ignore_cong)
 
     apply (rule ccorres_move_c_guard_tcb)
 apply csymbr
+            apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
+              apply (rule ccorres_symb_exec_r)
+     apply (rule_tac P="reply = x13" in ccorres_gen_asm2)
 
 sorry
                   apply (ctac add: setThreadState_ccorres_valid_queues')
