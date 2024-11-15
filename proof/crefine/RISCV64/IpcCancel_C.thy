@@ -2873,7 +2873,7 @@ lemma cancelIPC_ccorres_helper:
 lemma cancelIPC_ccorres_helper_x_2:
   "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
-                            \<and> blockingObject st = ep) thread
+                            \<and> replyObject st = replyOpt) thread
         and ko_at' ep' ep)
         {s. epptr_' s = Ptr ep}
         []
