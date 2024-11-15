@@ -3151,8 +3151,38 @@ lemma cancelIPC_ccorres1:
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
                 (* ! *)
 
-apply csymbr
+(* apply csymbr *)
 
+defer
+defer
+defer
+defer
+defer
+defer
+defer
+
+          \<comment> \<open>BlockedOnReply\<close>
+           apply (simp add: ThreadState_defs ccorres_cond_iffs
+                            Collect_False Collect_True word_sle_def
+                      cong: call_ignore_cong del: Collect_const)
+           apply simp
+           apply (ctac add: reply_remove_tcb_ccorres)
+
+          \<comment> \<open>BlockedOnNotification\<close>
+          apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
+                     cong: call_ignore_cong)
+          apply (rule ccorres_symb_exec_r)
+            apply (ctac (no_vcg))
+           apply clarsimp
+           apply (rule conseqPre, vcg)
+           apply (rule subset_refl)
+          apply (rule conseqPre, vcg)
+          apply clarsimp
+
+         \<comment> \<open>Running, Inactive, and Idle\<close>
+         apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
+                    cong: call_ignore_cong,
+                rule ccorres_return_Skip)+
 (*
     apply (fastforce simp: typ_heap_simps ctcb_relation_def carch_tcb_relation_def
                            option_to_ptr_NULL_eq
