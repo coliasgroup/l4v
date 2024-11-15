@@ -3095,6 +3095,10 @@ lemma cancelIPC_ccorres1_helper_x_3:
   "\<And>a b c. (getBlockingObject (Structures_H.thread_state.BlockedOnReceive a b c)) = return a"
   unfolding getBlockingObject_def epBlocked_def by simp
 
+lemma cancelIPC_ccorres1_helper_x_4:
+  "\<And>a b c d e. (getBlockingObject (Structures_H.thread_state.BlockedOnSend a b c d e)) = return a"
+  unfolding getBlockingObject_def epBlocked_def by simp
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3183,6 +3187,40 @@ defer
          apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                     cong: call_ignore_cong,
                 rule ccorres_return_Skip)+
+
+      \<comment> \<open>BlockedOnSend\<close>
+      apply (simp add: word_sle_def ccorres_cond_iffs
+                 cong: call_ignore_cong)
+
+      \<comment> \<open>clag\<close>
+            apply (unfold cancelIPC_ccorres1_helper_x_4)
+            apply (simp only: return_bind)
+            apply (rule ccorres_rhs_assoc)+
+            apply csymbr
+            apply csymbr
+            apply (rule ccorres_pre_getEndpoint)
+            apply (rule ccorres_assert)
+            apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
+              apply (rule ccorres_symb_exec_r)
+                apply (simp only: fun_app_def simp_list_case_return
+                                  return_bind ccorres_seq_skip)
+                apply (rule ccorres_rhs_assoc2)
+                apply (rule ccorres_rhs_assoc2)
+                apply (rule ccorres_rhs_assoc2)
+                apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+
+defer
+defer
+defer
+defer
+defer
+defer
+defer
+
+  \<comment> \<open>Restart\<close>
+     apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
+                cong: call_ignore_cong,
+            rule ccorres_return_Skip)
 
 
 (*
