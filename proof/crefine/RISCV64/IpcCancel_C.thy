@@ -3126,8 +3126,15 @@ apply (rule ccorres_guard_imp2)
 unfolding getBlockingObject_def
 apply (simp only: bind_assoc)
 unfolding epBlocked_def
+apply (case_tac "BlockedOnReceive x11 x12 x13")
+
+   apply (simp only: fun_app_def)
+apply (simp only: return_bind)
 apply (simp only: return_bind simp_list_case_return simp_list_case_return fun_app_def)
    apply (unfold fun_app_def)
+apply (case_tac "Structures_H.thread_state.BlockedOnReceive x11 x12 x13")
+      apply (unfold case_into_if)
+(* case_into_if *)
             apply (rule ccorres_symb_exec_l)
  apply (simp only: K_bind_def)
  apply (simp only: return_bind)
