@@ -2873,14 +2873,13 @@ lemma cancelIPC_ccorres_helper:
 lemma cancelIPC_ccorres_helper_x_2:
   "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
-                            \<and> replyObject st = replyOpt) thread
-        and ko_at' ep' ep)
-        {s. epptr_' s = Ptr ep}
+                            \<and> replyObject st = replyOpt) thread)
+        {s. reply_' s = Ptr (case replyOpt of None \<Rightarrow> 0 | Some reply \<Rightarrow> reply)}
         []
         (case replyOpt of None \<Rightarrow> return () | Some reply \<Rightarrow> replyUnlink reply thread)
         (IF \<acute>reply \<noteq> NULL THEN
-            CALL reply_unlink_'proc(\<acute>reply,tcb_ptr_to_ctcb_ptr thread)
-        FII)"
+            CALL reply_unlink(\<acute>reply,tcb_ptr_to_ctcb_ptr thread)
+        FI)"
 sorry
 
 declare empty_fail_get[iff]
@@ -3023,7 +3022,7 @@ lemma cancelIPC_ccorres1:
                 (* ! *)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
-
+                    apply (ctac (no_vcg) add: cancelIPC_ccorres_helper_x_2)
 (* apply csymbr *)
 
 (* apply (ctac add: reply_unlink_ccorres) *)
