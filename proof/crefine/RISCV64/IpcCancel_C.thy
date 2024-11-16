@@ -3036,7 +3036,7 @@ lemma cancelIPC_ccorres1:
                 apply clarsimp
 
 
-
+(*
                  apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 
 apply clarsimp
@@ -3053,6 +3053,7 @@ apply simp
 
                 apply clarsimp
 defer
+*)
 
 (*
 apply wpsimp
@@ -3061,6 +3062,9 @@ apply wpsimp
 defer
 defer
 *)
+
+defer
+defer
 
 
                apply vcg
