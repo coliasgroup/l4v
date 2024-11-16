@@ -3063,8 +3063,8 @@ defer
 defer
 *)
 
-defer
-defer
+subgoal sorry
+subgoal sorry
 
 
                apply vcg
@@ -3126,13 +3126,13 @@ defer
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 
-defer
-defer
-defer
-defer
-defer
-defer
-defer
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
 
   \<comment> \<open>Restart\<close>
      apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
