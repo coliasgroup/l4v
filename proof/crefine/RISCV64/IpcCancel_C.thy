@@ -3026,10 +3026,22 @@ lemma cancelIPC_ccorres1:
 
                   apply (ctac add: setThreadState_ccorres)
 
-                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 
-defer          
 
+(*
+
+apply wpsimp
+
+apply (wp hoare_vcg_all_lift set_ep_valid_objs')
+apply (simp add: valid_tcb_state'_def split del: if_split)
+
+
+                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' set_ntfn_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+
+     
+*)
+
+defer
                 apply (simp add: ThreadState_defs)
                apply vcg
               apply (rule conseqPre, vcg)
