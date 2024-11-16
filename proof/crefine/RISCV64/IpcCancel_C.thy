@@ -3035,7 +3035,9 @@ lemma cancelIPC_ccorres1:
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 
+(**)
 
+(**)
 (*
                  apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 
