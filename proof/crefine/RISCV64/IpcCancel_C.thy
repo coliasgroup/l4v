@@ -3025,10 +3025,16 @@ lemma cancelIPC_ccorres1:
                     apply (ctac (no_vcg) add: cancelIPC_ccorres_helper_x_2)
 
                   apply (ctac add: setThreadState_ccorres)
-
-
+                 apply wpsimp
 
 (*
+subgoal by wpsimp
+
+  apply (wp hoare_vcg_all_lift)
+                 apply (simp add: valid_tcb_state'_def split del: if_split)
+
+  apply (wp hoare_vcg_all_lift)
+
 
 apply wpsimp
 
@@ -3038,10 +3044,10 @@ apply (simp add: valid_tcb_state'_def split del: if_split)
 
                  apply (wp hoare_vcg_all_lift set_ep_valid_objs' set_ntfn_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 
-     
+   
+defer  
 *)
 
-defer
                 apply (simp add: ThreadState_defs)
                apply vcg
               apply (rule conseqPre, vcg)
@@ -3052,6 +3058,18 @@ defer
             apply (rule conseqPre, vcg)
             apply clarsimp
 
+                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+
+apply wpsimp
+(*
+  apply (wp hoare_vcg_all_lift set_ep_valid_objs')
+  apply (simp add: valid_tcb_state'_def split del: if_split)
+  apply (wp hoare_vcg_all_lift set_ep_valid_objs')
+
+                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+
+*)
+ apply (simp add: ThreadState_defs)
 defer
 defer
 
@@ -3069,16 +3087,6 @@ defer
 (* apply csymbr *)
 
 (* apply (ctac add: reply_unlink_ccorres) *)
-
-sorry
-
-defer
-defer
-defer
-defer
-defer
-defer
-defer
 
           \<comment> \<open>BlockedOnReply\<close>
            apply (simp add: ThreadState_defs ccorres_cond_iffs
