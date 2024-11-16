@@ -3023,52 +3023,21 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
                     apply (ctac (no_vcg) add: cancelIPC_ccorres_helper_x_2)
-
-                  apply (ctac add: setThreadState_ccorres)
-                 apply wpsimp
-
-(*
-subgoal by wpsimp
-
-  apply (wp hoare_vcg_all_lift)
-                 apply (simp add: valid_tcb_state'_def split del: if_split)
-
-  apply (wp hoare_vcg_all_lift)
-
-
-apply wpsimp
-
-apply (wp hoare_vcg_all_lift set_ep_valid_objs')
-apply (simp add: valid_tcb_state'_def split del: if_split)
-
-
-                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' set_ntfn_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
-
-   
-defer  
-*)
-
-                apply (simp add: ThreadState_defs)
-               apply vcg
-              apply (rule conseqPre, vcg)
-              apply clarsimp
-             apply clarsimp
-             apply (rule conseqPre, vcg)
-             apply (rule subset_refl)
-            apply (rule conseqPre, vcg)
-            apply clarsimp
+                      apply (ctac add: setThreadState_ccorres)
+                     apply wpsimp
+                    apply (simp add: ThreadState_defs)
+                   apply vcg
+                  apply (rule conseqPre, vcg)
+                  apply clarsimp
+                 apply clarsimp
+                 apply (rule conseqPre, vcg)
+                 apply (rule subset_refl)
+                apply (rule conseqPre, vcg)
+                apply clarsimp
 
                  apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 
 apply wpsimp
-(*
-  apply (wp hoare_vcg_all_lift set_ep_valid_objs')
-  apply (simp add: valid_tcb_state'_def split del: if_split)
-  apply (wp hoare_vcg_all_lift set_ep_valid_objs')
-
-                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
-
-*)
  apply (simp add: ThreadState_defs)
 defer
 defer
