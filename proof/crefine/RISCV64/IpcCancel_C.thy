@@ -3042,8 +3042,11 @@ lemma cancelIPC_ccorres1:
 apply clarsimp
 
 defer
+apply wpsimp
 apply (case_tac x13)
 apply simp
+        apply (rule subset_refl)
+
 defer
 apply simp
         apply (rule subset_refl)
