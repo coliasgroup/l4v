@@ -3036,14 +3036,29 @@ lemma cancelIPC_ccorres1:
                 apply clarsimp
 
 
-apply clarsimp
 
                  apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 
+apply clarsimp
+
+defer
+apply (case_tac x13)
+apply simp
+defer
+apply simp
+        apply (rule subset_refl)
+
+                apply clarsimp
+defer
+
+(*
 apply wpsimp
  apply (simp add: ThreadState_defs)
+
 defer
 defer
+*)
+
 
                apply vcg
               apply (rule conseqPre, vcg)
