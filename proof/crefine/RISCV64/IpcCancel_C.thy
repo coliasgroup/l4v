@@ -2949,7 +2949,7 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
-    (\<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace> \<inter> \<lbrace>\<acute>reply = Ptr replyPtr\<rbrace>) []
+    (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
@@ -3051,7 +3051,7 @@ apply (rule_tac P'="{s. reply_' s = option_to_ptr x13}" in ccorres_from_vcg_thro
 *)
 
      apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-     apply (rule_tac P="rv'b = option_to_ptr x13" in ccorres_gen_asm2)
+     apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
      apply (case_tac x13)
      apply simp
 
@@ -3088,11 +3088,30 @@ subgoal sorry
                       apply (ctac add: setThreadState_ccorres)
 
 
-
-apply simp
-apply (intro conjI)
 apply simp
 apply (ctac add: reply_unlink_ccorres)
+
+apply (intro conjI)
+apply (intro impI)
+
+(* apply (ctac add: reply_unlink_ccorres) *)
+subgoal sorry
+
+apply (intro impI)
+
+
+                     apply wpsimp
+                    apply (simp add: ThreadState_defs)
+                   apply vcg
+                  apply (rule conseqPre, vcg)
+                  apply clarsimp
+                 apply clarsimp
+                 apply (rule conseqPre, vcg)
+                 apply (rule subset_refl)
+                apply (rule conseqPre, vcg)
+                apply clarsimp
+
+
 apply (clarsimp simp: no_0_def)
 apply (ctac add: reply_unlink_ccorres)
 subgoal sorry
