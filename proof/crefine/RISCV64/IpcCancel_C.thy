@@ -3046,45 +3046,21 @@ lemma cancelIPC_ccorres1:
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
                     apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
                     apply (case_tac x13)
-                    prefer 2
-                    apply simp
-                    apply (rule ccorres_guard_imp2)
-                    apply (ctac add: reply_unlink_ccorres)
                     apply simp
                     apply (ctac add: setThreadState_ccorres)
-                    apply (rename_tac foo)
-                    apply simp
 
 (*
-apply (rule ccorres_guard_imp2)
-
-
-apply (ctac add: reply_unlink_ccorres)
- apply (ctac add: setThreadState_ccorres)
-(*
-                    apply (simp add: ThreadState_defs)
-subgoal sorry
-
-                     apply wpsimp
-*)
-*)
-
 apply (ctac (trace) add: reply_unlink_ccorres)
-apply (rule ccorres_guard_imp2)
-apply (ctac add: reply_unlink_ccorres)
-subgoal sorry
+*)
 
-(*
+apply simp
 apply (rule ccorres_guard_imp2)
 apply (ctac add: reply_unlink_ccorres)
 apply (ctac add: setThreadState_ccorres)
 apply wp
-
 subgoal sorry
 subgoal sorry
 
-apply wpsimp
-*)
                     apply (simp add: ThreadState_defs)
                    apply vcg
                   apply (rule conseqPre, vcg)
