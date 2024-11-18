@@ -3045,6 +3045,20 @@ lemma cancelIPC_ccorres1:
                   apply (rule ccorres_symb_exec_r)
 
 (*
+apply (rule_tac P="\<lambda>s. reply_' s = option_to_ptr x13" in ccorres_from_vcg[where P'=UNIV])
+apply (rule_tac P="\<lambda>s. reply_' s = option_to_ptr x13" in ccorres_split_nothrow_novcg)
+apply (rule_tac P'="{s. reply_' s = option_to_ptr x13}" in ccorres_from_vcg_throws[where P=\<top>])
+*)
+
+     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
+     apply (rule_tac P="rv'b = option_to_ptr x13" in ccorres_gen_asm2)
+     apply (case_tac x13)
+     apply simp
+
+
+
+
+(*
 subgoal sorry
 subgoal sorry
 subgoal sorry
@@ -3053,9 +3067,9 @@ subgoal sorry
 apply wpsimp
 *)
 
-                    apply (ctac (no_vcg) add: cancelIPC_ccorres_helper_x_2)
 
 
+(*
 subgoal sorry
 subgoal sorry
 subgoal sorry
@@ -3065,13 +3079,14 @@ subgoal sorry
 subgoal sorry
 subgoal sorry
 (* apply wpsimp *)
-
+*)
 
 (*
 
 *)
 
                       apply (ctac add: setThreadState_ccorres)
+subgoal sorry
                      apply wpsimp
                     apply (simp add: ThreadState_defs)
                    apply vcg
@@ -3112,8 +3127,9 @@ apply wpsimp
 defer
 defer
 *)
+apply wpsimp
+apply wpsimp
 
-subgoal sorry
 subgoal sorry
 
 
