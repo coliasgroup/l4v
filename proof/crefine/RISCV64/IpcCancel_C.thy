@@ -3086,7 +3086,18 @@ subgoal sorry
 *)
 
                       apply (ctac add: setThreadState_ccorres)
+
+
+
+apply simp
+apply (intro conjI)
+apply simp
+apply (ctac add: reply_unlink_ccorres)
+apply (clarsimp simp: no_0_def)
+apply (ctac add: reply_unlink_ccorres)
 subgoal sorry
+
+
                      apply wpsimp
                     apply (simp add: ThreadState_defs)
                    apply vcg
