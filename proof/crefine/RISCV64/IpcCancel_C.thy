@@ -3048,6 +3048,7 @@ lemma cancelIPC_ccorres1:
                     apply (case_tac x13)
                     apply simp
                     apply (ctac add: setThreadState_ccorres)
+                    apply (rename_tac foo)
                     apply simp
 
 (*
@@ -3064,7 +3065,10 @@ subgoal sorry
 *)
 *)
 
+apply (ctac add: reply_unlink_ccorres)
+subgoal sorry
 
+(*
 apply (rule ccorres_guard_imp2)
 apply (ctac add: reply_unlink_ccorres)
 apply (ctac add: setThreadState_ccorres)
@@ -3074,6 +3078,7 @@ subgoal sorry
 subgoal sorry
 
 apply wpsimp
+*)
                     apply (simp add: ThreadState_defs)
                    apply vcg
                   apply (rule conseqPre, vcg)
@@ -3085,6 +3090,7 @@ apply wpsimp
                 apply clarsimp
 
                      apply wpsimp
+
 subgoal sorry
 
                     apply (simp add: ThreadState_defs)
