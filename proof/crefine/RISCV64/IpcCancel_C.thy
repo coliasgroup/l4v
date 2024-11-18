@@ -3043,21 +3043,14 @@ lemma cancelIPC_ccorres1:
                 (* ! *)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
-
-     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-     apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
-     apply (case_tac x13)
-     apply simp
-
+                    apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
+                    apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
+                    apply (case_tac x13)
+                    apply simp
                       apply (ctac add: setThreadState_ccorres)
-
-
 apply simp
-
 apply (ctac add: reply_unlink_ccorres)
 subgoal sorry
-
-
                      apply wpsimp
                     apply (simp add: ThreadState_defs)
                    apply vcg
@@ -3068,8 +3061,6 @@ subgoal sorry
                  apply (rule subset_refl)
                 apply (rule conseqPre, vcg)
                 apply clarsimp
-
-
 
                      apply wpsimp
 subgoal sorry
@@ -3087,10 +3078,6 @@ subgoal sorry
 
 
 (* https://github.com/seL4/l4v/commit/9766f1ca43214350d691cd9c71535adf7b5f9861 *)
-
-(* apply csymbr *)
-
-(* apply (ctac add: reply_unlink_ccorres) *)
 
           \<comment> \<open>BlockedOnReply\<close>
            apply (simp add: ThreadState_defs ccorres_cond_iffs
