@@ -2871,7 +2871,7 @@ lemma cancelIPC_ccorres_helper:
   by assumption
 
 lemma cancelIPC_ccorres_helper_x_2:
-(*
+
   "ccorres dc xfdc
     (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st) \<and> replyObject st = replyOpt) thread)
     {s. reply_' s = Ptr (option_to_0 replyOpt)}
@@ -2880,16 +2880,6 @@ lemma cancelIPC_ccorres_helper_x_2:
       (IF \<acute>reply \<noteq> NULL THEN
         CALL reply_unlink(\<acute>reply,tcb_ptr_to_ctcb_ptr thread)
     FI)"
-*)
-
-  "ccorres dc xfdc
-    (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
-    (\<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace> \<inter> \<lbrace>\<acute>reply = Ptr replyPtr\<rbrace>)
-    []
-    (case replyOpt of None \<Rightarrow> return () | Some replyPtr \<Rightarrow> replyUnlink replyPtr tcbPtr)
-    (IF \<acute>reply \<noteq> NULL THEN
-        CALL reply_unlink(\<acute>reply, \<acute>tcb)
-    FI)"
 
 (*
   "ccorres dc xfdc
@@ -2902,8 +2892,14 @@ lemma cancelIPC_ccorres_helper_x_2:
     FI)"
 *)
 (*
-  apply (rule ccorres_from_vcg)
-  apply (rule allI)
+  "ccorres dc xfdc
+    (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
+    (\<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace> \<inter> \<lbrace>\<acute>reply = Ptr replyPtr\<rbrace>)
+    []
+    (case replyOpt of None \<Rightarrow> return () | Some replyPtr \<Rightarrow> replyUnlink replyPtr tcbPtr)
+    (IF \<acute>reply \<noteq> NULL THEN
+        CALL reply_unlink(\<acute>reply, \<acute>tcb)
+    FI)"
 *)
 sorry
 
@@ -3057,8 +3053,6 @@ subgoal sorry
 apply wpsimp
 *)
 
-
-
                     apply (ctac (no_vcg) add: cancelIPC_ccorres_helper_x_2)
 
 
@@ -3069,7 +3063,8 @@ subgoal sorry
 subgoal sorry
 subgoal sorry
 subgoal sorry
-apply wpsimp
+subgoal sorry
+(* apply wpsimp *)
 
 
 (*
