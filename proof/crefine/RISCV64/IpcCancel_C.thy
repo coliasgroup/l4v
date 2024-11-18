@@ -3045,8 +3045,10 @@ subgoal sorry
 subgoal sorry
 subgoal sorry
 apply wpsimp
-sorry
+
+
 (*
+
 *)
 
                       apply (ctac add: setThreadState_ccorres)
