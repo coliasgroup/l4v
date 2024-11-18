@@ -2874,7 +2874,7 @@ lemma cancelIPC_ccorres_helper_x_2:
   "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
                             \<and> replyObject st = replyOpt) thread)
-        {s. reply_' s = Ptr (case replyOpt of None \<Rightarrow> 0 | Some reply \<Rightarrow> reply)}
+        {s. reply_' s = Ptr (option_to_0 replyOpt)}
         []
         (case replyOpt of None \<Rightarrow> return () | Some reply \<Rightarrow> replyUnlink reply thread)
         (IF \<acute>reply \<noteq> NULL THEN
@@ -3032,9 +3032,11 @@ subgoal sorry
 apply wpsimp
 *)
 
+
+
                     apply (ctac (no_vcg) add: cancelIPC_ccorres_helper_x_2)
 
-(*
+
 subgoal sorry
 subgoal sorry
 subgoal sorry
@@ -3043,6 +3045,8 @@ subgoal sorry
 subgoal sorry
 subgoal sorry
 apply wpsimp
+sorry
+(*
 *)
 
                       apply (ctac add: setThreadState_ccorres)
