@@ -2871,15 +2871,16 @@ lemma cancelIPC_ccorres_helper:
   by assumption
 
 lemma cancelIPC_ccorres_helper_x_2:
-  "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
-         st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
-                            \<and> replyObject st = replyOpt) thread)
-        {s. reply_' s = Ptr (option_to_0 replyOpt)}
-        []
-        (case replyOpt of None \<Rightarrow> return () | Some reply \<Rightarrow> replyUnlink reply thread)
-        (IF \<acute>reply \<noteq> NULL THEN
-            CALL reply_unlink(\<acute>reply,tcb_ptr_to_ctcb_ptr thread)
-        FI)"
+  "ccorres dc xfdc
+    (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
+    (\<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace> \<inter> \<lbrace>\<acute>reply = Ptr replyPtr\<rbrace>)
+    []
+    (case replyOpt of None \<Rightarrow> return () | Some replyPtr \<Rightarrow> replyUnlink replyPtr tcbPtr)
+    (IF \<acute>reply \<noteq> NULL THEN
+        CALL reply_unlink(\<acute>reply, \<acute>tcb)
+    FI)"
+  apply (rule ccorres_from_vcg)
+  apply (rule allI)
 sorry
 
 declare empty_fail_get[iff]
@@ -2929,7 +2930,7 @@ lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
     (\<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace> \<inter> \<lbrace>\<acute>reply = Ptr replyPtr\<rbrace>) []
-    (replyUnlink tcbPtr replyPtr) (Call reply_unlink_'proc)"
+    (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
 lemma reply_pop_ccorres:
