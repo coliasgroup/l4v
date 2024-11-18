@@ -3044,46 +3044,10 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
 
-(*
-apply (rule_tac P="\<lambda>s. reply_' s = option_to_ptr x13" in ccorres_from_vcg[where P'=UNIV])
-apply (rule_tac P="\<lambda>s. reply_' s = option_to_ptr x13" in ccorres_split_nothrow_novcg)
-apply (rule_tac P'="{s. reply_' s = option_to_ptr x13}" in ccorres_from_vcg_throws[where P=\<top>])
-*)
-
      apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
      apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
      apply (case_tac x13)
      apply simp
-
-
-
-
-(*
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-apply wpsimp
-*)
-
-
-
-(*
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-(* apply wpsimp *)
-*)
-
-(*
-
-*)
 
                       apply (ctac add: setThreadState_ccorres)
 
@@ -3091,30 +3055,6 @@ subgoal sorry
 apply simp
 
 apply (ctac add: reply_unlink_ccorres)
-
-apply (intro conjI)
-apply (intro impI)
-
-(* apply (ctac add: reply_unlink_ccorres) *)
-subgoal sorry
-
-apply (intro impI)
-
-
-                     apply wpsimp
-                    apply (simp add: ThreadState_defs)
-                   apply vcg
-                  apply (rule conseqPre, vcg)
-                  apply clarsimp
-                 apply clarsimp
-                 apply (rule conseqPre, vcg)
-                 apply (rule subset_refl)
-                apply (rule conseqPre, vcg)
-                apply clarsimp
-
-
-apply (clarsimp simp: no_0_def)
-apply (ctac add: reply_unlink_ccorres)
 subgoal sorry
 
 
@@ -3129,49 +3069,22 @@ subgoal sorry
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 
-(**)
 
-(**)
-(*
-                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 
-apply clarsimp
-
-defer
-apply wpsimp
-apply (case_tac x13)
-apply simp
-        apply (rule subset_refl)
-
-defer
-apply simp
-        apply (rule subset_refl)
-
-                apply clarsimp
-defer
-*)
-
-(*
-apply wpsimp
- apply (simp add: ThreadState_defs)
-
-defer
-defer
-*)
-apply wpsimp
-apply wpsimp
-
+                     apply wpsimp
 subgoal sorry
 
+                    apply (simp add: ThreadState_defs)
+                   apply vcg
+                  apply (rule conseqPre, vcg)
+                  apply clarsimp
+                 apply clarsimp
+                 apply (rule conseqPre, vcg)
+                 apply (rule subset_refl)
+                apply (rule conseqPre, vcg)
+                apply clarsimp
 
-               apply vcg
-              apply (rule conseqPre, vcg)
-              apply clarsimp
-             apply clarsimp
-             apply (rule conseqPre, vcg)
-             apply (rule subset_refl)
-            apply (rule conseqPre, vcg)
-            apply clarsimp
+
 
 (* https://github.com/seL4/l4v/commit/9766f1ca43214350d691cd9c71535adf7b5f9861 *)
 
