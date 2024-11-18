@@ -3075,10 +3075,6 @@ subgoal sorry
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 
-
-
-(* https://github.com/seL4/l4v/commit/9766f1ca43214350d691cd9c71535adf7b5f9861 *)
-
           \<comment> \<open>BlockedOnReply\<close>
            apply (simp add: ThreadState_defs ccorres_cond_iffs
                             Collect_False Collect_True word_sle_def
