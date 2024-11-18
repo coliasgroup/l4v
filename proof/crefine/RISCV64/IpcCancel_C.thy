@@ -3059,6 +3059,8 @@ apply (ctac add: reply_unlink_ccorres)
 apply (ctac add: setThreadState_ccorres)
 apply wp
 subgoal sorry
+apply wpsimp
+
 subgoal sorry
 
                     apply (simp add: ThreadState_defs)
