@@ -3063,7 +3063,16 @@ subgoal sorry
                      apply wpsimp
 *)
 *)
+
+
+apply (rule ccorres_guard_imp2)
+apply (ctac add: reply_unlink_ccorres)
+apply (ctac add: setThreadState_ccorres)
+apply wp
+
 subgoal sorry
+subgoal sorry
+
 apply wpsimp
                     apply (simp add: ThreadState_defs)
                    apply vcg
