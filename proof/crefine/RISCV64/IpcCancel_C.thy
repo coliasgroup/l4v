@@ -3022,7 +3022,29 @@ lemma cancelIPC_ccorres1:
                 (* ! *)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
+
+(*
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+apply wpsimp
+*)
+
                     apply (ctac (no_vcg) add: cancelIPC_ccorres_helper_x_2)
+
+(*
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+subgoal sorry
+apply wpsimp
+*)
+
                       apply (ctac add: setThreadState_ccorres)
                      apply wpsimp
                     apply (simp add: ThreadState_defs)
