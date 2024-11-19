@@ -3052,34 +3052,17 @@ prefer 2 subgoal sorry
                   apply (rule ccorres_symb_exec_r)
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
                     apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
-                    apply (case_tac x13)
-(*
-prefer 2
-apply simp
-apply (rule ccorres_guard_imp2)
-apply (ctac add: reply_unlink_ccorres)
-apply (ctac add: setThreadState_ccorres)
-apply wp
-subgoal sorry
-apply wpsimp
-subgoal sorry
-*)
-
-apply simp
-apply (ctac add: setThreadState_ccorres)
-
-(*
-apply (ctac (trace) add: reply_unlink_ccorres)
-*)
+                    apply wpc
+                      \<comment> \<open>None\<close>
+                      apply simp
+                      apply (ctac add: setThreadState_ccorres)
+                      \<comment> \<open>Some\<close>
+                      apply simp
+                      apply (ctac add: reply_unlink_ccorres)
+                      apply (ctac add: setThreadState_ccorres)
+                    apply wp
 
 
-apply simp
-apply (rule ccorres_guard_imp2)
-apply (ctac add: reply_unlink_ccorres)
-apply (ctac add: setThreadState_ccorres)
-apply wp
-subgoal sorry
-apply wpsimp
 subgoal sorry
 
 
@@ -3096,7 +3079,7 @@ subgoal sorry
                      apply wpsimp
 
 subgoal sorry
-
+subgoal sorry
                     apply (simp add: ThreadState_defs)
                    apply vcg
                   apply (rule conseqPre, vcg)
@@ -3170,19 +3153,6 @@ subgoal sorry
    apply (rule conseqPre, vcg)
    apply clarsimp
   apply clarsimp
-
-  apply (drule(1) obj_at_cslift_tcb)
-  apply clarsimp
-  apply (frule obj_at_valid_objs', clarsimp+)
-  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def)
-
-  apply (rule conjI, clarsimp)
-   apply (rule conjI, clarsimp)
-    apply (rule conjI)
-
-
 
 sorry (* FIXME RT: cancelIPC_ccorres1 *) (*
    apply (rule ccorres_move_c_guard_tcb)
