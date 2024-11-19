@@ -3062,7 +3062,6 @@ prefer 2 subgoal sorry
                       apply (ctac add: setThreadState_ccorres)
                     apply wp
 
-
 subgoal sorry
 
 
@@ -3075,6 +3074,12 @@ subgoal sorry
                  apply (rule subset_refl)
                 apply (rule conseqPre, vcg)
                 apply clarsimp
+
+                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+                apply (simp add: ThreadState_defs)
+               apply vcg
+              apply (rule conseqPre, vcg)
+              apply clarsimp
 
                      apply wpsimp
 
