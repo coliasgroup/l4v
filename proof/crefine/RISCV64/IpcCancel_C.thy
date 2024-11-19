@@ -3046,6 +3046,15 @@ prefer 2 subgoal sorry
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+(*
+
+prefer 2
+subgoal by (wp)
+
+subgoal sorry
+*)
+
+
                 (* ! *)
 (*apply csymbr*)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
@@ -3071,6 +3080,7 @@ prefer 2 subgoal sorry
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 
+apply  (wpsimp wp: hoare_drop_imp hoare_vcg_all_lift | safe)
 subgoal sorry
 subgoal sorry
                     apply (simp add: ThreadState_defs)
