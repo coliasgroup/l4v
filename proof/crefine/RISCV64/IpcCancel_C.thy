@@ -2948,7 +2948,7 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
-    (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
+    (invs' and tcb_at' tcbPtr)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
@@ -3109,21 +3109,29 @@ apply (wp hoare_case_option_wp)
 
 apply (wp hoare_vcg_all_lift case_option_wp hoare_case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
 *)
+
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 (*
 apply (wp hoare_drop_imps)
 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 *)
+
 apply (case_tac x13)
 apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
+apply wp
 
 apply (clarsimp split del: if_split)
-            apply (wpsimp wp: hoare_drop_imps hoare_vcg_all_lift possibleSwitchTo_sch_act_not
-                              possibleSwitchTo_sch_act_not sts_st_tcb' sts_valid_objs'
-                          simp: valid_tcb_state'_def)+
+apply wp
+apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+
+apply (wp hoare_drop_imps hoare_vcg_all_lift
+                               sts_st_tcb' sts_valid_objs')
+apply (simp add: valid_tcb_state'_def valid_bound_reply'_def
+split del: if_split
+)
 
 (*
        apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
