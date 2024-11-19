@@ -3109,6 +3109,10 @@ apply (wp hoare_case_option_wp)
 
 apply (wp hoare_vcg_all_lift case_option_wp hoare_case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
 *)
+       apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
+
+
+apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 
 subgoal sorry
 subgoal sorry
