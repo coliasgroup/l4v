@@ -3090,6 +3090,23 @@ apply  (wpsimp wp: hoare_drop_imp hoare_vcg_all_lift | safe)
 
 *)
 
+(* see receiveIPC_ccorres *)
+(*
+            apply (wpsimp wp: hoare_drop_imps hoare_vcg_all_lift possibleSwitchTo_sch_act_not
+                              possibleSwitchTo_sch_act_not sts_st_tcb' sts_valid_objs'
+                          simp: valid_tcb_state'_def)+
+*)
+
+       
+
+        apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
+
+        apply (rule valid_drop_case)
+        apply (wp hoare_drop_imps hoare_vcg_all_lift
+                  )
+
+apply (wp hoare_case_option_wp)
+
 apply (wp hoare_vcg_all_lift case_option_wp hoare_case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
 
 subgoal sorry
