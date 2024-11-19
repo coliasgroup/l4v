@@ -3079,9 +3079,14 @@ subgoal sorry
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 
+(*
+
 apply wp
 
 apply  (wpsimp wp: hoare_drop_imp hoare_vcg_all_lift | safe)
+
+*)
+
 subgoal sorry
 subgoal sorry
                     apply (simp add: ThreadState_defs)
@@ -3156,7 +3161,12 @@ subgoal sorry
    apply clarsimp
    apply (rule conseqPre, vcg)
    apply clarsimp
-  apply clarsimp
+
+subgoal sorry
+subgoal sorry
+
+  apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
+  done
 
 sorry (* FIXME RT: cancelIPC_ccorres1 *) (*
    apply (rule ccorres_move_c_guard_tcb)
