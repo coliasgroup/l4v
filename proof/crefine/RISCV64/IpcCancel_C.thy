@@ -3071,8 +3071,6 @@ prefer 2 subgoal sorry
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 
-                     apply wpsimp
-
 subgoal sorry
 subgoal sorry
                     apply (simp add: ThreadState_defs)
