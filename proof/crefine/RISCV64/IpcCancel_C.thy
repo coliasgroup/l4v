@@ -3018,10 +3018,9 @@ lemma cancelIPC_ccorres1:
                              cfault_rel_def cthread_state_relation_def)
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
-(* todo are 2 and 3 here *)
+(* todo: 3 *)
 (*
-prefer 2 subgoal sorry
-prefer 2 subgoal sorry
+prefer 3 subgoal sorry
 *)
    apply (rule ccorres_symb_exec_r)
      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
