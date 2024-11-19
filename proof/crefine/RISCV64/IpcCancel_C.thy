@@ -3046,14 +3046,13 @@ prefer 2 subgoal sorry
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-(*
 
+(*
 prefer 2
-subgoal by (wp)
+apply wp
 
 subgoal sorry
 *)
-
 
                 (* ! *)
 (*apply csymbr*)
@@ -3079,6 +3078,8 @@ subgoal sorry
                  apply (rule subset_refl)
                 apply (rule conseqPre, vcg)
                 apply clarsimp
+
+apply wp
 
 apply  (wpsimp wp: hoare_drop_imp hoare_vcg_all_lift | safe)
 subgoal sorry
