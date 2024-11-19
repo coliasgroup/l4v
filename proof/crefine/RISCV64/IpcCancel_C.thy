@@ -3019,8 +3019,10 @@ lemma cancelIPC_ccorres1:
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
 (* todo are 2 and 3 here *)
+(*
 prefer 2 subgoal sorry
 prefer 2 subgoal sorry
+*)
    apply (rule ccorres_symb_exec_r)
      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
      apply (rule_tac P="rv'a = thread_state_to_tsType rv" in ccorres_gen_asm2)
@@ -3051,6 +3053,7 @@ prefer 2 subgoal sorry
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
                     apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
                     apply (case_tac x13)
+(*
 prefer 2
 apply simp
 apply (rule ccorres_guard_imp2)
@@ -3060,7 +3063,7 @@ apply wp
 subgoal sorry
 apply wpsimp
 subgoal sorry
-
+*)
 
 apply simp
 apply (ctac add: setThreadState_ccorres)
@@ -3069,7 +3072,7 @@ apply (ctac add: setThreadState_ccorres)
 apply (ctac (trace) add: reply_unlink_ccorres)
 *)
 
-(*
+
 apply simp
 apply (rule ccorres_guard_imp2)
 apply (ctac add: reply_unlink_ccorres)
@@ -3078,7 +3081,7 @@ apply wp
 subgoal sorry
 apply wpsimp
 subgoal sorry
-*)
+
 
                     apply (simp add: ThreadState_defs)
                    apply vcg
