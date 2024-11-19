@@ -3166,7 +3166,8 @@ subgoal sorry
    apply (rule conseqPre, vcg)
    apply clarsimp
 
-subgoal sorry
+apply (wpsimp wp: threadSet_wp)
+
 subgoal sorry
 
   apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
