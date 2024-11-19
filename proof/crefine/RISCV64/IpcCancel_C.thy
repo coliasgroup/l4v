@@ -3090,7 +3090,7 @@ apply  (wpsimp wp: hoare_drop_imp hoare_vcg_all_lift | safe)
 
 *)
 
-apply (wp hoare_vcg_all_lift case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
+apply (wp hoare_vcg_all_lift case_option_wp hoare_case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
 
 subgoal sorry
 subgoal sorry
