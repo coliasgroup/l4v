@@ -3032,9 +3032,7 @@ lemma cancelIPC_ccorres1:
             apply csymbr
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
-(*
-apply csymbr
-*)
+(*apply csymbr*)
             apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
               apply (rule ccorres_symb_exec_r)
                 apply (simp only: fun_app_def simp_list_case_return
