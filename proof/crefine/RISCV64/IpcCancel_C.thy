@@ -3185,11 +3185,14 @@ subgoal sorry
    apply (rule conseqPre, vcg)
    apply clarsimp
 
-apply (wpsimp wp: threadSet_wp)
+apply (wp threadSet_wp)
 
 subgoal sorry
 
-  apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
+(*
+apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
+*)
+sorry
   done
 
 sorry (* FIXME RT: cancelIPC_ccorres1 *) (*
