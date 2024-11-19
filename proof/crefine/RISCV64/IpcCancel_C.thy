@@ -3032,6 +3032,9 @@ lemma cancelIPC_ccorres1:
             apply csymbr
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
+(*
+apply csymbr
+*)
             apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
               apply (rule ccorres_symb_exec_r)
                 apply (simp only: fun_app_def simp_list_case_return
@@ -3041,6 +3044,7 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
                 (* ! *)
+(*apply csymbr*)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
