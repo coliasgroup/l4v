@@ -3168,8 +3168,16 @@ subgoal sorry
    apply clarsimp
   apply clarsimp
 
-defer
-apply clarsimp
+  apply (drule(1) obj_at_cslift_tcb)
+  apply clarsimp
+  apply (frule obj_at_valid_objs', clarsimp+)
+  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def)
+
+  apply (rule conjI, clarsimp)
+   apply (rule conjI, clarsimp)
+    apply (rule conjI)
 
 
 
