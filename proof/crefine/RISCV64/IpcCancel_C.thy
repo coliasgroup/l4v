@@ -3109,10 +3109,29 @@ apply (wp hoare_case_option_wp)
 
 apply (wp hoare_vcg_all_lift case_option_wp hoare_case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
 *)
+apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
+(*
+apply (wp hoare_drop_imps)
+apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+*)
+apply (case_tac x13)
+apply (simp split del: if_split)
+apply wp
+apply (rename_tac foo)
+apply (simp split del: if_split)
+
+apply (clarsimp split del: if_split)
+            apply (wpsimp wp: hoare_drop_imps hoare_vcg_all_lift possibleSwitchTo_sch_act_not
+                              possibleSwitchTo_sch_act_not sts_st_tcb' sts_valid_objs'
+                          simp: valid_tcb_state'_def)+
+
+(*
        apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
 
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
+       apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
+*)
 
 subgoal sorry
 subgoal sorry
