@@ -3103,7 +3103,6 @@ subgoal sorry
                  apply (rule subset_refl)
                 apply (rule conseqPre, vcg)
                 apply clarsimp
-
 (*
 
 apply wp
@@ -3138,17 +3137,20 @@ apply (wp hoare_drop_imps)
 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 *)
 
+
 apply (case_tac x13)
 apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
 
+(*
+  apply (frule replyObject_nonzero)
 
-
-apply (wp sts_invs_minor')
+apply (wp reply_at'_replyObject)
 apply wp
              apply (wp replyUnlink_valid_objs')
+*)
 
 apply simp
 (* apply (strengthen  invs_pspace_bounded') *)
@@ -3156,6 +3158,8 @@ apply simp
 
 (* see lemma replyUnlink_valid_objs'[wp]: *)
 (* see lemma sts_invs_minor' *)
+(* see lemma map_to_scs_Some_scRefs_nonzero *)
+
 subgoal sorry
 
 (*
@@ -3256,6 +3260,8 @@ subgoal sorry
 
 apply (wp threadSet_wp)
 
+(*
+
 apply (simp add: guard_is_UNIV_def ghost_assertion_data_get_def
                               ghost_assertion_data_set_def cap_tag_defs
 projectKOs valid_obj'_def valid_tcb'_def
@@ -3324,7 +3330,22 @@ split:
 thread_state.splits
 endpoint.splits
 )+
+
+*)
+
 subgoal sorry
+
+apply clarsimp
+  apply (drule(1) obj_at_cslift_tcb)
+  apply clarsimp
+  apply (frule obj_at_valid_objs', clarsimp+)
+  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def)
+
+  apply (rule conjI, clarsimp)
+    apply (rule conjI)
+
 
 (*
 apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
