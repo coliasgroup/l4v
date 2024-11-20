@@ -3241,6 +3241,74 @@ subgoal sorry
 
 apply (wp threadSet_wp)
 
+apply (simp add: guard_is_UNIV_def ghost_assertion_data_get_def
+                              ghost_assertion_data_set_def cap_tag_defs
+projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def
+
+projectKOs obj_at'_def pred_tcb_at'_def
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def
+                     isTS_defs cte_wp_at_ctes_of
+                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+ obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                         isTS_defs cte_wp_at_ctes_of
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                         isTS_defs cte_wp_at_ctes_of
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                        isTS_defs cte_wp_at_ctes_of isSendEP_def
+                        cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def
+isTS_defs cthread_state_relation_def typ_heap_simps
+
+split:
+thread_state.splits
+endpoint.splits
+)
+
+apply (case_tac rv)
+apply (simp add: guard_is_UNIV_def ghost_assertion_data_get_def
+                              ghost_assertion_data_set_def cap_tag_defs
+projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def
+
+projectKOs obj_at'_def pred_tcb_at'_def
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def
+                     isTS_defs cte_wp_at_ctes_of
+                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+ obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                         isTS_defs cte_wp_at_ctes_of
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                         isTS_defs cte_wp_at_ctes_of
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
+                        isTS_defs cte_wp_at_ctes_of isSendEP_def
+                        cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def
+isTS_defs cthread_state_relation_def typ_heap_simps
+
+split:
+thread_state.splits
+endpoint.splits
+)+
 subgoal sorry
 
 (*
