@@ -3067,18 +3067,11 @@ prefer 3 subgoal sorry
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-(* todo are 2 and 3 here *)
+(* todo: 2,3 *)
 (*
 prefer 2 subgoal sorry
+prefer 2 subgoal sorry
 *)
-
-(*
-prefer 2
-apply wp
-
-subgoal sorry
-*)
-
                 (* ! *)
 (*apply csymbr*)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
@@ -3104,39 +3097,31 @@ subgoal sorry
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 (*
+NOTES:
+
+see: receiveIPC_ccorres
 
 apply wp
-
 apply  (wpsimp wp: hoare_drop_imp hoare_vcg_all_lift | safe)
 
-*)
+apply (wpsimp wp: hoare_drop_imps hoare_vcg_all_lift possibleSwitchTo_sch_act_not
+                  possibleSwitchTo_sch_act_not sts_st_tcb' sts_valid_objs'
+                        simp: valid_tcb_state'_def)+
 
-(* see receiveIPC_ccorres *)
-(*
-            apply (wpsimp wp: hoare_drop_imps hoare_vcg_all_lift possibleSwitchTo_sch_act_not
-                              possibleSwitchTo_sch_act_not sts_st_tcb' sts_valid_objs'
-                          simp: valid_tcb_state'_def)+
-*)
+apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 
-(*
-
-        apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-
-        apply (rule valid_drop_case)
-        apply (wp hoare_drop_imps hoare_vcg_all_lift
-                  )
+apply (rule valid_drop_case)
+apply (wp hoare_drop_imps hoare_vcg_all_lift)
 
 apply (wp hoare_case_option_wp)
 
 apply (wp hoare_vcg_all_lift case_option_wp hoare_case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
-*)
 
-apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-(*
 apply (wp hoare_drop_imps)
 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
 *)
 
+apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 
 apply (case_tac x13)
 apply (simp split del: if_split)
@@ -3145,20 +3130,26 @@ apply (rename_tac foo)
 apply (simp split del: if_split)
 
 (*
-  apply (frule replyObject_nonzero)
+NOTES:
+
+apply (frule replyObject_nonzero)
 
 apply (wp reply_at'_replyObject)
 apply wp
-             apply (wp replyUnlink_valid_objs')
+apply (wp replyUnlink_valid_objs')
 *)
 
 apply simp
-(* apply (strengthen  invs_pspace_bounded') *)
-   apply (frule invs_pspace_bounded'[OF invs'])
 
-(* see lemma replyUnlink_valid_objs'[wp]: *)
-(* see lemma sts_invs_minor' *)
-(* see lemma map_to_scs_Some_scRefs_nonzero *)
+(*
+NOTES:
+
+apply (strengthen  invs_pspace_bounded')
+
+see lemma replyUnlink_valid_objs'[wp]
+see lemma sts_invs_minor'
+see lemma map_to_scs_Some_scRefs_nonzero
+*)
 
 subgoal sorry
 
@@ -3170,18 +3161,12 @@ apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def
 apply (wp hoare_drop_imps hoare_vcg_all_lift
                                sts_st_tcb' sts_valid_objs')
 apply (simp add: valid_tcb_state'_def valid_bound_reply'_def
-split del: if_split
-)
+  split del: if_split)
 
-(*
-       apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
-
+apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
        apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
-*)
-
-subgoal sorry
 *)
 
 subgoal sorry
@@ -3262,78 +3247,14 @@ apply (wp threadSet_wp)
 
 (*
 
-apply (simp add: guard_is_UNIV_def ghost_assertion_data_get_def
-                              ghost_assertion_data_set_def cap_tag_defs
-projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def
-
-projectKOs obj_at'_def pred_tcb_at'_def
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
- obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                        isTS_defs cte_wp_at_ctes_of isSendEP_def
-                        cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
-isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def
-isTS_defs cthread_state_relation_def typ_heap_simps
-
-split:
-thread_state.splits
-endpoint.splits
-)
-
 apply (case_tac rv)
-apply (simp add: guard_is_UNIV_def ghost_assertion_data_get_def
-                              ghost_assertion_data_set_def cap_tag_defs
-projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def
-
-projectKOs obj_at'_def pred_tcb_at'_def
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
- obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                        isTS_defs cte_wp_at_ctes_of isSendEP_def
-                        cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
-isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def
-isTS_defs cthread_state_relation_def typ_heap_simps
-
-split:
-thread_state.splits
-endpoint.splits
-)+
 
 *)
 
 subgoal sorry
+
+(*
+WIP:
 
 apply clarsimp
   apply (drule(1) obj_at_cslift_tcb)
@@ -3345,12 +3266,14 @@ apply clarsimp
 
   apply (rule conjI, clarsimp)
     apply (rule conjI)
-
+*)
 
 (*
 apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
 *)
+
 sorry
+
   done
 
 sorry (* FIXME RT: cancelIPC_ccorres1 *) (*
