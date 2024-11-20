@@ -2948,7 +2948,7 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
-    (\<top>)
+    (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
@@ -3123,6 +3123,7 @@ apply (rename_tac foo)
 apply (simp split del: if_split)
 apply wp
 apply simp
+   apply (frule invs_pspace_bounded'[OF invs'])
 
 subgoal sorry
 
