@@ -2946,10 +2946,19 @@ lemma reply_remove_tcb_ccorres:
     (replyRemoveTCB tptr) (Call reply_remove_tcb_'proc)"
 sorry (* FIXME RT: reply_remove_tcb_corres *)
 
+(*
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
+    (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
+sorry (* FIXME RT: reply_unlink_ccorres *)
+*)
+
+lemma reply_unlink_ccorres:
+  "ccorres dc xfdc
+    (tcb_at' tcbPtr)
+    UNIV []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
