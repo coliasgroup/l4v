@@ -2905,6 +2905,13 @@ sorry
 
 declare empty_fail_get[iff]
 
+lemma
+  assumes "pspace_aligned' as" "pspace_distinct' as" "valid_tcb_state' ts as"
+  shows reply_at'_replyObject:
+    "\<forall>replyPtr. replyObject ts = Some replyPtr \<longrightarrow> reply_at' replyPtr as"
+  using assms
+  by (clarsimp simp: valid_tcb_state'_def obj_at'_def)+
+
 lemma getThreadState_ccorres_foo:
   "(\<And>rv. ccorres r xf (P rv) (P' rv) hs (f rv) c) \<Longrightarrow>
     ccorres r xf (\<lambda>s. \<forall>ts. st_tcb_at' ((=) ts) t s \<longrightarrow> P ts s)
@@ -3131,6 +3138,9 @@ apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
+
+
+
 apply (wp sts_invs_minor')
 apply wp
              apply (wp replyUnlink_valid_objs')
