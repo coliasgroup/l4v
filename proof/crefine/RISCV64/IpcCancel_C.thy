@@ -2948,7 +2948,7 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
-    (invs' and tcb_at' tcbPtr)
+    (\<top>)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
@@ -3122,7 +3122,11 @@ apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
 apply wp
+apply simp
 
+subgoal sorry
+
+(*
 apply (clarsimp split del: if_split)
 apply wp
 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
@@ -3142,6 +3146,8 @@ apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 *)
 
 subgoal sorry
+*)
+
 subgoal sorry
                     apply (simp add: ThreadState_defs)
                    apply vcg
