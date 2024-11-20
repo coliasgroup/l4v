@@ -2905,12 +2905,17 @@ sorry
 
 declare empty_fail_get[iff]
 
-lemma
-  assumes "pspace_aligned' as" "pspace_distinct' as" "valid_tcb_state' ts as"
-  shows reply_at'_replyObject:
-    "\<forall>replyPtr. replyObject ts = Some replyPtr \<longrightarrow> reply_at' replyPtr as"
+lemma reply_at'_replyObject:
+  assumes "valid_tcb_state' ts s"
+  shows "\<forall>replyPtr. ts = BlockedOnReceive a b (Some replyPtr) \<longrightarrow> reply_at' replyPtr s"
   using assms
-  by (clarsimp simp: valid_tcb_state'_def obj_at'_def)+
+  by (clarsimp simp: valid_tcb_state'_def)
+
+lemma replyObject_nonzero:
+  assumes "valid_tcb_state' ts s" "no_0_obj' s"
+  shows "\<forall>replyOpt. ts = BlockedOnReceive a b replyOpt \<longrightarrow> replyOpt \<noteq> Some 0"
+  using assms
+  by (fastforce simp: valid_tcb_state'_def)
 
 lemma getThreadState_ccorres_foo:
   "(\<And>rv. ccorres r xf (P rv) (P' rv) hs (f rv) c) \<Longrightarrow>
