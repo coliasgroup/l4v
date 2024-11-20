@@ -2946,21 +2946,22 @@ lemma reply_remove_tcb_ccorres:
     (replyRemoveTCB tptr) (Call reply_remove_tcb_'proc)"
 sorry (* FIXME RT: reply_remove_tcb_corres *)
 
-(*
+
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
-*)
 
+(*
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (tcb_at' tcbPtr)
     UNIV []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
+*)
 
 lemma reply_pop_ccorres:
   "ccorres dc xfdc
@@ -3130,10 +3131,16 @@ apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
+apply (wp sts_invs_minor')
 apply wp
+             apply (wp replyUnlink_valid_objs')
+
 apply simp
+(* apply (strengthen  invs_pspace_bounded') *)
    apply (frule invs_pspace_bounded'[OF invs'])
 
+(* see lemma replyUnlink_valid_objs'[wp]: *)
+(* see lemma sts_invs_minor' *)
 subgoal sorry
 
 (*
