@@ -3202,6 +3202,7 @@ subgoal sorry
             apply csymbr
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
+(*apply csymbr*)
             apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
               apply (rule ccorres_symb_exec_r)
                 apply (simp only: fun_app_def simp_list_case_return
@@ -3210,14 +3211,37 @@ subgoal sorry
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-
+(* todo: 2,3 *)
+(*
+prefer 2 subgoal sorry
+prefer 2 subgoal sorry
+*)
+                (* ! *)
+                apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
+                  apply (rule ccorres_symb_exec_r)
+                    apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
+                    apply (rule_tac P="rv'b = NULL" in ccorres_gen_asm2)
+                    apply simp
+                    apply (ctac add: setThreadState_ccorres)
+                   apply vcg
+                  apply (rule conseqPre, vcg)
+                  apply clarsimp
+                 apply clarsimp
+                 apply (rule conseqPre, vcg)
+                 apply (rule subset_refl)
+                apply (rule conseqPre, vcg)
+                apply clarsimp
 subgoal sorry
 subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
-subgoal sorry
+                    apply (simp add: ThreadState_defs)
+                   apply vcg
+                  apply (rule conseqPre, vcg)
+                  apply clarsimp
+                 apply clarsimp
+                 apply (rule conseqPre, vcg)
+                 apply (rule subset_refl)
+                apply (rule conseqPre, vcg)
+                apply clarsimp
 
   \<comment> \<open>Restart\<close>
      apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
@@ -3260,6 +3284,13 @@ apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_a
 *)
 
 sorry
+
+(*
+NOTES:
+
+cthread_state_relation_lifted relates H and C thread state
+
+*)
 
 end
 end
