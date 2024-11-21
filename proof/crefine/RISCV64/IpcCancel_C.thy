@@ -2738,6 +2738,13 @@ lemma epQueue_tail_sign[simp]:
 
 (* Clag from cancelSignal_ccorres_helper *)
 
+lemma cancelIPC_ccorres_helper_invs':
+  "\<lbrace>(\<lambda>s. True)\<rbrace>
+     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
+           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
+   \<lbrace>\<lambda>rv. invs'\<rbrace>"
+sorry
+
 lemma cancelIPC_ccorres_helper:
   "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
@@ -2916,7 +2923,7 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
-    (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
+    (\<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
@@ -2975,7 +2982,7 @@ lemma cancelIPC_ccorres1:
    apply (rule getThreadState_ccorres_foo)
    apply csymbr
    apply (rule ccorres_move_c_guard_tcb)+
-   apply (rule ccorres_split_nothrow_novcg)
+   apply (rule ccorres_split_nothrow_novcg) (* _novcg, _dc *)
        apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
         apply vcg
        apply (clarsimp simp: typ_heap_simps')
@@ -3068,7 +3075,6 @@ apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def
 *)
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-
 apply (case_tac x13)
 apply (simp split del: if_split)
 apply wp
@@ -3085,8 +3091,6 @@ apply wp
 apply (wp replyUnlink_valid_objs')
 *)
 
-apply simp
-
 (*
 NOTES:
 
@@ -3095,6 +3099,26 @@ apply (strengthen  invs_pspace_bounded')
 see lemma replyUnlink_valid_objs'[wp]
 see lemma sts_invs_minor'
 see lemma map_to_scs_Some_scRefs_nonzero
+
+see:
+
+       apply (rule_tac Q'="\<lambda>rv. invs' and cte_at' slot and valid_cap' cap" in hoare_strengthen_postE_R)
+        apply (wp cteDelete_invs'')
+see lemma cteDelete_invs'':
+
+*)
+apply (rule_tac Q'="\<lambda>rv. invs' and tcb_at' thread and reply_at' foo and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s)" in hoare_post_imp)
+apply (simp add: invs'_def invs_pspace_aligned' invs_pspace_distinct' invs_pspace_bounded' invs_valid_objs' invs_no_0_obj')
+
+(*
+apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
+apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+apply (simp add: invs'_def)
+apply (wp hy_invs')
+apply (strengthen  invs_pspace_bounded')
+        apply (wp cancelIPC_ccorres_helper_invs')
+    apply (wpsimp wp: hoare_drop_imp)+
+apply (clarsimp split del: if_split)
 *)
 
 subgoal sorry
