@@ -2961,6 +2961,13 @@ lemma replyObject_nonzero:
   using assms
   by (fastforce simp: valid_tcb_state'_def)
 
+lemma xx_a:
+  "\<lbrace>(\<lambda>s. invs' s)\<rbrace>
+     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
+           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
+   \<lbrace>\<lambda>rv. invs'\<rbrace>"
+sorry
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
