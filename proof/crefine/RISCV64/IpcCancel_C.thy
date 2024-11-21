@@ -3046,6 +3046,14 @@ prefer 2 subgoal sorry
                       apply simp
                       apply (ctac (no_vcg) add: reply_unlink_ccorres)
                       apply (ctac add: setThreadState_ccorres)
+(*
+apply (rule_tac Q'="\<lambda>rv. invs'" in hoare_post_imp)
+   apply (rule hoare_strengthen_post)
+apply (strengthen  invs_pspace_distinct')
+   apply (rule_tac Q'="\<lambda>rv. invs'" in hoare_strengthen_postE_R)
+*)
+
+
                     apply wp
                     apply (simp add: ThreadState_defs)
                    apply vcg
