@@ -3109,6 +3109,8 @@ see lemma cteDelete_invs'':
 *)
 apply (rule_tac Q'="\<lambda>rv. invs' and tcb_at' thread and reply_at' foo and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s)" in hoare_post_imp)
 apply (simp add: invs'_def invs_pspace_aligned' invs_pspace_distinct' invs_pspace_bounded' invs_valid_objs' invs_no_0_obj')
+apply (wp cancelIPC_ccorres_helper_invs')
+apply simp
 
 (*
 apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
