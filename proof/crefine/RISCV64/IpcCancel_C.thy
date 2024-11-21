@@ -2738,13 +2738,6 @@ lemma epQueue_tail_sign[simp]:
 
 (* Clag from cancelSignal_ccorres_helper *)
 
-lemma cancelIPC_ccorres_helper_invs':
-  "\<lbrace>(\<lambda>s. True)\<rbrace>
-     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
-           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-   \<lbrace>\<lambda>rv. invs'\<rbrace>"
-sorry
-
 lemma cancelIPC_ccorres_helper:
   "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
@@ -2876,6 +2869,13 @@ lemma cancelIPC_ccorres_helper:
     subgoal by (simp add: objBits_simps')
    subgoal by (simp add: objBits_simps)
   by assumption
+
+lemma cancelIPC_ccorres_helper_invs':
+  "\<lbrace>(\<lambda>s. invs' s)\<rbrace>
+     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
+           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
+   \<lbrace>\<lambda>rv. invs'\<rbrace>"
+sorry
 
 declare empty_fail_get[iff]
 
