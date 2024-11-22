@@ -3021,7 +3021,7 @@ prefer 3 subgoal sorry
 (*apply csymbr*)
             apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
               apply (rule ccorres_symb_exec_r)
-                apply (simp only: fun_app_def simp_list_case_return
+                apply (simp only: fun_app_def list_case_If
                                   return_bind ccorres_seq_skip)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
