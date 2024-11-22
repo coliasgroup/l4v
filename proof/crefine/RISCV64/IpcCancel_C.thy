@@ -3007,6 +3007,7 @@ prefer 3 subgoal sorry
    apply (rule ccorres_symb_exec_r)
      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
      apply (rule_tac P="rv'a = thread_state_to_tsType rv" in ccorres_gen_asm2)
+     apply (rule_tac P="valid_tcb_state' rv" in ccorres_gen_asm)
      apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
             apply (unfold blockedCancelIPC_def)
@@ -3091,6 +3092,16 @@ apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac x13)
+apply (simp split del: if_split)
+apply wp
+apply (rename_tac foo)
+apply (simp split del: if_split)
+apply wp
+subgoal sorry
+
+(*
+apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
+apply (case_tac x13)
 prefer 2
 apply (simp split del: if_split)
    apply (rule_tac P="invs' and tcb_at' thread" in ccorres_gen_asm_state)
@@ -3109,6 +3120,7 @@ subgoal sorry
 apply (rename_tac foo)
 apply (simp split del: if_split)
 apply wp
+*)
 
 (*
 NOTES:
