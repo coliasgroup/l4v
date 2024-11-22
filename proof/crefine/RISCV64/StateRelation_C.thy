@@ -292,7 +292,8 @@ where
         \<and> badge = blockingIPCBadge_CL (fst ts')
         \<and> cg    = to_bool (blockingIPCCanGrant_CL (fst ts'))
         \<and> cgr   = to_bool (blockingIPCCanGrantReply_CL (fst ts'))
-        \<and> isc   = to_bool (blockingIPCIsCall_CL (fst ts')))"
+        \<and> isc   = to_bool (blockingIPCIsCall_CL (fst ts'))
+        \<and> 0     = replyObject_CL (fst ts'))"
 | "cthread_state_relation_lifted (Structures_H.BlockedOnNotification oref) ts'
      = (tsType_CL (fst ts') = scast ThreadState_BlockedOnNotification
         \<and> oref = blockingObject_CL (fst ts'))"

@@ -2988,6 +2988,13 @@ lemma cancelIPC_ccorres1:
    apply csymbr
    apply (rule getThreadState_ccorres_foo)
    apply csymbr
+
+(*
+        apply (rule_tac A="\<lambda>s. invs' s"
+                   (* and A'=UNIV *)
+                     in ccorres_guard_imp2)
+*)
+
    apply (rule ccorres_move_c_guard_tcb)+
    apply (rule ccorres_split_nothrow_novcg) (* _novcg, _dc *)
        apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
@@ -3027,12 +3034,13 @@ prefer 3 subgoal sorry
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
-                apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+                apply (ctac (no_vcg) add: cancelIPC_ccorres_helper) 
 (* todo: 2,3 *)
 (*
 prefer 2 subgoal sorry
 prefer 2 subgoal sorry
 *)
+
                 (* ! *)
 (*apply csymbr*)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
@@ -3203,6 +3211,7 @@ apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 *)
 
 subgoal sorry
+
                 apply (simp add: ThreadState_defs)
                apply vcg
               apply (rule conseqPre, vcg)
@@ -3276,7 +3285,8 @@ prefer 2 subgoal sorry
            apply (rule subset_refl)
           apply (rule conseqPre, vcg)
           apply clarsimp
-subgoal sorry
+apply wp
+apply clarsimp
 subgoal sorry
              apply vcg
             apply (rule conseqPre, vcg)
