@@ -3091,10 +3091,13 @@ apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac x13)
+prefer 2
 apply (simp split del: if_split)
 apply wp
+subgoal sorry
 apply (rename_tac foo)
 apply (simp split del: if_split)
+apply wp
 
 (*
 NOTES:
@@ -3156,7 +3159,9 @@ apply (strengthen  invs_pspace_bounded')
 apply (clarsimp split del: if_split)
 *)
 
+(*
 subgoal sorry
+*)
 
 (*
 apply (clarsimp split del: if_split)
