@@ -258,9 +258,9 @@ If a thread is blocking on an endpoint, then the endpoint is fetched and the thr
 >     assert (not $ isIdle ep)
 >         "blockedCancelIPC: endpoint must not be idle"
 >     let queue' = delete tptr $ epQueue ep
->     ep' <- case queue' of
->         [] -> return IdleEP
->         _ -> return $ ep { epQueue = queue' }
+>     ep' <- return $ case queue' of
+>         [] -> IdleEP
+>         _ -> ep { epQueue = queue' }
 >     setEndpoint epptr ep'
 >     case replyOpt of
 >         Nothing -> return ()
