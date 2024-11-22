@@ -3099,6 +3099,12 @@ apply (simp split del: if_split)
 (*
 NOTES:
 
+apply (rule hoare_pre)
+*)
+
+(*
+NOTES:
+
 apply (frule replyObject_nonzero)
 
 apply (wp reply_at'_replyObject)
