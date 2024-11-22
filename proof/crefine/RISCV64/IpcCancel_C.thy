@@ -2923,7 +2923,7 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
-    (\<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
+    (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
@@ -3185,7 +3185,7 @@ subgoal sorry
                 apply (rule conseqPre, vcg)
                 apply clarsimp
 
-          \<comment> \<open>BlockedOnReply\<close>
+          \<comment> \<open>BlockedOnReply case\<close>
            apply (simp add: ThreadState_defs ccorres_cond_iffs
                             Collect_False Collect_True word_sle_def
                       cong: call_ignore_cong del: Collect_const)
