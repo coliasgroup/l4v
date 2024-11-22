@@ -3093,7 +3093,18 @@ apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac x13)
 prefer 2
 apply (simp split del: if_split)
+   apply (rule_tac P="invs' and tcb_at' thread" in ccorres_gen_asm_state)
+
+           apply (rule_tac P="tcb_at' thread"
+                      in ccorres_from_vcg[where P'=UNIV])
+
 apply wp
+apply (rule hoare_pre)
+apply wp
+
+                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
+apply (rule_tac Q'="\<lambda>rv. invs'" in hoare_post_imp)
+
 subgoal sorry
 apply (rename_tac foo)
 apply (simp split del: if_split)
