@@ -3004,7 +3004,7 @@ lemma cancelIPC_ccorres1:
    apply (rule ccorres_symb_exec_r)
      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
      apply (rule_tac P="rv'a = thread_state_to_tsType rv" in ccorres_gen_asm2)
-     apply (rule_tac P="valid_tcb_state' rv" in ccorres_gen_asm)
+(* apply (rule_tac P="valid_tcb_state' rv" in ccorres_gen_asm) *)
      apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
             apply (unfold blockedCancelIPC_def)
@@ -3160,6 +3160,7 @@ subgoal sorry
    apply clarsimp
    apply (wp threadSet_wp)
 
+apply (clarsimp simp: guard_is_UNIV_def)
 subgoal sorry
 
 sorry
