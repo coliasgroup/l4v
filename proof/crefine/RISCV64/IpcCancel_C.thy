@@ -2968,14 +2968,6 @@ lemma x_a:
    \<lbrace>\<lambda>rv. invs'\<rbrace>"
 sorry
 
-lemma x_threadSet_wp:
-  "\<lbrace>\<lambda>s. \<forall>tcb :: tcb. ko_at' tcb t s \<longrightarrow> P (set_obj' t (f tcb) s)\<rbrace>
-   threadSet f t
-   \<lbrace>\<lambda>_. P\<rbrace>"
-  unfolding threadSet_def
-  apply (wpsimp wp: setObject_tcb_wp set_tcb'.getObject_wp)
-  done
-
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -2996,13 +2988,6 @@ lemma cancelIPC_ccorres1:
    apply csymbr
    apply (rule getThreadState_ccorres_foo)
    apply csymbr
-
-(*
-        apply (rule_tac A="\<lambda>s. invs' s"
-                   (* and A'=UNIV *)
-                     in ccorres_guard_imp2)
-*)
-
    apply (rule ccorres_move_c_guard_tcb)+
    apply (rule ccorres_split_nothrow_novcg) (* _novcg, _dc *)
        apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
@@ -3016,9 +3001,6 @@ lemma cancelIPC_ccorres1:
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
 (* todo: 3 *)
-(*
-prefer 3 subgoal sorry
-*)
    apply (rule ccorres_symb_exec_r)
      apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
      apply (rule_tac P="rv'a = thread_state_to_tsType rv" in ccorres_gen_asm2)
@@ -3044,11 +3026,6 @@ prefer 3 subgoal sorry
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper) 
 (* todo: 2,3 *)
-(*
-prefer 2 subgoal sorry
-prefer 2 subgoal sorry
-*)
-
                 (* ! *)
 (*apply csymbr*)
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
@@ -3056,7 +3033,7 @@ prefer 2 subgoal sorry
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
                     apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
 (*                    
-                    apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
+apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
                     apply wpc
                       \<comment> \<open>None\<close>
@@ -3066,14 +3043,6 @@ prefer 2 subgoal sorry
                       apply simp
                       apply (ctac (no_vcg) add: reply_unlink_ccorres)
                       apply (ctac add: setThreadState_ccorres)
-(*
-apply (rule_tac Q'="\<lambda>rv. invs'" in hoare_post_imp)
-   apply (rule hoare_strengthen_post)
-apply (strengthen  invs_pspace_distinct')
-   apply (rule_tac Q'="\<lambda>rv. invs'" in hoare_strengthen_postE_R)
-*)
-
-
                     apply wp
                     apply (simp add: ThreadState_defs)
                    apply vcg
@@ -3084,30 +3053,6 @@ apply (strengthen  invs_pspace_distinct')
                  apply (rule subset_refl)
                 apply (rule conseqPre, vcg)
                 apply clarsimp
-(*
-NOTES:
-
-see: receiveIPC_ccorres
-
-apply wp
-apply  (wpsimp wp: hoare_drop_imp hoare_vcg_all_lift | safe)
-
-apply (wpsimp wp: hoare_drop_imps hoare_vcg_all_lift possibleSwitchTo_sch_act_not
-                  possibleSwitchTo_sch_act_not sts_st_tcb' sts_valid_objs'
-                        simp: valid_tcb_state'_def)+
-
-apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-
-apply (rule valid_drop_case)
-apply (wp hoare_drop_imps hoare_vcg_all_lift)
-
-apply (wp hoare_case_option_wp)
-
-apply (wp hoare_vcg_all_lift case_option_wp hoare_case_option_wp set_ep_valid_objs' | wpc | simp add: valid_tcb_state'_def split del: if_split)+
-
-apply (wp hoare_drop_imps)
-apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
-*)
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac x13)
@@ -3116,110 +3061,8 @@ apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
 apply (wp x_a)
-subgoal sorry
-
-(*
-apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-apply (case_tac x13)
-prefer 2
-apply (simp split del: if_split)
-   apply (rule_tac P="invs' and tcb_at' thread" in ccorres_gen_asm_state)
-
-           apply (rule_tac P="tcb_at' thread"
-                      in ccorres_from_vcg[where P'=UNIV])
-
-apply wp
-apply (rule hoare_pre)
-apply wp
-
-                 apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
-apply (rule_tac Q'="\<lambda>rv. invs'" in hoare_post_imp)
 
 subgoal sorry
-apply (rename_tac foo)
-apply (simp split del: if_split)
-apply wp
-*)
-
-(*
-NOTES:
-
-apply (rule hoare_pre)
-*)
-
-(*
-NOTES:
-
-apply (frule replyObject_nonzero)
-
-apply (wp reply_at'_replyObject)
-apply wp
-apply (wp replyUnlink_valid_objs')
-*)
-
-(*
-NOTES:
-
-apply (strengthen  invs_pspace_bounded')
-
-see lemma replyUnlink_valid_objs'[wp]
-see lemma sts_invs_minor'
-see lemma map_to_scs_Some_scRefs_nonzero
-
-see:
-
-       apply (rule_tac Q'="\<lambda>rv. invs' and cte_at' slot and valid_cap' cap" in hoare_strengthen_postE_R)
-        apply (wp cteDelete_invs'')
-see lemma cteDelete_invs'':
-
-*)
-
-(*
-apply (wp blockedCancelIPC_invs' replyRemoveTCB_invs' cancelSignal_invs'
-                    hoare_vcg_all_lift hoare_vcg_imp_lift' threadSet_fault_invs' gts_wp'
-              )
-apply (rule_tac Q'="\<lambda>rv. invs' and tcb_at' thread and reply_at' foo and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s)" in hoare_post_imp)
-apply (simp add: invs'_def invs_pspace_aligned' invs_pspace_distinct' invs_pspace_bounded' invs_valid_objs' invs_no_0_obj')
-
-apply (wp blockedCancelIPC_invs' replyRemoveTCB_invs' cancelSignal_invs'
-                    hoare_vcg_all_lift hoare_vcg_imp_lift' threadSet_fault_invs' gts_wp'
-              )
-
-apply (wp cancelIPC_ccorres_helper_invs')
-apply simp
-*)
-
-
-(*
-apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
-apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
-apply (simp add: invs'_def)
-apply (wp hy_invs')
-apply (strengthen  invs_pspace_bounded')
-        apply (wp cancelIPC_ccorres_helper_invs')
-    apply (wpsimp wp: hoare_drop_imp)+
-apply (clarsimp split del: if_split)
-*)
-
-(*
-subgoal sorry
-*)
-
-(*
-apply (clarsimp split del: if_split)
-apply wp
-apply (wp hoare_vcg_all_lift set_ep_valid_objs' | simp add: valid_tcb_state'_def split del: if_split)+
-
-apply (wp hoare_drop_imps hoare_vcg_all_lift
-                               sts_st_tcb' sts_valid_objs')
-apply (simp add: valid_tcb_state'_def valid_bound_reply'_def
-  split del: if_split)
-
-apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
-
-apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-       apply (wp | simp | wpc | wp (once) hoare_drop_imps)+
-*)
 
 subgoal sorry
 
@@ -3276,11 +3119,7 @@ subgoal sorry
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
           apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-(* todo: 2,3 *)
-(*
-prefer 2 subgoal sorry
-prefer 2 subgoal sorry
-*)
+(* todo: 3 *)
           (* ! *)
           apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
             apply (rule ccorres_symb_exec_r)
@@ -3296,21 +3135,10 @@ prefer 2 subgoal sorry
            apply (rule subset_refl)
           apply (rule conseqPre, vcg)
           apply clarsimp
-apply wp
-   apply (simp add: ctcb_relation_def
-                                     seL4_Fault_lift_NullFault
-                                     cfault_rel_def is_cap_fault_def
-                                     cthread_state_relation_def)
-
-
-               apply (clarsimp simp: ctcb_relation_def
-                                     seL4_Fault_lift_NullFault
-                                     cfault_rel_def is_cap_fault_def
-                                     cthread_state_relation_def)
-apply clarsimp
-   apply (simp add: ctcb_relation_def cthread_state_relation_def)
+         apply wp
 
 subgoal sorry
+
              apply vcg
             apply (rule conseqPre, vcg)
             apply clarsimp
@@ -3330,44 +3158,11 @@ subgoal sorry
    apply clarsimp
    apply (rule conseqPre, vcg)
    apply clarsimp
-
-apply (wp threadSet_wp)
-
-(*
-
-apply (case_tac rv)
-
-*)
+   apply (wp threadSet_wp)
 
 subgoal sorry
 
-(*
-WIP:
-
-apply clarsimp
-  apply (drule(1) obj_at_cslift_tcb)
-  apply clarsimp
-  apply (frule obj_at_valid_objs', clarsimp+)
-  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def)
-
-  apply (rule conjI, clarsimp)
-    apply (rule conjI)
-*)
-
-(*
-apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
-*)
-
 sorry
-
-(*
-NOTES:
-
-cthread_state_relation_lifted relates H and C thread state
-
-*)
 
 end
 end
