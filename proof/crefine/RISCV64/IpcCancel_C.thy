@@ -2961,12 +2961,20 @@ lemma replyObject_nonzero:
   using assms
   by (fastforce simp: valid_tcb_state'_def)
 
-lemma xx_a:
+lemma x_a:
   "\<lbrace>(\<lambda>s. invs' s)\<rbrace>
      (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
            else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
    \<lbrace>\<lambda>rv. invs'\<rbrace>"
 sorry
+
+lemma x_threadSet_wp:
+  "\<lbrace>\<lambda>s. \<forall>tcb :: tcb. ko_at' tcb t s \<longrightarrow> P (set_obj' t (f tcb) s)\<rbrace>
+   threadSet f t
+   \<lbrace>\<lambda>_. P\<rbrace>"
+  unfolding threadSet_def
+  apply (wpsimp wp: setObject_tcb_wp set_tcb'.getObject_wp)
+  done
 
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
@@ -3047,6 +3055,9 @@ prefer 2 subgoal sorry
                   apply (rule ccorres_symb_exec_r)
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
                     apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
+(*                    
+                    apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
+*)
                     apply wpc
                       \<comment> \<open>None\<close>
                       apply simp
@@ -3104,7 +3115,7 @@ apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
-apply wp
+apply (wp x_a)
 subgoal sorry
 
 (*
@@ -3286,7 +3297,19 @@ prefer 2 subgoal sorry
           apply (rule conseqPre, vcg)
           apply clarsimp
 apply wp
+   apply (simp add: ctcb_relation_def
+                                     seL4_Fault_lift_NullFault
+                                     cfault_rel_def is_cap_fault_def
+                                     cthread_state_relation_def)
+
+
+               apply (clarsimp simp: ctcb_relation_def
+                                     seL4_Fault_lift_NullFault
+                                     cfault_rel_def is_cap_fault_def
+                                     cthread_state_relation_def)
 apply clarsimp
+   apply (simp add: ctcb_relation_def cthread_state_relation_def)
+
 subgoal sorry
              apply vcg
             apply (rule conseqPre, vcg)
