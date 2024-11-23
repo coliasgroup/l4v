@@ -3040,7 +3040,9 @@ apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
                       apply simp
                       apply (ctac add: setThreadState_ccorres)
                       \<comment> \<open>Some\<close>
+(*
 apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
+*)
                       apply simp
                       apply (ctac (no_vcg) add: reply_unlink_ccorres)
                       apply (ctac add: setThreadState_ccorres)
