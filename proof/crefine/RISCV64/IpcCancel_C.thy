@@ -2925,6 +2925,24 @@ lemma reply_unlink_ccorres:
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
+  apply (cinit lift: reply_' tcb_' simp: getThreadState_def)
+  apply (rule ccorres_move_c_guard_tcb)
+  apply clarsimp
+  
+
+  apply (add_sym_refs, add_valid_replies rptr simp: valid_cap_def, add_sch_act_wf)
+  apply (rule corres_stateAssert_assume; (simp add: sym_refs_asrt_def)?)
+  apply (rule corres_stateAssert_assume; simp?)
+  apply (rule corres_stateAssert_assume; (simp add: sch_act_wf_asrt_def)?)
+  apply (rule corres_guard_imp)
+    apply (rule corres_split[OF getReply_TCB_corres])
+      apply (simp split del: if_split)
+      apply (rule_tac R="tptrOpt = None" in corres_cases';
+             clarsimp simp del: corres_return)
+       apply (rule corres_return_trivial)
+      apply wpfix
+      apply (rule replyClear_corres)
+
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
 lemma reply_pop_ccorres:
