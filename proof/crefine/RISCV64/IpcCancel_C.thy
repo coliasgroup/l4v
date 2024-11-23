@@ -2922,27 +2922,15 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
-    (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
+    (valid_tcbs' and pspace_aligned' and pspace_distinct'
+      and st_tcb_at' (\<lambda>st. \<exists>oref cg. st = Structures_H.BlockedOnReceive oref cg (Some replyPtr)
+                           \<or> st = Structures_H.BlockedOnReply (Some replyPtr)) tcbPtr
+      and (\<lambda>s. replyTCBs_of s replyPtr = Some tcbPtr))
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_' simp: getThreadState_def)
   apply (rule ccorres_move_c_guard_tcb)
   apply clarsimp
-  
-
-  apply (add_sym_refs, add_valid_replies rptr simp: valid_cap_def, add_sch_act_wf)
-  apply (rule corres_stateAssert_assume; (simp add: sym_refs_asrt_def)?)
-  apply (rule corres_stateAssert_assume; simp?)
-  apply (rule corres_stateAssert_assume; (simp add: sch_act_wf_asrt_def)?)
-  apply (rule corres_guard_imp)
-    apply (rule corres_split[OF getReply_TCB_corres])
-      apply (simp split del: if_split)
-      apply (rule_tac R="tptrOpt = None" in corres_cases';
-             clarsimp simp del: corres_return)
-       apply (rule corres_return_trivial)
-      apply wpfix
-      apply (rule replyClear_corres)
-
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
 lemma reply_pop_ccorres:
@@ -3082,6 +3070,7 @@ apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
 apply (wp x_a)
+apply clarsimp
 
 subgoal sorry
 
