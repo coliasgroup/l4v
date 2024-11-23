@@ -3069,8 +3069,8 @@ apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
 apply (simp split del: if_split)
-apply (wp x_a)
-apply clarsimp
+apply wp
+apply (simp add: valid_objs'_valid_tcbs')
 
 subgoal sorry
 
