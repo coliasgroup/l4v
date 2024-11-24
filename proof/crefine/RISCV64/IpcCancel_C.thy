@@ -3089,7 +3089,7 @@ apply csymbr
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_d)
       apply ceqv
 apply csymbr
-
+apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm2)
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
@@ -3105,20 +3105,8 @@ apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
                       apply (ctac (no_vcg) add: reply_unlink_ccorres)
                       apply (ctac add: setThreadState_ccorres)
                     apply wp
-                    apply (simp add: ThreadState_defs)
                    apply vcg
-(*
-                  apply (rule conseqPre, vcg)
-*)
-                  apply clarsimp
-(*
-                 apply clarsimp
-                 apply (rule conseqPre, vcg)
-                 apply (rule subset_refl)
-                apply (rule conseqPre, vcg)
-                apply clarsimp
-*)
-subgoal sorry
+
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac ro)
@@ -3130,6 +3118,8 @@ apply wp
 apply (simp add: valid_objs'_valid_tcbs')
 
 subgoal sorry
+
+apply clarsimp
 
 subgoal sorry
 
@@ -3224,6 +3214,7 @@ subgoal sorry
    apply (wp threadSet_wp)
 
 apply (clarsimp simp: guard_is_UNIV_def)
+
 subgoal sorry
 
 sorry
