@@ -2925,7 +2925,8 @@ lemma reply_unlink_ccorres:
     (valid_tcbs' and pspace_aligned' and pspace_distinct'
       and st_tcb_at' (\<lambda>st. \<exists>oref cg. st = Structures_H.BlockedOnReceive oref cg (Some replyPtr)
                            \<or> st = Structures_H.BlockedOnReply (Some replyPtr)) tcbPtr
-      and (\<lambda>s. replyTCBs_of s replyPtr = Some tcbPtr))
+      and ko_at' reply replyPtr
+      and (\<lambda>s. replyTCB reply = Some tcbPtr))
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_' simp: getThreadState_def)
@@ -3089,7 +3090,7 @@ apply csymbr
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_d)
       apply ceqv
 apply csymbr
-apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
+apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm2) (* gen_asm2 ? *)
 
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
@@ -3113,10 +3114,10 @@ apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac ro)
 apply (simp split del: if_split)
 apply wp
-apply (rename_tac foo)
+apply (rename_tac ro')
 apply (simp split del: if_split)
 apply wp
-apply (simp add: valid_objs'_valid_tcbs')
+apply (clarsimp simp: valid_objs'_valid_tcbs')
 
 
 subgoal sorry
