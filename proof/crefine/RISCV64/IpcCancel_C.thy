@@ -2743,15 +2743,15 @@ lemma cancelIPC_ccorres_helper:
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
                             \<and> blockingObject st = ep) thread
         and ko_at' ep' ep)
-        {s. epptr_' s = Ptr ep}
+        UNIV
         []
         (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
                          else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-        (\<acute>queue :== CALL ep_ptr_get_queue(\<acute>epptr);;
+        (\<acute>queue :== CALL ep_ptr_get_queue(Ptr ep);;
          \<acute>queue :== CALL tcbEPDequeue(tcb_ptr_to_ctcb_ptr thread,\<acute>queue);;
-          CALL ep_ptr_set_queue(\<acute>epptr,\<acute>queue);;
+          CALL ep_ptr_set_queue(Ptr ep,\<acute>queue);;
           IF head_C \<acute>queue = NULL THEN
-              CALL endpoint_ptr_set_state(\<acute>epptr,scast EPState_Idle)
+              CALL endpoint_ptr_set_state(Ptr ep,scast EPState_Idle)
           FI)"
   apply (rule ccorres_from_vcg)
   apply (rule allI)
@@ -3034,8 +3034,30 @@ lemma cancelIPC_ccorres1:
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
 (*apply csymbr*)
-            apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
-              apply (rule ccorres_symb_exec_r)
+
+   apply (rule_tac xf'=ret__unsigned_longlong_'
+            and val="blockingObject"
+            and R="st_tcb_at' ((=) (BlockedOnReceive blockingObject
+         blockingIPCCanGrant replyObjectOpt)) thread"
+            and R'=UNIV
+            in ccorres_symb_exec_r_known_rv)
+        apply clarsimp
+       apply (rule conseqPre, vcg)
+       apply (clarsimp simp: st_tcb_at'_def)
+       apply (frule (1) obj_at_cslift_tcb)
+                   apply (clarsimp simp: ctcb_relation_def typ_heap_simps
+                                         cthread_state_relation_def word_size
+                                         isSend_def thread_state_lift_def
+ctcb_relation_thread_state_to_tsType
+ctcb_relation_def
+                                  split: Structures_H.thread_state.splits)
+(*
+
+*)
+subgoal sorry
+
+      apply ceqv
+apply csymbr
                 apply (simp only: fun_app_def list_case_If
                                   return_bind ccorres_seq_skip)
                 apply (rule ccorres_rhs_assoc2)
