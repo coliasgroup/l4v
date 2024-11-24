@@ -2974,6 +2974,16 @@ lemma x_a:
    \<lbrace>\<lambda>rv. invs'\<rbrace>"
 sorry
 
+lemma ctcb_relation_x_b:
+  "ctcb_relation tcb ctcb \<and> BlockedOnReceive bo bicg ro = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
+  unfolding ctcb_relation_def cthread_state_relation_def
+  by (cases "(tcbState tcb)", simp_all)
+
+lemma ctcb_relation_x_c:
+  "ctcb_relation tcb ctcb \<and> BlockedOnSend bo bib bicg bicgr biic = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
+  unfolding ctcb_relation_def cthread_state_relation_def
+  by (cases "(tcbState tcb)", simp_all)
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3023,7 +3033,7 @@ lemma cancelIPC_ccorres1:
 
      apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
-            apply (rename_tac blockingObject blockingIPCCanGrant replyObjectOpt)
+            apply (rename_tac bo bicg ro)
             apply (unfold blockedCancelIPC_def)
             apply (simp add: word_sle_def ccorres_cond_iffs cong: call_ignore_cong)
             apply (unfold cancelIPC_ccorres1_helper2)
@@ -3036,26 +3046,15 @@ lemma cancelIPC_ccorres1:
 (*apply csymbr*)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
-            and val="blockingObject"
-            and R="st_tcb_at' ((=) (BlockedOnReceive blockingObject
-         blockingIPCCanGrant replyObjectOpt)) thread"
+            and val="bo"
+            and R="st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
         apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
-                   apply (clarsimp simp: ctcb_relation_def typ_heap_simps
-                                         cthread_state_relation_def word_size
-                                         isSend_def thread_state_lift_def
-ctcb_relation_thread_state_to_tsType
-ctcb_relation_def
-                                  split: Structures_H.thread_state.splits)
-(*
-
-*)
-subgoal sorry
-
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_x_b)
       apply ceqv
 apply csymbr
                 apply (simp only: fun_app_def list_case_If
@@ -3070,7 +3069,7 @@ apply csymbr
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-                    apply (rule_tac P="rv'a = option_to_ptr replyObjectOpt \<and> replyObjectOpt \<noteq> Some 0" in ccorres_gen_asm2)
+                    apply (rule_tac P="rv'a = option_to_ptr ro \<and> ro \<noteq> Some 0" in ccorres_gen_asm2)
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
@@ -3097,7 +3096,7 @@ apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
                 apply clarsimp
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-apply (case_tac replyObjectOpt)
+apply (case_tac ro)
 apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
@@ -3109,15 +3108,7 @@ subgoal sorry
 
 subgoal sorry
 
-                apply (simp add: ThreadState_defs)
                apply vcg
-              apply (rule conseqPre, vcg)
-              apply clarsimp
-             apply clarsimp
-             apply (rule conseqPre, vcg)
-             apply (rule subset_refl)
-            apply (rule conseqPre, vcg)
-            apply clarsimp
 
           \<comment> \<open>BlockedOnReply case\<close>
            apply (simp add: ThreadState_defs ccorres_cond_iffs
@@ -3147,6 +3138,7 @@ subgoal sorry
                  cong: call_ignore_cong)
 
       \<comment> \<open>clag\<close>
+      apply (rename_tac bo bib bicg bicgr biic)
       apply (unfold cancelIPC_ccorres1_helper3)
       apply (simp only: return_bind)
       apply (rule ccorres_rhs_assoc)+
@@ -3154,9 +3146,18 @@ subgoal sorry
       apply csymbr
       apply (rule ccorres_pre_getEndpoint)
       apply (rule ccorres_assert)
-(*apply csymbr*)
-      apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
-        apply (rule ccorres_symb_exec_r)
+   apply (rule_tac xf'=ret__unsigned_longlong_'
+            and val="bo"
+            and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
+            and R'=UNIV
+            in ccorres_symb_exec_r_known_rv)
+        apply clarsimp
+       apply (rule conseqPre, vcg)
+       apply (clarsimp simp: st_tcb_at'_def)
+       apply (frule (1) obj_at_cslift_tcb)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_x_c)
+      apply ceqv
+        apply csymbr
           apply (simp only: fun_app_def list_case_If return_bind ccorres_seq_skip)
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
@@ -3183,13 +3184,6 @@ subgoal sorry
 subgoal sorry
 
              apply vcg
-            apply (rule conseqPre, vcg)
-            apply clarsimp
-           apply clarsimp
-           apply (rule conseqPre, vcg)
-           apply (rule subset_refl)
-          apply (rule conseqPre, vcg)
-          apply clarsimp
 
   \<comment> \<open>Restart\<close>
      apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
