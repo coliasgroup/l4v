@@ -3198,7 +3198,7 @@ apply csymbr
               apply simp
             apply (ctac add: setThreadState_ccorres)
              apply vcg
-            apply wpsimp
+            apply wp
             apply clarsimp
 subgoal sorry
 
