@@ -3097,7 +3097,9 @@ apply csymbr
       apply ceqv
 apply csymbr
 apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm2) (* gen_asm2 ? *)
-
+(*
+apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
+*)
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
@@ -3116,7 +3118,7 @@ apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
                    apply vcg
 
 
-apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
+apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac ro)
 apply (simp split del: if_split)
 apply wp
@@ -3202,12 +3204,15 @@ subgoal sorry
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_e)
       apply ceqv
 apply csymbr
-
+(*
+apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
+*)
               apply simp
             apply (ctac add: setThreadState_ccorres)
              apply vcg
             apply wp
-            apply clarsimp
+       apply (clarsimp simp: ThreadState_defs)
+
 subgoal sorry
 
              apply vcg
