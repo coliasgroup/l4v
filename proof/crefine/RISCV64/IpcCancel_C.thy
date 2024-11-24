@@ -2989,6 +2989,11 @@ lemma ctcb_relation_x_d:
   unfolding ctcb_relation_def cthread_state_relation_def
   by (cases "(tcbState tcb)", simp_all)
 
+lemma ctcb_relation_x_e:
+  "ctcb_relation tcb ctcb \<and> BlockedOnSend bo bib bicg bicgr biic = tcbState tcb \<Longrightarrow> replyObject_CL (thread_state_lift (tcbState_C ctcb)) = 0"
+  unfolding ctcb_relation_def cthread_state_relation_def
+  by (cases "(tcbState tcb)", simp_all)
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3074,7 +3079,7 @@ apply csymbr
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
-            and R="st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
+            and R="valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
         apply clarsimp
@@ -3085,8 +3090,6 @@ apply csymbr
       apply ceqv
 apply csymbr
 
-                    apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-                    apply (rule_tac P="rv'a = option_to_ptr ro \<and> ro \<noteq> Some 0" in ccorres_gen_asm2)
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
@@ -3104,14 +3107,19 @@ apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
                     apply wp
                     apply (simp add: ThreadState_defs)
                    apply vcg
+(*
                   apply (rule conseqPre, vcg)
+*)
                   apply clarsimp
+(*
                  apply clarsimp
                  apply (rule conseqPre, vcg)
                  apply (rule subset_refl)
                 apply (rule conseqPre, vcg)
                 apply clarsimp
+*)
 subgoal sorry
+
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac ro)
 apply (simp split del: if_split)
@@ -3182,22 +3190,25 @@ subgoal sorry
           apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 (* todo: 3 *)
           (* ! *)
-          apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
-            apply (rule ccorres_symb_exec_r)
-              apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-              apply (rule_tac P="rv'a = NULL" in ccorres_gen_asm2)
+
+   apply (rule_tac xf'=ret__unsigned_longlong_'
+            and val="0"
+            and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
+            and R'=UNIV
+            in ccorres_symb_exec_r_known_rv)
+        apply clarsimp
+       apply (rule conseqPre, vcg)
+       apply (clarsimp simp: st_tcb_at'_def)
+       apply (frule (1) obj_at_cslift_tcb)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_x_e)
+      apply ceqv
+apply csymbr
+
               apply simp
             apply (ctac add: setThreadState_ccorres)
              apply vcg
-            apply (rule conseqPre, vcg)
+            apply wpsimp
             apply clarsimp
-           apply clarsimp
-           apply (rule conseqPre, vcg)
-           apply (rule subset_refl)
-          apply (rule conseqPre, vcg)
-          apply clarsimp
-         apply wp
-
 subgoal sorry
 
              apply vcg
