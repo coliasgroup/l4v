@@ -2992,9 +2992,11 @@ lemma cancelIPC_ccorres1:
    apply (rule ccorres_stateAssert)
    apply (rule ccorres_stateAssert)
    apply csymbr
-   apply (rule getThreadState_ccorres_foo)
    apply csymbr
-   apply (rule ccorres_move_c_guard_tcb)+
+   apply (rule ccorres_move_c_guard_tcb)
+   apply (rule getThreadState_ccorres_foo)
+   apply (rename_tac threadState)
+
    apply (rule ccorres_split_nothrow_novcg) (* _novcg, _dc *)
        apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
         apply vcg
@@ -3006,11 +3008,19 @@ lemma cancelIPC_ccorres1:
                              cfault_rel_def cthread_state_relation_def)
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
-(* todo: 3 *)
-   apply (rule ccorres_symb_exec_r)
-     apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
-     apply (rule_tac P="rv'a = thread_state_to_tsType rv" in ccorres_gen_asm2)
-(* apply (rule_tac P="valid_tcb_state' rv" in ccorres_gen_asm) *)
+
+   apply (rule_tac xf'=ret__unsigned_longlong_'
+            and val="thread_state_to_tsType threadState"
+            and R="st_tcb_at' ((=) threadState) thread"
+            and R'=UNIV
+            in ccorres_symb_exec_r_known_rv)
+        apply clarsimp
+       apply (rule conseqPre, vcg)
+       apply (clarsimp simp: st_tcb_at'_def)
+       apply (frule (1) obj_at_cslift_tcb)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType)
+      apply ceqv
+
      apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
             apply (unfold blockedCancelIPC_def)
@@ -3037,7 +3047,7 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-                    apply (rule_tac P="rv'b = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
+                    apply (rule_tac P="rv'a = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
@@ -3134,7 +3144,7 @@ subgoal sorry
           apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
             apply (rule ccorres_symb_exec_r)
               apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-              apply (rule_tac P="rv'b = NULL" in ccorres_gen_asm2)
+              apply (rule_tac P="rv'a = NULL" in ccorres_gen_asm2)
               apply simp
             apply (ctac add: setThreadState_ccorres)
              apply vcg
@@ -3165,8 +3175,6 @@ subgoal sorry
 
     \<comment> \<open>Post wp proofs\<close>
     apply vcg
-   apply clarsimp
-   apply (rule conseqPre, vcg)
    apply clarsimp
    apply (wp threadSet_wp)
 
