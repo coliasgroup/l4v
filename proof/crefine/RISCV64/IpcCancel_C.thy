@@ -3118,6 +3118,7 @@ apply (simp split del: if_split)
 apply wp
 apply (simp add: valid_objs'_valid_tcbs')
 
+
 subgoal sorry
 
 apply clarsimp
