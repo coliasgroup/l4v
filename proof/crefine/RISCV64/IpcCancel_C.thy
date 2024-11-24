@@ -2995,6 +2995,11 @@ lemma ctcb_relation_x_e:
   unfolding ctcb_relation_def cthread_state_relation_def
   by (cases "(tcbState tcb)", simp_all)
 
+lemma ctcb_relation_x_f:
+  "ctcb_relation tcb ctcb \<and> BlockedOnNotification won = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = won"
+  unfolding ctcb_relation_def cthread_state_relation_def
+  by (cases "(tcbState tcb)", simp_all)
+
 (*
 lemma valid_objs'_valid_replies'[elim!]:
   "valid_objs' s \<Longrightarrow> valid_replies' s"
@@ -3227,7 +3232,14 @@ subgoal sorry
    apply clarsimp
    apply (wp threadSet_wp)
 
-apply (clarsimp simp: guard_is_UNIV_def)
+apply (clarsimp simp: guard_is_UNIV_def typ_heap_simps ctcb_relation_thread_state_to_tsType
+ctcb_relation_x_b
+ctcb_relation_x_c
+ctcb_relation_x_d
+ctcb_relation_x_e
+ctcb_relation_x_f
+split: option.splits thread_state.splits
+)
 
 subgoal sorry
 
