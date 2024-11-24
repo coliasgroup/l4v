@@ -3023,6 +3023,7 @@ lemma cancelIPC_ccorres1:
 
      apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
+            apply (rename_tac blockingObject blockingIPCCanGrant replyObjectOpt)
             apply (unfold blockedCancelIPC_def)
             apply (simp add: word_sle_def ccorres_cond_iffs cong: call_ignore_cong)
             apply (unfold cancelIPC_ccorres1_helper2)
@@ -3047,7 +3048,7 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_symb_exec_r) \<comment> \<open>ptr_get lemmas don't work so well :(\<close>
                   apply (rule ccorres_symb_exec_r)
                     apply (rule_tac xf'=reply_' in ccorres_abstract, ceqv)
-                    apply (rule_tac P="rv'a = option_to_ptr x13 \<and> x13 \<noteq> Some 0" in ccorres_gen_asm2)
+                    apply (rule_tac P="rv'a = option_to_ptr replyObjectOpt \<and> replyObjectOpt \<noteq> Some 0" in ccorres_gen_asm2)
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
@@ -3074,7 +3075,7 @@ apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
                 apply clarsimp
 
 apply (subst option.split[symmetric,where P=id, simplified]) (* see Ipc_C.thy *)
-apply (case_tac x13)
+apply (case_tac replyObjectOpt)
 apply (simp split del: if_split)
 apply wp
 apply (rename_tac foo)
