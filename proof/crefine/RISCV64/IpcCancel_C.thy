@@ -3089,7 +3089,8 @@ apply csymbr
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_d)
       apply ceqv
 apply csymbr
-apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm2)
+apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
+
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
