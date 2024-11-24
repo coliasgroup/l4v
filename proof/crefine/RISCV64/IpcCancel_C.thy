@@ -2995,6 +2995,12 @@ lemma ctcb_relation_x_e:
   unfolding ctcb_relation_def cthread_state_relation_def
   by (cases "(tcbState tcb)", simp_all)
 
+(*
+lemma valid_objs'_valid_replies'[elim!]:
+  "valid_objs' s \<Longrightarrow> valid_replies' s"
+  by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
+*)
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
