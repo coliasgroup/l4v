@@ -3029,7 +3029,7 @@ lemma cancelIPC_ccorres1:
    apply (rename_tac threadState)
 
    apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
-       apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
+       apply (rule threadSet_ccorres_lemma2[where P=\<top>])
         apply vcg
        apply (clarsimp simp: typ_heap_simps')
        apply (erule(1) rf_sr_tcb_update_no_queue2,
