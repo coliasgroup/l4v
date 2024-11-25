@@ -3225,7 +3225,7 @@ apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
             apply (ctac add: setThreadState_ccorres)
              apply vcg
             apply wp
-       apply (clarsimp simp: ThreadState_defs)
+       apply clarsimp
 
 subgoal sorry
 
