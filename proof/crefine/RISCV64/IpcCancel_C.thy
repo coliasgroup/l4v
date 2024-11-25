@@ -3005,23 +3005,63 @@ lemma valid_objs'_valid_replies'[elim!]:
   by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
 *)
 
+lemma xxxx:
+  "\<lbrakk> st = BlockedOnReceive bo bicg (Some ro);
+     valid_objs' s; no_0_obj' s;  st_tcb_at' ((=) st) t s\<rbrakk>
+       \<Longrightarrow> reply_at' ro s"
+  apply (drule (1) tcb_in_valid_state')
+  by (fastforce simp: obj_at'_def valid_tcb_state'_def)
+
+lemma xxxxx:
+  "\<lbrakk> no_0_obj' s; reply_at' ro s\<rbrakk>
+       \<Longrightarrow> ro \<noteq> 0"
+  apply (simp add: obj_at'_def no_0_obj'_def)
+sorry
+
 lemma xxx_a:
   "\<lbrakk>valid_objs' s \<and> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
    \<rbrakk> \<Longrightarrow>
    obj_at' (\<lambda>a. replyTCB a = Some thread) ro s"
 sorry
-  apply (clarsimp simp: refs_of_rev' obj_at'_def ko_wp_at'_def)
-  by (force simp: tcb_in_valid_state st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
+  by (force simp: tcb_in_valid_state' st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
            split: if_splits Structures_H.thread_state.split)
 
-lemma xxx_b:
-  "\<lbrakk>valid_objs' s \<and> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
-   \<rbrakk> \<Longrightarrow>
-   ro \<noteq> 0"
-  apply (clarsimp simp: refs_of_rev' obj_at'_def ko_wp_at'_def)
+lemma xxx_bb:
+  assumes
+      "valid_objs' s"
+      "no_0_obj' s"
+      "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
+  shows
+      "valid_tcb_state' (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro)) s"
+  using assms
 sorry
-  by (force simp: tcb_in_valid_state st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
-           split: if_splits Structures_H.thread_state.split)
+  by (force
+        dest: tcb_in_valid_state'
+        simp:
+        xxxx
+        xxxxx
+        replyObject_nonzero tcb_in_valid_state' st_tcb_at'_def
+        obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
+        valid_objs'_def no_0_obj'_def    
+        valid_tcb_state'_def       
+      split: if_splits Structures_H.thread_state.split)
+
+lemma xxx_b:
+  assumes
+      "valid_objs' s"
+      "no_0_obj' s"
+      "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
+  shows "ro \<noteq> 0"
+  using assms
+sorry
+  by (force simp:
+        xxxx
+        xxxxx
+        replyObject_nonzero tcb_in_valid_state' valid_tcb_state'_def st_tcb_at'_def
+        obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
+        valid_objs'_def no_0_obj'_def    
+        valid_tcb_state'_def       
+      split: if_splits Structures_H.thread_state.split)
 
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
