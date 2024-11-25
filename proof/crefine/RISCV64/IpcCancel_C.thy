@@ -3105,7 +3105,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
-            and R="valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
+            and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
             (* and R'="{s'. s \<Turnstile>\<^sub>c tcb_ptr_to_ctcb_ptr thread}" *)
             in ccorres_symb_exec_r_known_rv)
@@ -3154,9 +3154,6 @@ apply (fastforce simp: st_tcb_at'_def obj_at'_def)
 
 apply (rule conjI)
 apply (simp add: xxx_a)
-
-apply (rule conjI)
-subgoal sorry
 
 apply (simp add: xxx_b)
 
