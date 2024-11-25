@@ -3086,6 +3086,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 *)
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
+
    apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
        apply (rule threadSet_ccorres_lemma2[where P=\<top>])
         apply vcg
@@ -3097,6 +3098,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                              cfault_rel_def cthread_state_relation_def)
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
+
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="thread_state_to_tsType threadState"
             and R="st_tcb_at' ((=) threadState) thread"
