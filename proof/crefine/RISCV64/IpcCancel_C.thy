@@ -3019,23 +3019,17 @@ lemma cancelIPC_ccorres1:
                    (UNIV \<inter> {s. tptr_' s = tcb_ptr_to_ctcb_ptr thread}) []
           (cancelIPC thread) (Call cancelIPC_'proc)"
   apply (cinit lift: tptr_' simp: Let_def cong: call_ignore_cong)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule ccorres_move_c_guard_tcb)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule ccorres_stateAssert)
    apply (rule ccorres_stateAssert)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply csymbr
    apply csymbr
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule ccorres_move_c_guard_tcb)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 (*
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 *)
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
        apply (rule threadSet_ccorres_lemma2[where P=\<top>])
         apply vcg
@@ -3047,7 +3041,6 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                              cfault_rel_def cthread_state_relation_def)
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="thread_state_to_tsType threadState"
             and R="st_tcb_at' ((=) threadState) thread"
@@ -3059,7 +3052,6 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType)
       apply ceqv
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
      apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
             apply (rename_tac bo bicg ro)
@@ -3072,7 +3064,6 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
             apply csymbr
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="bo"
             and R="st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
@@ -3084,9 +3075,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_b)
       apply ceqv
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                 apply (simp only: fun_app_def list_case_If
                                   return_bind ccorres_seq_skip)
                 apply (rule ccorres_rhs_assoc2)
@@ -3108,11 +3097,9 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_d)
       apply ceqv
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
                  apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 (*
 apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
 *)
@@ -3181,22 +3168,14 @@ apply simp
 
       \<comment> \<open>clag\<close>
       apply (rename_tac bo bib bicg bicgr biic)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (unfold cancelIPC_ccorres1_helper3)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (simp only: return_bind)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule ccorres_rhs_assoc)+
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule ccorres_pre_getEndpoint)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule ccorres_assert)
 
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="bo"
             and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
@@ -3208,15 +3187,12 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_c)
       apply ceqv
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
         apply csymbr
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
           apply (simp only: fun_app_def list_case_If return_bind ccorres_seq_skip)
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
           apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
           (* ! *)
@@ -3235,10 +3211,8 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_e)
       apply ceqv
 
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
 
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 (*
 apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
 *)
