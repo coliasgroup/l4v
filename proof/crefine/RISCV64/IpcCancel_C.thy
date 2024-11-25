@@ -3029,7 +3029,7 @@ lemma cancelIPC_ccorres1:
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
 
-   apply (rule ccorres_split_nothrow_novcg) (* _novcg, _dc *)
+   apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
        apply (rule_tac P=\<top> in threadSet_ccorres_lemma2)
         apply vcg
        apply (clarsimp simp: typ_heap_simps')
@@ -3232,18 +3232,7 @@ subgoal sorry
     apply vcg
    apply clarsimp
    apply (wp threadSet_wp)
-
-apply (clarsimp simp: guard_is_UNIV_def typ_heap_simps ctcb_relation_thread_state_to_tsType
-ctcb_relation_x_b
-ctcb_relation_x_c
-ctcb_relation_x_d
-ctcb_relation_x_e
-ctcb_relation_x_f
-split: option.splits thread_state.splits
-)
-
-subgoal sorry
-
+apply vcg
 
    apply clarsimp
   apply (drule(1) obj_at_cslift_tcb)
