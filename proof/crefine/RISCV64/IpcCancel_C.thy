@@ -3005,6 +3005,16 @@ lemma valid_objs'_valid_replies'[elim!]:
   by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
 *)
 
+lemma xxx:
+  "\<lbrakk>st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive x gr ro)) thread s; ko_at' ep' x s;
+    invs' s; sym_refs (state_refs_of' s)\<rbrakk> \<Longrightarrow>
+   thread \<in> set (epQueue ep') \<and> isRecvEP ep'"
+  apply (frule (1) sym_refs_st_tcb_atD')
+  apply (clarsimp simp: refs_of_rev' obj_at'_def ko_wp_at'_def)
+  by (cases ep';
+      force simp: isSendEP_def isRecvEP_def state_refs_of'_def tcb_st_refs_of'_def
+           split: if_splits Structures_H.thread_state.split_asm)
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3131,7 +3141,13 @@ apply (simp split del: if_split)
 apply wp
 apply (clarsimp simp: valid_objs'_valid_tcbs')
 
-subgoal sorry
+apply (rule conjI)
+apply (fastforce simp: st_tcb_at'_def obj_at'_def)
+
+apply (rule conjI)
+apply (fastforce simp: st_tcb_at'_def obj_at'_def)
+
+sorry
 
 apply clarsimp
 apply (frule (1) tcb_at_h_t_valid)
