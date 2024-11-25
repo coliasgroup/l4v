@@ -3025,6 +3025,9 @@ lemma cancelIPC_ccorres1:
    apply csymbr
    apply csymbr
    apply (rule ccorres_move_c_guard_tcb)
+(*
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+*)
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
 
@@ -3193,6 +3196,7 @@ subgoal sorry
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_c)
       apply ceqv
+
         apply csymbr
           apply (simp only: fun_app_def list_case_If return_bind ccorres_seq_skip)
           apply (rule ccorres_rhs_assoc2)
@@ -3225,7 +3229,7 @@ apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
             apply (ctac add: setThreadState_ccorres)
              apply vcg
             apply wp
-       apply clarsimp
+           apply simp
 
 subgoal sorry
 
