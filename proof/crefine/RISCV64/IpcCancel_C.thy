@@ -2992,12 +2992,6 @@ lemma ctcb_relation_x_f:
   unfolding ctcb_relation_def cthread_state_relation_def
   by (cases "(tcbState tcb)", simp_all)
 
-(*
-lemma valid_objs'_valid_replies'[elim!]:
-  "valid_objs' s \<Longrightarrow> valid_replies' s"
-  by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
-*)
-
 lemma x_a:
   "\<lbrakk>
      valid_objs' s; no_0_obj' s;  st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
@@ -3023,6 +3017,20 @@ lemma x_c:
   apply simp
   apply (simp add: x_b)
   done
+
+
+(*
+lemma valid_objs'_valid_replies'[elim!]:
+  "valid_objs' s \<Longrightarrow> valid_replies' s"
+  by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
+
+lemma Reply_or_Receive_reply_at:
+  "\<lbrakk> st = Structures_A.thread_state.BlockedOnReply rp
+     \<or> st = Structures_A.thread_state.BlockedOnReceive epPtr (Some rp) p'; valid_objs s;
+        st_tcb_at ((=) st) t s\<rbrakk> \<Longrightarrow> reply_at rp s"
+  apply (drule (1) st_tcb_at_valid_st2)
+  by (fastforce simp: obj_at_def valid_tcb_state_def)
+*)
 
 lemma x_d:
   "\<lbrakk> valid_objs' s
