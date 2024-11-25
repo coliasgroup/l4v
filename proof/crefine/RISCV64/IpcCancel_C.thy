@@ -3314,7 +3314,14 @@ apply simp
                         valid_tcb_state'_def typ_heap_simps
                         word_sle_def)
   apply (rule conjI, clarsimp)
+  apply (rule conjI, clarsimp)
+
     apply (rule conjI)
+
+    subgoal by (auto simp add: obj_at'_def projectKOs pred_tcb_at'_def invs'_def objBits_simps'
+                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
+                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                    split: thread_state.splits endpoint.splits)
 
 sorry
 
