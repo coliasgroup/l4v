@@ -3181,14 +3181,22 @@ apply simp
 
       \<comment> \<open>clag\<close>
       apply (rename_tac bo bib bicg bicgr biic)
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (unfold cancelIPC_ccorres1_helper3)
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (simp only: return_bind)
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule ccorres_rhs_assoc)+
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule ccorres_pre_getEndpoint)
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule ccorres_assert)
 
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="bo"
             and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
@@ -3200,13 +3208,17 @@ apply simp
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_c)
       apply ceqv
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
         apply csymbr
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
           apply (simp only: fun_app_def list_case_If return_bind ccorres_seq_skip)
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
           apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
           (* ! *)
 
 (* todo: 3 *)
@@ -3223,8 +3235,10 @@ apply simp
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_e)
       apply ceqv
 
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
 
+apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 (*
 apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
 *)
@@ -3235,7 +3249,9 @@ apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
             apply wp
            apply simp
 
-subgoal sorry
+apply clarsimp
+apply (frule (1) tcb_at_h_t_valid)
+apply simp
 
              apply vcg
 
