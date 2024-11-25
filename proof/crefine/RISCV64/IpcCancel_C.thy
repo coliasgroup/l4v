@@ -2967,13 +2967,6 @@ lemma replyObject_nonzero:
   using assms
   by (fastforce simp: valid_tcb_state'_def)
 
-lemma x_a:
-  "\<lbrace>(\<lambda>s. invs' s)\<rbrace>
-     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
-           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-   \<lbrace>\<lambda>rv. invs'\<rbrace>"
-sorry
-
 lemma ctcb_relation_x_b:
   "ctcb_relation tcb ctcb \<and> BlockedOnReceive bo bicg ro = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
   unfolding ctcb_relation_def cthread_state_relation_def
@@ -3005,28 +2998,42 @@ lemma valid_objs'_valid_replies'[elim!]:
   by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
 *)
 
-lemma xxxx:
-  "\<lbrakk> st = BlockedOnReceive bo bicg (Some ro);
-     valid_objs' s; no_0_obj' s;  st_tcb_at' ((=) st) t s\<rbrakk>
+lemma x_a:
+  "\<lbrakk>
+     valid_objs' s; no_0_obj' s;  st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
        \<Longrightarrow> reply_at' ro s"
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
-lemma xxxxx:
+lemma x_b:
   "\<lbrakk> no_0_obj' s; reply_at' ro s\<rbrakk>
        \<Longrightarrow> ro \<noteq> 0"
-  apply (simp add: obj_at'_def no_0_obj'_def)
-sorry
+proof
+  apply_end (simp add: obj_at'_def no_0_obj'_def)
+qed
 
-lemma xxx_a:
-  "\<lbrakk>valid_objs' s \<and> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
+lemma x_c:
+  "\<lbrakk>
+      valid_objs' s;
+      no_0_obj' s;
+      st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) t s
+  \<rbrakk> \<Longrightarrow> ro \<noteq> 0"
+  apply (drule x_a)
+  apply simp
+  apply simp
+  apply (simp add: x_b)
+  done
+
+lemma x_d:
+  "\<lbrakk> valid_objs' s
+    \<and> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
    \<rbrakk> \<Longrightarrow>
    obj_at' (\<lambda>a. replyTCB a = Some thread) ro s"
 sorry
   by (force simp: tcb_in_valid_state' st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
            split: if_splits Structures_H.thread_state.split)
 
-lemma xxx_bb:
+lemma x_d_x:
   assumes
       "valid_objs' s"
       "no_0_obj' s"
@@ -3041,23 +3048,6 @@ sorry
         xxxx
         xxxxx
         replyObject_nonzero tcb_in_valid_state' st_tcb_at'_def
-        obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
-        valid_objs'_def no_0_obj'_def    
-        valid_tcb_state'_def       
-      split: if_splits Structures_H.thread_state.split)
-
-lemma xxx_b:
-  assumes
-      "valid_objs' s"
-      "no_0_obj' s"
-      "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
-  shows "ro \<noteq> 0"
-  using assms
-sorry
-  by (force simp:
-        xxxx
-        xxxxx
-        replyObject_nonzero tcb_in_valid_state' valid_tcb_state'_def st_tcb_at'_def
         obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
         valid_objs'_def no_0_obj'_def    
         valid_tcb_state'_def       
@@ -3193,9 +3183,9 @@ apply (rule conjI)
 apply (fastforce simp: st_tcb_at'_def obj_at'_def)
 
 apply (rule conjI)
-apply (simp add: xxx_a)
+apply (simp add: x_d)
 
-apply (simp add: xxx_b)
+apply (simp add: x_c)
 
 apply clarsimp
 apply (frule (1) tcb_at_h_t_valid)
