@@ -3084,6 +3084,7 @@ apply csymbr
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+
 (* todo: 2,3 *)
                 (* ! *)
 (*apply csymbr*)
@@ -3091,7 +3092,7 @@ apply csymbr
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
             and R="valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
-            and R'=UNIV            
+            and R'=UNIV
             (* and R'="{s'. s \<Turnstile>\<^sub>c tcb_ptr_to_ctcb_ptr thread}" *)
             in ccorres_symb_exec_r_known_rv)
         apply clarsimp
