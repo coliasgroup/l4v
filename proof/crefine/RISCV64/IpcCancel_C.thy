@@ -3064,7 +3064,6 @@ lemma cancelIPC_ccorres1:
             apply csymbr
             apply (rule ccorres_pre_getEndpoint)
             apply (rule ccorres_assert)
-(*apply csymbr*)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="bo"
@@ -3077,7 +3076,9 @@ lemma cancelIPC_ccorres1:
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_b)
       apply ceqv
-apply csymbr
+
+      apply csymbr
+
                 apply (simp only: fun_app_def list_case_If
                                   return_bind ccorres_seq_skip)
                 apply (rule ccorres_rhs_assoc2)
@@ -3085,9 +3086,7 @@ apply csymbr
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 
-(* todo: 2,3 *)
-                (* ! *)
-(*apply csymbr*)
+(* todo: 3 *)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
@@ -3101,22 +3100,28 @@ apply csymbr
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_d)
       apply ceqv
-apply csymbr
-apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
+
+      apply csymbr
+
+      apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
+
 (*
 apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
 *)
 (*                    
 apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
 *)
+
                     apply wpc
                       \<comment> \<open>None\<close>
                       apply simp
                       apply (ctac add: setThreadState_ccorres)
                       \<comment> \<open>Some\<close>
+
 (*
 apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
 *)
+
                       apply simp
                       apply (ctac (no_vcg) add: reply_unlink_ccorres)
                       apply (ctac add: setThreadState_ccorres)
@@ -3131,7 +3136,6 @@ apply (rename_tac ro')
 apply (simp split del: if_split)
 apply wp
 apply (clarsimp simp: valid_objs'_valid_tcbs')
-
 
 subgoal sorry
 
@@ -3177,6 +3181,7 @@ subgoal sorry
       apply csymbr
       apply (rule ccorres_pre_getEndpoint)
       apply (rule ccorres_assert)
+
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="bo"
             and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
@@ -3194,8 +3199,9 @@ subgoal sorry
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
           apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-(* todo: 3 *)
           (* ! *)
+
+(* todo: 3 *)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="0"
@@ -3208,10 +3214,13 @@ subgoal sorry
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_e)
       apply ceqv
-apply csymbr
+
+      apply csymbr
+
 (*
 apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
 *)
+
               apply simp
             apply (ctac add: setThreadState_ccorres)
              apply vcg
@@ -3231,9 +3240,11 @@ subgoal sorry
     apply vcg
    apply clarsimp
    apply (wp threadSet_wp)
-apply vcg
+
+   apply vcg
 
    apply clarsimp
+
   apply (drule(1) obj_at_cslift_tcb)
   apply clarsimp
   apply (frule obj_at_valid_objs', clarsimp+)
@@ -3242,8 +3253,6 @@ apply vcg
                         word_sle_def)
   apply (rule conjI, clarsimp)
     apply (rule conjI)
-
-
 
 sorry
 
