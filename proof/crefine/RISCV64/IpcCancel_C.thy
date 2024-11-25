@@ -2925,8 +2925,7 @@ lemma reply_unlink_ccorres:
     (valid_tcbs' and pspace_aligned' and pspace_distinct'
       and st_tcb_at' (\<lambda>st. \<exists>oref cg. st = Structures_H.BlockedOnReceive oref cg (Some replyPtr)
                            \<or> st = Structures_H.BlockedOnReply (Some replyPtr)) tcbPtr
-      and ko_at' reply replyPtr
-      and (\<lambda>s. replyTCB reply = Some tcbPtr))
+      and obj_at' (\<lambda>reply. replyTCB reply = Some tcbPtr) replyPtr)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_' simp: getThreadState_def)
@@ -3122,7 +3121,6 @@ apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
                       apply (ctac add: setThreadState_ccorres)
                     apply wp
                    apply vcg
-
 
 apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac ro)
