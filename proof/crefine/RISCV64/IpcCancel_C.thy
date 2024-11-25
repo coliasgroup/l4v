@@ -3005,15 +3005,23 @@ lemma valid_objs'_valid_replies'[elim!]:
   by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
 *)
 
-lemma xxx:
-  "\<lbrakk>st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive x gr ro)) thread s; ko_at' ep' x s;
-    invs' s; sym_refs (state_refs_of' s)\<rbrakk> \<Longrightarrow>
-   thread \<in> set (epQueue ep') \<and> isRecvEP ep'"
-  apply (frule (1) sym_refs_st_tcb_atD')
+lemma xxx_a:
+  "\<lbrakk>valid_objs' s \<and> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
+   \<rbrakk> \<Longrightarrow>
+   obj_at' (\<lambda>a. replyTCB a = Some thread) ro s"
+sorry
   apply (clarsimp simp: refs_of_rev' obj_at'_def ko_wp_at'_def)
-  by (cases ep';
-      force simp: isSendEP_def isRecvEP_def state_refs_of'_def tcb_st_refs_of'_def
-           split: if_splits Structures_H.thread_state.split_asm)
+  by (force simp: tcb_in_valid_state st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
+           split: if_splits Structures_H.thread_state.split)
+
+lemma xxx_b:
+  "\<lbrakk>valid_objs' s \<and> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
+   \<rbrakk> \<Longrightarrow>
+   ro \<noteq> 0"
+  apply (clarsimp simp: refs_of_rev' obj_at'_def ko_wp_at'_def)
+sorry
+  by (force simp: tcb_in_valid_state st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
+           split: if_splits Structures_H.thread_state.split)
 
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
@@ -3145,9 +3153,12 @@ apply (rule conjI)
 apply (fastforce simp: st_tcb_at'_def obj_at'_def)
 
 apply (rule conjI)
-apply (fastforce simp: st_tcb_at'_def obj_at'_def)
+apply (simp add: xxx_a)
 
-sorry
+apply (rule conjI)
+subgoal sorry
+
+apply (simp add: xxx_b)
 
 apply clarsimp
 apply (frule (1) tcb_at_h_t_valid)
