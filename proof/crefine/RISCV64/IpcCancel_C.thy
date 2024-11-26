@@ -3225,8 +3225,8 @@ lemma cancelIPC_ccorres1:
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
    apply csymbr
-
    apply (rule ccorres_move_c_guard_tcb)
+
    apply (ctac add: nullFault_ptr_new_ccorres)
 apply (rule ccorres_guard_imp2)
 
@@ -3463,6 +3463,23 @@ defer
     apply (rule conjI)
 apply (frule (2) tcb_at_h_t_valid)
 defer
+
+apply clarsimp
+  apply (drule(1) obj_at_cslift_tcb)
+  apply clarsimp
+  apply (frule obj_at_valid_objs', clarsimp+)
+  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def)
+  apply (rule conjI, clarsimp)
+   apply (rule conjI, clarsimp)
+    apply (rule conjI)
+     apply (simp add: projectKOs obj_at'_def pred_tcb_at'_def
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def valid_state'_def
+                     isTS_defs cte_wp_at_ctes_of
+                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+ split: thread_state.splits)
+
 
 
 
