@@ -3228,6 +3228,7 @@ lemma cancelIPC_ccorres1:
    apply (rule ccorres_move_c_guard_tcb)
 
    apply (ctac add: nullFault_ptr_new_ccorres)
+
 (*
 apply (rule ccorres_guard_imp2)
 *)
@@ -3465,7 +3466,7 @@ apply simp
     apply vcg
    apply clarsimp
    apply (wp add: threadSet_wp)
-apply vcg
+   apply vcg
 
 
 
