@@ -3061,6 +3061,22 @@ sorry
         valid_tcb_state'_def       
       split: if_splits Structures_H.thread_state.split)
 
+lemma foo_x1:
+  shows
+    "ccorres dc xfdc
+      (tcb_at' thread and invs' and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s))
+      (UNIV \<inter> {s. tptr_' s = tcb_ptr_to_ctcb_ptr thread})
+      (threadSet (tcbFault_update (\<lambda>_. None)) thread)
+      (\<acute>ret__struct_seL4_Fault_C :== CALL seL4_Fault_NullFault_new();;
+        Guard C_Guard {s. s \<Turnstile>\<^sub>c tptr}
+          (\<acute>globals :==
+            t_hrs_'_update
+              (hrs_mem_update
+                (heap_update
+                  (PTR(seL4_Fault_C) &(tptr\<rightarrow>[''tcbFault_C'']))
+                    \<acute>ret__struct_seL4_Fault_C))))"
+sorry
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3078,14 +3094,16 @@ lemma cancelIPC_ccorres1:
    apply (rule ccorres_move_c_guard_tcb)
    apply (rule ccorres_stateAssert)
    apply (rule ccorres_stateAssert)
+   apply (rule getThreadState_ccorres_foo)
+   apply (rename_tac threadState)
    apply csymbr
+
    apply csymbr
    apply (rule ccorres_move_c_guard_tcb)
+
 (*
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 *)
-   apply (rule getThreadState_ccorres_foo)
-   apply (rename_tac threadState)
 
    apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
        apply (rule threadSet_ccorres_lemma2[where P=\<top>])
