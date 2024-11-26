@@ -3299,6 +3299,7 @@ apply simp
             rule ccorres_return_Skip)
 
     \<comment> \<open>Post wp proofs\<close>
+
     apply vcg
    apply clarsimp
    apply (wp threadSet_wp)
