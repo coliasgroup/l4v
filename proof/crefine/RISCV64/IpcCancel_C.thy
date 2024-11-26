@@ -3069,6 +3069,59 @@ lemma nullFault_ptr_new_ccorres:
       []
       (threadSet (tcbFault_update (\<lambda>_. None)) thread)
       (Call seL4_Fault_NullFault_ptr_new_'proc)"
+  apply (rule threadSet_corres_lemma)
+  apply (rule seL4_Fault_NullFault_ptr_new_spec)
+  apply (rule seL4_Fault_NullFault_ptr_new_modifies)
+   apply clarsimp
+   apply (frule (1) obj_at_cslift_tcb)
+   apply (clarsimp simp: typ_heap_simps')
+   apply (rule rf_sr_tcb_update_no_queue_gen, assumption+, simp, simp_all)
+    apply (rule ball_tcb_cte_casesI, simp_all)[1]
+
+
+
+    apply (frule cmap_relation_tcb)
+    apply (frule (1) cmap_relation_ko_atD)
+
+               apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+                                     cfault_rel_def cthread_state_relation_def
+is_cap_fault_def
+)
+
+               apply (case_tac "tcbState tcb")
+  apply (frule (1) obj_at_cslift_tcb)
+apply clarsimp
+
+               apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+                                     cfault_rel_def cthread_state_relation_def seL4_Fault_lift_def)
+
+    apply (frule cmap_relation_tcb)
+    apply (frule (1) cmap_relation_ko_atD)
+    apply clarsimp
+    apply (simp add: ctcb_relation_def cthread_state_relation_def)
+  apply (frule (1) obj_at_cslift_tcb)
+  apply (clarsimp simp: typ_heap_simps)
+prefer 2
+   apply (frule (2) tcb_at_h_t_valid)
+
+    apply (simp add: ctcb_relation_def cthread_state_relation_def cfault_rel_def)
+
+
+   apply clarsimp
+   apply (frule (1) obj_at_cslift_tcb)
+   apply (clarsimp simp: typ_heap_simps')
+
+    apply (frule cmap_relation_tcb)
+    apply (frule (1) cmap_relation_ko_atD)
+    apply clarsimp
+    apply (simp add: ctcb_relation_def cthread_state_relation_def)
+  apply (frule (1) obj_at_cslift_tcb)
+  apply (clarsimp simp: typ_heap_simps)
+
+    apply (simp add: ctcb_relation_def cthread_state_relation_def cfault_rel_def)
+
+  done
+sorry
 
    apply (rule ccorres_from_spec_modifies_heap)
    apply (rule seL4_Fault_NullFault_ptr_new_spec)
@@ -3122,6 +3175,28 @@ apply clarsimp
    by (auto simp: carch_state_relation_def cmachine_state_relation_def refill_buffer_relation_def
                   typ_heap_simps)
 
+(*
+lemma threadSet_tcbState_simple_corres:
+  "ccorres dc xfdc (tcb_at' thread)
+        {s. (\<forall>cl fl. cthread_state_relation_lifted st (cl\<lparr>tsType_CL := v64_' s && mask 4\<rparr>, fl)) \<and>
+           thread_state_ptr_' s = Ptr &(tcb_ptr_to_ctcb_ptr thread\<rightarrow>[''tcbState_C''])} []
+        (threadSet (tcbState_update (\<lambda>_. st)) thread)  (Call thread_state_ptr_set_tsType_'proc)"
+  apply (rule threadSet_corres_lemma)
+  apply (rule thread_state_ptr_set_tsType_spec)
+  apply (rule thread_state_ptr_set_tsType_modifies)
+   apply clarsimp
+   apply (frule (1) obj_at_cslift_tcb)
+   apply (clarsimp simp: typ_heap_simps')
+   apply (rule rf_sr_tcb_update_no_queue_gen, assumption+, simp, simp_all)
+    apply (rule ball_tcb_cte_casesI, simp_all)
+    apply (frule cmap_relation_tcb)
+    apply (frule (1) cmap_relation_ko_atD)
+    apply clarsimp
+    apply (simp add: ctcb_relation_def cthread_state_relation_def)
+  apply (frule (1) obj_at_cslift_tcb)
+  apply (clarsimp simp: typ_heap_simps)
+  done
+*)
 sorry
 (*seL4_Fault_ptr
       (CALL seL4_Fault_NullFault_ptr_new(PTR
