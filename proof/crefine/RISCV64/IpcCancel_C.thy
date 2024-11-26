@@ -3302,8 +3302,8 @@ apply simp
     apply vcg
    apply clarsimp
    apply (wp threadSet_wp)
-
    apply vcg
+
 
    apply clarsimp
 
