@@ -3456,8 +3456,8 @@ apply simp
     apply vcg
 defer
    apply clarsimp
-   apply (wpsimp wp: threadSet_wp)
-   apply vcg
+   apply (wp add: threadSet_wp)
+apply vcg
 
    apply clarsimp
     apply (rule conjI)
@@ -3475,7 +3475,7 @@ apply clarsimp
    apply (rule conjI, clarsimp)
     apply (rule conjI)
      apply (simp add: projectKOs obj_at'_def pred_tcb_at'_def
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def valid_state'_def
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
                      isTS_defs cte_wp_at_ctes_of
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
  split: thread_state.splits)
