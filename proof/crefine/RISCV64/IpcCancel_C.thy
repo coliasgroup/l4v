@@ -3221,12 +3221,14 @@ lemma cancelIPC_ccorres1:
    apply (rule ccorres_move_c_guard_tcb)
    apply (rule ccorres_stateAssert)
    apply (rule ccorres_stateAssert)
+
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
    apply csymbr
-   apply (rule ccorres_move_c_guard_tcb)
 
+   apply (rule ccorres_move_c_guard_tcb)
    apply (ctac add: nullFault_ptr_new_ccorres)
+apply (rule ccorres_guard_imp2)
 
 (*
    apply csymbr
@@ -3452,12 +3454,31 @@ apply simp
     \<comment> \<open>Post wp proofs\<close>
 
     apply vcg
+defer
    apply clarsimp
    apply (wpsimp wp: threadSet_wp)
    apply vcg
 
-
    apply clarsimp
+    apply (rule conjI)
+apply (frule (2) tcb_at_h_t_valid)
+defer
+
+
+
+
+
+
+  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def
+)
+
+defer
+   apply clarsimp
+  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def)
 
   apply (drule(1) obj_at_cslift_tcb)
   apply clarsimp
