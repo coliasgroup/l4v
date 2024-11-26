@@ -3205,8 +3205,9 @@ sorry
 *)
 
 lemma threadSet_wp2:
-   "threadSet f t
-   \<lbrace>\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
+   "\<lbrace>\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>
+      threadSet f t
+   \<lbrace>\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
   unfolding threadSet_def
   apply (wp add:
 
@@ -3501,6 +3502,8 @@ threadSet_fault_invs'
 
 
 apply clarsimp
+
+
 
 
 
