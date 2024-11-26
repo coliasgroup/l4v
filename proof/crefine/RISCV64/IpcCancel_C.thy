@@ -3496,8 +3496,15 @@ threadSet_fault_invs'
                          thread_set_in_correct_ready_q
 )
 *)
+
+
+
+
+
+
 subgoal sorry
-   apply vcg
+ 
+  apply vcg
 
 apply clarsimp
   apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
