@@ -3254,6 +3254,12 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply ceqv
 *)
 
+(*
+   apply (rule ccorres_symb_exec_r)
+     apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
+     apply (rule_tac P="rv' = thread_state_to_tsType rv" in ccorres_gen_asm2)
+*)
+
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="thread_state_to_tsType threadState"
             and R="st_tcb_at' ((=) threadState) thread"
@@ -3265,6 +3271,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType)
       apply ceqv
+
      apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
             apply (rename_tac bo bicg ro)
@@ -3475,10 +3482,19 @@ apply clarsimp
   apply (rule conjI, clarsimp)
    apply (rule conjI, clarsimp)
     apply (rule conjI)
-     apply (simp add: projectKOs obj_at'_def pred_tcb_at'_def
+
+
+
+
+
+     apply (clarsimp simp: projectKOs obj_at'_def pred_tcb_at'_def
 obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                     isTS_defs cte_wp_at_ctes_of
+                     isTS_defs cte_wp_at_ctes_of ps_clear_upd valid_pspace'_def pspace_aligned'_def
+                        obj_at'_def ko_wp_at'_def state_refs_of'_def
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+
+map_to_ko_at_updI'
+ps_clear_upd_None
  split: thread_state.splits)
 
 
