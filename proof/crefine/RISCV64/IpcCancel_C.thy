@@ -3465,13 +3465,26 @@ apply simp
 
     apply vcg
    apply clarsimp
-   apply (wp add: threadSet_wp)
+
+    apply (rule_tac P="\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s"
+                 in hoare_weaken_pre)
+  apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s" in hoare_strengthen_post)
+
+   apply (wp add: threadSet_wp
+
+threadSet_fault_invs'
+ threadSet_invs_trivial thread_set_invs_but_fault_tcbs
+                         thread_set_no_change_tcb_state thread_set_no_change_tcb_sched_context
+                         thread_set_cte_wp_at_trivial ex_nonz_cap_to_pres hoare_weak_lift_imp
+                         thread_set_in_correct_ready_q
+)
+subgoal sorry
+subgoal sorry
    apply vcg
 
-
-
-
-
+apply clarsimp
+  apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
+done
 
 apply clarsimp
   apply (drule(1) obj_at_cslift_tcb)
