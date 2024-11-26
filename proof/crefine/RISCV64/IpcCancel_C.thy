@@ -3204,6 +3204,19 @@ sorry
                   &(\<acute>tptr\<rightarrow>[''tcbFault_C''])))"
 *)
 
+lemma threadSet_wp2:
+   "threadSet f t
+   \<lbrace>\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
+  unfolding threadSet_def
+  apply (wp add:
+
+threadSet_fault_invs'
+
+
+)
+sorry
+  done
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3466,19 +3479,23 @@ apply simp
     apply vcg
    apply clarsimp
 
-    apply (rule_tac P="\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s"
+(*
+    apply (rule_tac P="\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s"
                  in hoare_weaken_pre)
-  apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s" in hoare_strengthen_post)
+  apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
+  apply (wpsimp wp: threadSet_wp2)
+*)
+  apply (rule_tac hoare_strengthen_post)
 
-   apply (wp add: threadSet_wp
-
+   apply (wp add: threadSet_wp2)
+(*
 threadSet_fault_invs'
  threadSet_invs_trivial thread_set_invs_but_fault_tcbs
                          thread_set_no_change_tcb_state thread_set_no_change_tcb_sched_context
                          thread_set_cte_wp_at_trivial ex_nonz_cap_to_pres hoare_weak_lift_imp
                          thread_set_in_correct_ready_q
 )
-subgoal sorry
+*)
 subgoal sorry
    apply vcg
 
