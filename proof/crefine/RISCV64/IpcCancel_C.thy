@@ -3489,6 +3489,7 @@ apply simp
 
 *)
   apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
+(* OR hoare_post_imp *)
 
    apply (wp add: threadSet_wp2)
 (*
@@ -3503,6 +3504,14 @@ threadSet_fault_invs'
 
 apply clarsimp
 
+
+  apply (frule obj_at_valid_objs', clarsimp+)
+  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
+                        valid_tcb_state'_def typ_heap_simps
+                        word_sle_def)
+  apply (rule conjI, clarsimp)
+   apply (rule conjI)
+sorry
 
 
 
