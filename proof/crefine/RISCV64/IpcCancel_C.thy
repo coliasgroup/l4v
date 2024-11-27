@@ -2870,13 +2870,6 @@ lemma cancelIPC_ccorres_helper:
    subgoal by (simp add: objBits_simps)
   by assumption
 
-lemma cancelIPC_ccorres_helper_invs':
-  "\<lbrace>(\<lambda>s. invs' s)\<rbrace>
-     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
-           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-   \<lbrace>\<lambda>rv. invs'\<rbrace>"
-sorry
-
 declare empty_fail_get[iff]
 
 lemma getThreadState_ccorres_foo:
@@ -3031,19 +3024,6 @@ lemma x_c:
   apply (simp add: x_b)
   done
 
-(*
-lemma valid_objs'_valid_replies'[elim!]:
-  "valid_objs' s \<Longrightarrow> valid_replies' s"
-  by (auto simp: valid_objs'_def valid_replies'_def valid_replies'_except_def valid_obj'_def split: kernel_object.splits)
-
-lemma Reply_or_Receive_reply_at:
-  "\<lbrakk> st = Structures_A.thread_state.BlockedOnReply rp
-     \<or> st = Structures_A.thread_state.BlockedOnReceive epPtr (Some rp) p'; valid_objs s;
-        st_tcb_at ((=) st) t s\<rbrakk> \<Longrightarrow> reply_at rp s"
-  apply (drule (1) st_tcb_at_valid_st2)
-  by (fastforce simp: obj_at_def valid_tcb_state_def)
-*)
-
 lemma x_d_x:
   "\<lbrakk> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
    \<rbrakk> \<Longrightarrow>
@@ -3066,12 +3046,14 @@ lemma x_d:
   apply (clarsimp simp: obj_at'_def)
   done
 
+(*
 lemma x_d_sorry:
   "\<lbrakk>  valid_objs' s
    ; st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
    \<rbrakk> \<Longrightarrow>
    obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
 sorry
+*)
 
 lemma threadSet_wp2_x1:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
@@ -3124,6 +3106,7 @@ lemma threadSet_wp2:
     threadSet_wp2_x6
   )
 
+(*
 lemma cancelIPC_ccorres_helper_wp_x:
   "\<lbrace>(\<lambda>s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s)\<rbrace>
      (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
@@ -3137,7 +3120,7 @@ lemma cancelIPC_ccorres_helper_wp_x2:
            else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
    \<lbrace>\<lambda>rv s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s\<rbrace>"
 sorry
-
+*)
 
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
@@ -3264,10 +3247,10 @@ apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *
 apply (case_tac ro)
 prefer 2
 apply (simp split del: if_split)
-apply (wp add: cancelIPC_ccorres_helper_wp_x)
+apply (wp)
 apply (rename_tac ro')
 apply (simp split del: if_split)
-apply (wp add: cancelIPC_ccorres_helper_wp_x)
+apply (wp)
 apply (clarsimp simp: valid_objs'_valid_tcbs')
 
 apply clarsimp
