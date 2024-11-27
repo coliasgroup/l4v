@@ -2994,21 +2994,21 @@ lemma ctcb_relation_x_f:
 
 lemma x_a:
   "\<lbrakk>
-     valid_objs' s; no_0_obj' s;  st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
+     valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
        \<Longrightarrow> reply_at' ro s"
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
 lemma f_a:
   "\<lbrakk>
-     valid_objs' s;  st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s\<rbrakk>
+     valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s\<rbrakk>
        \<Longrightarrow> ep_at' bo s"
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
 lemma f_b:
   "\<lbrakk>
-     valid_objs' s;  st_tcb_at' ((=) (BlockedOnSend x xa xb xc xd)) t s\<rbrakk>
+     valid_objs' s; st_tcb_at' ((=) (BlockedOnSend x xa xb xc xd)) t s\<rbrakk>
        \<Longrightarrow> ep_at' x s"
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
@@ -3028,7 +3028,6 @@ lemma x_c:
   \<rbrakk> \<Longrightarrow> ro \<noteq> 0"
   apply (drule x_a)
   apply simp
-  apply simp
   apply (simp add: x_b)
   done
 
@@ -3045,21 +3044,6 @@ lemma Reply_or_Receive_reply_at:
   by (fastforce simp: obj_at_def valid_tcb_state_def)
 *)
 
-lemma sym_ref_Receive_or_Reply_replyTCB'x:
-  "\<lbrakk> sym_refs (state_refs_of' s); ko_at' tcb thread s;
-     tcbState tcb = BlockedOnReceive ep pl (Some rp)
-     \<or> tcbState tcb = BlockedOnReply (Some rp) \<rbrakk> \<Longrightarrow>
-    \<exists>reply. ksPSpace s rp = Some (KOReply reply) \<and> replyTCB reply = Some thread"
-  apply (drule (1) sym_refs_obj_atD'[rotated, where p=thread])
-  apply (clarsimp simp: state_refs_of'_def projectKOs obj_at'_def)
-  apply (clarsimp simp: ko_wp_at'_def)
-  apply (erule disjE; clarsimp)
-  apply (rename_tac koa; case_tac koa;
-         simp add: get_refs_def2 ep_q_refs_of'_def ntfn_q_refs_of'_def
-                   tcb_st_refs_of'_def tcb_bound_refs'_def
-            split: endpoint.split_asm ntfn.split_asm thread_state.split_asm if_split_asm)+
-  done
-
 lemma x_d_x:
   "\<lbrakk> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
    \<rbrakk> \<Longrightarrow>
@@ -3070,15 +3054,16 @@ lemma x_d_x:
 
 lemma x_d:
   "\<lbrakk> sym_refs (state_refs_of' s)
-   ; reply_at' ro s
+   ; valid_objs' s
    ; st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
    \<rbrakk> \<Longrightarrow>
    obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
+  apply (drule (1) x_a)
   apply (frule x_d_x)
   apply (clarsimp simp: st_tcb_at'_def)
   apply (frule (1) sym_ref_Receive_or_Reply_replyTCB')
   apply simp
-  apply (clarsimp simp: obj_at'_def valid_objs'_def)
+  apply (clarsimp simp: obj_at'_def)
   done
 
 lemma threadSet_wp2_x1:
