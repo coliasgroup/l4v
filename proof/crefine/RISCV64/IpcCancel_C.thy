@@ -3054,7 +3054,7 @@ sorry
   by (force simp: tcb_in_valid_state' st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
            split: if_splits Structures_H.thread_state.split)
 
-lemma x_d_x:
+lemma x_d_x1:
   assumes
       "valid_objs' s"
       "no_0_obj' s"
