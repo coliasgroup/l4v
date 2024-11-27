@@ -3054,26 +3054,6 @@ sorry
   by (force simp: tcb_in_valid_state' st_tcb_at'_def obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
            split: if_splits Structures_H.thread_state.split)
 
-lemma x_d_x1:
-  assumes
-      "valid_objs' s"
-      "no_0_obj' s"
-      "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
-  shows
-      "valid_tcb_state' (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro)) s"
-  using assms
-sorry
-  by (force
-        dest: tcb_in_valid_state'
-        simp:
-        xxxx
-        xxxxx
-        replyObject_nonzero tcb_in_valid_state' st_tcb_at'_def
-        obj_at'_def state_refs_of'_def tcb_st_refs_of'_def
-        valid_objs'_def no_0_obj'_def    
-        valid_tcb_state'_def       
-      split: if_splits Structures_H.thread_state.split)
-
 lemma threadSet_wp2_x1:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>tcb_at' t\<rbrace>"
