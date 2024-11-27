@@ -3312,38 +3312,6 @@ lemma cancelIPC_ccorres1:
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
 
-(*
-apply (rule ccorres_guard_imp2)
-*)
-
-(*
-   apply csymbr
-*)
-
-(*
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
-*)
-
-(*
-   apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
-       apply (rule threadSet_ccorres_lemma2[where P=\<top>])
-        apply vcg
-       apply (clarsimp simp: typ_heap_simps')
-       apply (erule(1) rf_sr_tcb_update_no_queue2,
-         (simp add: typ_heap_simps')+)[1]
-        apply (rule ball_tcb_cte_casesI, simp_all)[1]
-       apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
-                             cfault_rel_def cthread_state_relation_def)
-       apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
-      apply ceqv
-*)
-
-(*
-   apply (rule ccorres_symb_exec_r)
-     apply (rule_tac xf'=ret__unsigned_longlong_' in ccorres_abstract, ceqv)
-     apply (rule_tac P="rv' = thread_state_to_tsType rv" in ccorres_gen_asm2)
-*)
-
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="thread_state_to_tsType threadState"
             and R="st_tcb_at' ((=) threadState) thread"
@@ -3387,13 +3355,11 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                 apply (rule ccorres_rhs_assoc2)
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
-(* todo: 3 *)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
             and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
-            (* and R'="{s'. s \<Turnstile>\<^sub>c tcb_ptr_to_ctcb_ptr thread}" *)
             in ccorres_symb_exec_r_known_rv)
         apply clarsimp
        apply (rule conseqPre, vcg)
@@ -3404,23 +3370,12 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply csymbr
                  apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
-(*
-apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
-*)
-(*                    
-apply (rule_tac A="invs'" in ccorres_guard_imp2 [where A'=UNIV])
-*)
 
                     apply wpc
                       \<comment> \<open>None\<close>
                       apply simp
                       apply (ctac add: setThreadState_ccorres)
                       \<comment> \<open>Some\<close>
-
-(*
-apply (rule_tac A="reply_at' x2" and A'="reply_' s = x2" in ccorres_guard_imp2)
-*)
-
                       apply simp
                       apply (ctac (no_vcg) add: reply_unlink_ccorres)
                       apply (ctac add: setThreadState_ccorres)
@@ -3505,9 +3460,6 @@ apply simp
           apply (rule ccorres_rhs_assoc2)
           apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
-          (* ! *)
-
-(* todo: 3 *)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="0"
@@ -3522,10 +3474,6 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply ceqv
 
       apply csymbr
-
-(*
-apply (rule_tac A="tcb_at' (tcb_ptr_to_ctcb_ptr thread)" in ccorres_guard_imp2)
-*)
 
               apply simp
             apply (ctac add: setThreadState_ccorres)
@@ -3561,15 +3509,6 @@ apply simp
 (* OR hoare_post_imp *)
 
    apply (wp add: threadSet_wp2)
-(*
-threadSet_fault_invs'
- threadSet_invs_trivial thread_set_invs_but_fault_tcbs
-                         thread_set_no_change_tcb_state thread_set_no_change_tcb_sched_context
-                         thread_set_cte_wp_at_trivial ex_nonz_cap_to_pres hoare_weak_lift_imp
-                         thread_set_in_correct_ready_q
-)
-*)
-
 
 apply clarsimp
 
@@ -3671,69 +3610,6 @@ apply clarsimp
 apply clarsimp
   apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
 done
-
-apply clarsimp
-  apply (drule(1) obj_at_cslift_tcb)
-  apply clarsimp
-  apply (frule obj_at_valid_objs', clarsimp+)
-  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def)
-  apply (rule conjI, clarsimp)
-   apply (rule conjI, clarsimp)
-    apply (rule conjI)
-
-
-
-
-
-     apply (clarsimp simp: projectKOs obj_at'_def pred_tcb_at'_def
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                     isTS_defs cte_wp_at_ctes_of ps_clear_upd valid_pspace'_def pspace_aligned'_def
-                        obj_at'_def ko_wp_at'_def state_refs_of'_def
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-
-map_to_ko_at_updI'
-ps_clear_upd_None
- split: thread_state.splits)
-
-
-
-
-
-
-
-  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def
-)
-
-defer
-   apply clarsimp
-  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def)
-
-  apply (drule(1) obj_at_cslift_tcb)
-  apply clarsimp
-  apply (frule obj_at_valid_objs', clarsimp+)
-  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def)
-  apply (rule conjI, clarsimp)
-  apply (rule conjI, clarsimp)
-
-    apply (rule conjI)
-           apply (erule(2) map_to_ko_at_updI')
-
-    apply (auto simp add: obj_at'_def projectKOs pred_tcb_at'_def invs'_def objBits_simps'
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-map_to_ko_at_updI'
-state_refs_of'_upd
-                    split: thread_state.splits endpoint.splits)
-
-sorry
 
 end
 end
