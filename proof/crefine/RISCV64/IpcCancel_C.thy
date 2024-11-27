@@ -3241,7 +3241,7 @@ apply (rule conjI)
 apply (fastforce simp: st_tcb_at'_def obj_at'_def)
 
 apply (rule conjI)
-apply (simp add: x_d_sorry)
+apply (simp add: sym_refs_asrt_def x_d)
 
 apply (simp add: x_c)
 
