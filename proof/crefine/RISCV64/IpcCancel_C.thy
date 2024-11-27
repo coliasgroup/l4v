@@ -3294,7 +3294,12 @@ apply simp
 apply (drule (1) tcb_in_valid_state')
 apply (simp add: replyObject_nonzero)
 
-apply wp
+apply (wp add: cancelIPC_ccorres_helper_wp_x cancelIPC_ccorres_helper_wp_x2)
+
+(*
+NOTES
+use x_d
+*)
 
 subgoal sorry
 (*
