@@ -3066,6 +3066,13 @@ lemma x_d:
   apply (clarsimp simp: obj_at'_def)
   done
 
+lemma x_d_sorry:
+  "\<lbrakk>  valid_objs' s
+   ; st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
+   \<rbrakk> \<Longrightarrow>
+   obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
+sorry
+
 lemma threadSet_wp2_x1:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>tcb_at' t\<rbrace>"
@@ -3234,7 +3241,7 @@ apply (rule conjI)
 apply (fastforce simp: st_tcb_at'_def obj_at'_def)
 
 apply (rule conjI)
-apply (simp add: x_d)
+apply (simp add: x_d_sorry)
 
 apply (simp add: x_c)
 
