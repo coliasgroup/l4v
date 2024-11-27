@@ -3238,14 +3238,16 @@ lemma threadSet_wp2_x3:
                split: if_splits)
 
 lemma threadSet_wp2_x4:
-   "threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>sym_refs_asrt\<rbrace>"
+  "\<lbrace>\<lambda>s. sym_refs_asrt s\<rbrace>
+   threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>\<lambda>rv. sym_refs_asrt\<rbrace>"
   unfolding sym_refs_asrt_def
+
   apply (wpsimp wp: setThreadState_state_refs_of')
   apply (clarsimp dest!: st_tcb_at_state_refs_ofD'
                   elim!: rsubst[where P=sym_refs]
                  intro!: ext)
-  by (fastforce simp: tcb_bound_refs'_def get_refs_def2)
+  apply (fastforce simp: tcb_bound_refs'_def get_refs_def2)
 apply (wpsimp wp: threadSet_pred_tcb_no_state)
 sorry
 (*
