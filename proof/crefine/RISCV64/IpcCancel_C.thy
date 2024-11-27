@@ -3274,9 +3274,9 @@ st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread 
 \<and> pspace_distinct' s
 \<and> pspace_bounded' s
 \<and> valid_tcbs' s
-\<and> (\<forall>x. ro = Some x \<longrightarrow>
+\<and> ((ro = None \<longrightarrow> True) \<and> (\<forall>x. ro = Some x \<longrightarrow>
 obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s
-)
+))
 "
 in hoare_post_imp)
 
@@ -3294,17 +3294,17 @@ apply simp
 apply (drule (1) tcb_in_valid_state')
 apply (simp add: replyObject_nonzero)
 
-apply (subst option.split[symmetric, where P=id, simplified])
-
-apply (wp add: cancelIPC_ccorres_helper_wp_x cancelIPC_ccorres_helper_wp_x2)
-apply (subst option.split[symmetric, where P=id, simplified])
-
 (*
-NOTES
-use x_d
+apply wp
+apply (wp case_option_wp)
 *)
 
-subgoal sorry
+apply (subst option.split[symmetric, where P=id, simplified])
+apply (wp cancelIPC_ccorres_helper_wp_x cancelIPC_ccorres_helper_wp_x2)
+                      
+apply (wp hoare_case_option_wp2)
+
+
 (*
 apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
 
