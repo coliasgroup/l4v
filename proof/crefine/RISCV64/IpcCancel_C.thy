@@ -3055,6 +3055,7 @@ lemma x_d_sorry:
 sorry
 *)
 
+
 lemma threadSet_wp2_x1:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>tcb_at' t\<rbrace>"
@@ -3106,7 +3107,7 @@ lemma threadSet_wp2:
     threadSet_wp2_x6
   )
 
-
+(*
 lemma cancelIPC_ccorres_helper_wp_x:
   "\<lbrace>(\<lambda>s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s)\<rbrace>
      (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
@@ -3129,6 +3130,7 @@ lemma valid_drop_case: "\<lbrakk> \<lbrace>P\<rbrace> f \<lbrace>\<lambda>rv s. 
      apply (case_tac x1)
      apply simp+
   done
+*)
 
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
@@ -3300,7 +3302,7 @@ apply (wp case_option_wp)
 *)
 
 apply (subst option.split[symmetric, where P=id, simplified])
-apply (wp cancelIPC_ccorres_helper_wp_x cancelIPC_ccorres_helper_wp_x2)
+apply (wp )
                       
 apply (wp hoare_case_option_wp2)
 
