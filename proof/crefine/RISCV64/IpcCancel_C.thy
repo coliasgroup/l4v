@@ -3122,6 +3122,14 @@ lemma cancelIPC_ccorres_helper_wp_x2:
 sorry
 *)
 
+lemma valid_drop_case: "\<lbrakk> \<lbrace>P\<rbrace> f \<lbrace>\<lambda>rv s. P' rv s\<rbrace> \<rbrakk>
+                       \<Longrightarrow> \<lbrace>P\<rbrace> f \<lbrace>\<lambda>rv s. case rv of None \<Rightarrow> True | Some x \<Rightarrow> P' rv s\<rbrace>"
+   apply (simp only: valid_def Ball_def split: prod.split)
+     apply (rule allI impI)+
+     apply (case_tac x1)
+     apply simp+
+  done
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3243,12 +3251,23 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                     apply wp
                    apply vcg
 
+(*
+apply (wpsimp split_del: if_split)
+*)
+(*
+apply (wpsimp wp: hoare_case_option_wp split_del: if_split)
+*)                     
+
 apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
+
+(*
+        apply (rule valid_drop_case)
+*)
+
 apply (case_tac ro)
 prefer 2
 apply (simp split del: if_split)
 apply (wp)
-apply (rename_tac ro')
 apply (simp split del: if_split)
 apply (wp)
 apply (clarsimp simp: valid_objs'_valid_tcbs')
