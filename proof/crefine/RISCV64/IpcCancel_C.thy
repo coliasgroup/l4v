@@ -3238,6 +3238,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
       apply ceqv
       apply csymbr
                  apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+
       apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
 
                     apply wpc
@@ -3278,6 +3279,22 @@ obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s
 )
 "
 in hoare_post_imp)
+
+apply (clarsimp simp: replyObject_nonzero tcb_in_valid_state')
+apply (rule conjI)
+
+apply (case_tac ro)
+apply simp
+apply simp
+apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
+apply (rule_tac x=bo in exI)
+apply (rule_tac x=bicg in exI)
+apply simp
+
+apply (drule (1) tcb_in_valid_state')
+apply (simp add: replyObject_nonzero)
+
+apply wp
 
 subgoal sorry
 (*
