@@ -3533,8 +3533,18 @@ apply (simp add: invs_valid_objs' x_d)
                       valid_objs'_valid_tcbs'
                       x_d
                      split: thread_state.splits endpoint.splits)
-    apply clarsimp
+
+
+          apply (clarsimp simp:
+sym_refs_asrt_def
+invs'_implies
+invs_valid_objs'
+valid_objs'_valid_tcbs'
+x_d
+)
+    apply (frule (3) ep_blocked_in_queueD_send)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
+
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
                      isTS_defs cte_wp_at_ctes_of isRecvEP_def isSendEP_def
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
