@@ -3258,6 +3258,7 @@ apply (wpsimp split_del: if_split)
 apply (wpsimp wp: hoare_case_option_wp split_del: if_split)
 *)                     
 
+
 apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
 
 (*
