@@ -2948,12 +2948,6 @@ lemma cancelIPC_ccorres1_helper3:
   "\<And>a b c d e. (getBlockingObject (Structures_H.thread_state.BlockedOnSend a b c d e)) = return a"
   unfolding getBlockingObject_def epBlocked_def by simp
 
-lemma reply_at'_replyObject:
-  assumes "valid_tcb_state' ts s"
-  shows "\<forall>replyPtr. ts = BlockedOnReceive a b (Some replyPtr) \<longrightarrow> reply_at' replyPtr s"
-  using assms
-  by (clarsimp simp: valid_tcb_state'_def)
-
 lemma replyObject_nonzero:
   assumes "valid_tcb_state' ts s" "no_0_obj' s"
   shows "\<forall>replyOpt. ts = BlockedOnReceive a b replyOpt \<longrightarrow> replyOpt \<noteq> Some 0"
@@ -2977,11 +2971,6 @@ lemma ctcb_relation_x_d:
 
 lemma ctcb_relation_x_e:
   "ctcb_relation tcb ctcb \<and> BlockedOnSend bo bib bicg bicgr biic = tcbState tcb \<Longrightarrow> replyObject_CL (thread_state_lift (tcbState_C ctcb)) = 0"
-  unfolding ctcb_relation_def cthread_state_relation_def
-  by (cases "(tcbState tcb)", simp_all)
-
-lemma ctcb_relation_x_f:
-  "ctcb_relation tcb ctcb \<and> BlockedOnNotification won = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = won"
   unfolding ctcb_relation_def cthread_state_relation_def
   by (cases "(tcbState tcb)", simp_all)
 
@@ -3046,16 +3035,6 @@ lemma x_d:
   apply (clarsimp simp: obj_at'_def)
   done
 
-(*
-lemma x_d_sorry:
-  "\<lbrakk>  valid_objs' s
-   ; st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
-   \<rbrakk> \<Longrightarrow>
-   obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
-sorry
-*)
-
-
 lemma threadSet_wp2_x1:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>tcb_at' t\<rbrace>"
@@ -3106,31 +3085,6 @@ lemma threadSet_wp2:
     threadSet_wp2_x5
     threadSet_wp2_x6
   )
-
-(*
-lemma cancelIPC_ccorres_helper_wp_x:
-  "\<lbrace>(\<lambda>s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s)\<rbrace>
-     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
-           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-   \<lbrace>\<lambda>rv s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s\<rbrace>"
-sorry
-
-lemma cancelIPC_ccorres_helper_wp_x2:
-  "\<lbrace>(\<lambda>s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s)\<rbrace>
-     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
-           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-   \<lbrace>\<lambda>rv s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s\<rbrace>"
-sorry
-
-
-lemma valid_drop_case: "\<lbrakk> \<lbrace>P\<rbrace> f \<lbrace>\<lambda>rv s. P' rv s\<rbrace> \<rbrakk>
-                       \<Longrightarrow> \<lbrace>P\<rbrace> f \<lbrace>\<lambda>rv s. case rv of None \<Rightarrow> True | Some x \<Rightarrow> P' rv s\<rbrace>"
-   apply (simp only: valid_def Ball_def split: prod.split)
-     apply (rule allI impI)+
-     apply (case_tac x1)
-     apply simp+
-  done
-*)
 
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
@@ -3209,20 +3163,6 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
 
-(*
-      apply (rule_tac P="
-
-P and
-(\<lambda>s. bound ro \<longrightarrow> obj_at' (\<lambda>r. replyTCB r = Some thread) (the ro) s)
-"
-                  and P'=UNIV
-                   for P
-                   in ccorres_inst)
-*)
-(*
-apply (rule_tac P="sym_refs_asrt" in ccorres_cross_over_guard)
-*)
-
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
@@ -3254,18 +3194,8 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                     apply wp
                    apply vcg
 
-(*
-apply (wpsimp split_del: if_split)
-*)
-(*
-apply (wpsimp wp: hoare_case_option_wp split_del: if_split)
-*)                     
-
-
 apply (rule_tac Q'="
 \<lambda>rv s.
-
-
 st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
 \<and> tcb_at' thread s
 \<and> valid_objs' s
@@ -3296,41 +3226,10 @@ apply simp
 apply (drule (1) tcb_in_valid_state')
 apply (simp add: replyObject_nonzero)
 
-(*
-apply wp
-apply (wp case_option_wp)
-*)
-
 apply (subst option.split[symmetric, where P=id, simplified])
 apply (wp )
                       
 apply (wp hoare_case_option_wp2)
-
-
-(*
-apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
-
-(*
-        apply (rule valid_drop_case)
-*)
-
-apply (case_tac ro)
-prefer 2
-apply (simp split del: if_split)
-apply (wp)
-apply (simp split del: if_split)
-apply (wp)
-apply (clarsimp simp: valid_objs'_valid_tcbs')
-*)
-(*
-apply (wp add: cancelIPC_ccorres_helper_wp_x hoare_case_option_wp)
-apply (case_tac ro)
-apply (simp split del: if_split)
-apply wp
-apply (simp split del: if_split)
-apply (wp add: cancelIPC_ccorres_helper_wp_x hoare_case_option_wp)
-subgoal sorry
-*)
 
 apply clarsimp
 apply (frule (1) tcb_at_h_t_valid)
@@ -3438,8 +3337,6 @@ apply simp
 
 apply clarsimp
 
-
-
   apply (frule obj_at_valid_objs', clarsimp+)
   apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
                         valid_tcb_state'_def typ_heap_simps
@@ -3477,10 +3374,6 @@ apply (simp add: invs_valid_objs' x_d)
                       valid_objs'_valid_tcbs'
                       x_d
                      split: thread_state.splits endpoint.splits)
-
-
-
-
 
           apply (clarsimp simp:
 sym_refs_asrt_def
@@ -3534,7 +3427,6 @@ apply (simp add: invs_valid_objs' x_d)
                       x_d
                      split: thread_state.splits endpoint.splits)
 
-
           apply (clarsimp simp:
 sym_refs_asrt_def
 invs'_implies
@@ -3555,9 +3447,6 @@ x_d
                       x_d
                      split: thread_state.splits endpoint.splits)
 
-
-
- 
   apply vcg
 
 apply clarsimp
