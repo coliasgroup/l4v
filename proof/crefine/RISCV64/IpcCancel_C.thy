@@ -3219,9 +3219,8 @@ sorry
 *)
 
 lemma threadSet_wp2:
-   "\<lbrace>\<lambda>s. tcb_at' thread s \<and> st_tcb_at' ((=) ts) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>
-      threadSet f t
-   \<lbrace>\<lambda>rv s. tcb_at' thread s \<and> st_tcb_at' ((=) ts) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
+   "threadSet f t
+   \<lbrace>\<lambda>s. tcb_at' t s \<and> st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
   unfolding threadSet_def
   apply (wp add:
 
@@ -3230,6 +3229,15 @@ threadSet_fault_invs'
 
 )
 sorry
+  done
+
+
+lemma threadSet_wp2_x1:
+   "threadSet f t
+   \<lbrace>tcb_at' thread\<rbrace>"
+  unfolding threadSet_def
+  by (wpsimp wp: setObject_tcb_strongest getObject_tcb_wp) fastforce
+
   done
 
 lemma cancelIPC_ccorres1:
