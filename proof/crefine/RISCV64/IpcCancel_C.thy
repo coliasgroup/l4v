@@ -3294,7 +3294,10 @@ apply simp
 apply (drule (1) tcb_in_valid_state')
 apply (simp add: replyObject_nonzero)
 
+apply (subst option.split[symmetric, where P=id, simplified])
+
 apply (wp add: cancelIPC_ccorres_helper_wp_x cancelIPC_ccorres_helper_wp_x2)
+apply (subst option.split[symmetric, where P=id, simplified])
 
 (*
 NOTES
