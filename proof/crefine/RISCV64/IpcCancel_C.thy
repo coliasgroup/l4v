@@ -3218,27 +3218,52 @@ sorry
                   &(\<acute>tptr\<rightarrow>[''tcbFault_C''])))"
 *)
 
-lemma threadSet_wp2:
-   "threadSet f t
-   \<lbrace>\<lambda>s. tcb_at' t s \<and> st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
-  unfolding threadSet_def
-  apply (wp add:
-
-threadSet_fault_invs'
-
-
-)
-sorry
-  done
-
 
 lemma threadSet_wp2_x1:
-   "threadSet f t
-   \<lbrace>tcb_at' thread\<rbrace>"
-  unfolding threadSet_def
-  by (wpsimp wp: setObject_tcb_strongest getObject_tcb_wp) fastforce
+   "threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>tcb_at' t\<rbrace>"
+  by (wpsimp)
 
-  done
+lemma threadSet_wp2_x2:
+   "threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>invs'\<rbrace>"
+  by (wpsimp wp: threadSet_fault_invs')
+
+
+lemma threadSet_wp2_x3:
+   "threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>ready_qs_runnable\<rbrace>"
+  unfolding ready_qs_runnable_def
+apply (wpsimp wp: threadSet_pred_tcb_no_state)
+sorry
+
+lemma threadSet_wp2_x4:
+   "threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>sym_refs_asrt\<rbrace>"
+sorry
+
+lemma threadSet_wp2_x5:
+   "threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s\<rbrace>"
+sorry
+
+lemma threadSet_wp2_x6:
+   "threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>st_tcb_at' ((=) ts) t\<rbrace>"
+sorry
+
+
+lemma threadSet_wp2:
+   "threadSet (tcbFault_update (\<lambda>_. None)) t
+   \<lbrace>\<lambda>s. tcb_at' t s \<and> st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
+  by (wpsimp wp:
+    threadSet_wp2_x1
+    threadSet_wp2_x2
+    threadSet_wp2_x3
+    threadSet_wp2_x4
+    threadSet_wp2_x5
+    threadSet_wp2_x6
+  )
 
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
