@@ -3593,21 +3593,15 @@ apply clarsimp
                          cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                     split: thread_state.splits endpoint.splits)
 
-   apply (rule conjI)
 
 
 
-    apply (frule ep_blocked_in_queueD_recv)
+    apply (frule (2) ep_blocked_in_queueD_send)
     apply (simp add: sym_refs_asrt_def)
 
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
 
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                    split: thread_state.splits endpoint.splits)
+
 
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
                          isTS_defs cte_wp_at_ctes_of isRecvEP_def
@@ -3615,6 +3609,7 @@ apply clarsimp
                       sym_refs_asrt_def
                       ready_qs_runnable_def
                     split: thread_state.splits endpoint.splits)
+
  
   apply vcg
 
