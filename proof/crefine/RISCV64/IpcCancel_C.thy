@@ -3320,6 +3320,7 @@ apply (simp split del: if_split)
 apply (wp)
 apply (clarsimp simp: valid_objs'_valid_tcbs')
 *)
+(*
 apply (wp add: cancelIPC_ccorres_helper_wp_x hoare_case_option_wp)
 apply (case_tac ro)
 apply (simp split del: if_split)
@@ -3327,6 +3328,7 @@ apply wp
 apply (simp split del: if_split)
 apply (wp add: cancelIPC_ccorres_helper_wp_x hoare_case_option_wp)
 subgoal sorry
+*)
 
 apply clarsimp
 apply (frule (1) tcb_at_h_t_valid)
