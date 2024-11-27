@@ -3515,148 +3515,35 @@ apply (simp add: invs_valid_objs' x_d)
                       x_d
                      split: thread_state.splits endpoint.splits)
 
-
-
-apply simp
-apply (rule conjI)
+   apply (rule conjI)
+    apply (clarsimp simp: inQ_def)
+   apply clarsimp
+   apply (rule conjI)
+    apply (clarsimp simp: invs_valid_objs' f_b)
+   apply clarsimp
+   apply (rule conjI)
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
+                     isTS_defs cte_wp_at_ctes_of isRecvEP_def isSendEP_def
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                       sym_refs_asrt_def
                       ready_qs_runnable_def
                       invs_valid_objs'
                       valid_objs'_valid_tcbs'
                       x_d
-                     split: thread_state.splits)
+                     split: thread_state.splits endpoint.splits)
+    apply clarsimp
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
-
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
+                     isTS_defs cte_wp_at_ctes_of isRecvEP_def isSendEP_def
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                       sym_refs_asrt_def
                       ready_qs_runnable_def
                       invs_valid_objs'
                       valid_objs'_valid_tcbs'
                       x_d
-obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                      split: thread_state.splits endpoint.splits)
 
-   apply (rule conjI)
-    apply (clarsimp simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                      invs_valid_objs'
-                      valid_objs'_valid_tcbs'
-                      x_d
-                     split: thread_state.splits)
 
-    apply (clarsimp simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                      invs_valid_objs'
-                      valid_objs'_valid_tcbs'
-                      x_d
-invs'_implies
-                     )
-
-     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                      x_d
-                      invs_valid_objs'
-                     split: thread_state.splits)
-
-  apply (rule conjI)
-    apply (clarsimp simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                      x_d
-                      invs_valid_objs'
-                        valid_objs'_valid_tcbs'
-                     )
-    apply (frule (2) ep_blocked_in_queueD_recv)
-    apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                    split: thread_state.splits endpoint.splits)
-
-   apply (rule conjI)
-    apply (simp add: sym_refs_asrt_def)
-
-   apply (rule conjI)
-    apply (clarsimp simp: inQ_def)
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                    split: thread_state.splits endpoint.splits)
-
-    apply clarsimp
-
-    apply (frule (2) ep_blocked_in_queueD_recv)
-    apply (simp add: sym_refs_asrt_def)
-
-    apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
-
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                      x_d
-                      invs_valid_objs'
-                    split: thread_state.splits endpoint.splits)
-
-   apply (rule conjI)
-    apply (clarsimp simp: inQ_def)
-   apply clarsimp
-   apply (rule conjI)
-     apply ( simp add: f_b invs_valid_objs')
-   apply clarsimp
-   apply (rule conjI)
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                    split: thread_state.splits endpoint.splits)
-    apply clarsimp
-    apply (simp add: sym_refs_asrt_def)
-
-   apply (rule conjI)
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                    split: thread_state.splits endpoint.splits)
-
-
-
-
-    apply (frule (2) ep_blocked_in_queueD_send)
-    apply (simp add: sym_refs_asrt_def)
-
-    apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
-
-
-
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isSendEP_def
-                         cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
-                      ready_qs_runnable_def
-                    split: thread_state.splits endpoint.splits)
 
  
   apply vcg
