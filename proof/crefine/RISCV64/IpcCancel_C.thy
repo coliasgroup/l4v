@@ -3131,6 +3131,14 @@ lemma cancelIPC_ccorres_helper_wp_x:
    \<lbrace>\<lambda>rv s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s\<rbrace>"
 sorry
 
+lemma cancelIPC_ccorres_helper_wp_x2:
+  "\<lbrace>(\<lambda>s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s)\<rbrace>
+     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
+           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
+   \<lbrace>\<lambda>rv s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s\<rbrace>"
+sorry
+
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3141,7 +3149,7 @@ lemma cancelIPC_ccorres1:
         \<inter> {s. slot_' s = Ptr slot}) []
    (cteDeleteOne slot) (Call cteDeleteOne_'proc)"
   shows
-  "ccorres dc xfdc (tcb_at' thread and invs' and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s))
+  "ccorres dc xfdc (tcb_at' thread and invs' and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s) and (\<lambda>s. sym_refs (state_refs_of' s)))
                    (UNIV \<inter> {s. tptr_' s = tcb_ptr_to_ctcb_ptr thread}) []
           (cancelIPC thread) (Call cancelIPC_'proc)"
   apply (cinit lift: tptr_' simp: Let_def cong: call_ignore_cong)
@@ -3207,14 +3215,28 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
-apply (rule_tac P="\<lambda>s. bound ro \<longrightarrow> obj_at' (\<lambda>r. replyTCB r = Some thread) (the ro) s" in ccorres_cross_over_guard)
+
+(*
+      apply (rule_tac P="
+
+P and
+(\<lambda>s. bound ro \<longrightarrow> obj_at' (\<lambda>r. replyTCB r = Some thread) (the ro) s)
+"
+                  and P'=UNIV
+                   for P
+                   in ccorres_inst)
+*)
+(*
+apply (rule_tac P="sym_refs_asrt" in ccorres_cross_over_guard)
+*)
 
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
-            and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
+            and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread and (\<lambda>s. bound ro \<longrightarrow> obj_at' (\<lambda>r. replyTCB r = Some thread) (the ro) s)"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
         apply clarsimp
@@ -3237,22 +3259,16 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                       apply (ctac add: setThreadState_ccorres)
                     apply wp
                    apply vcg
+
 apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac ro)
+prefer 2
 apply (simp split del: if_split)
 apply (wp add: cancelIPC_ccorres_helper_wp_x)
 apply (rename_tac ro')
 apply (simp split del: if_split)
-apply wp
+apply (wp add: cancelIPC_ccorres_helper_wp_x)
 apply (clarsimp simp: valid_objs'_valid_tcbs')
-
-apply (rule conjI)
-apply (fastforce simp: st_tcb_at'_def obj_at'_def)
-
-apply (rule conjI)
-apply (simp add: sym_refs_asrt_def x_d)
-
-apply (simp add: x_c)
 
 apply clarsimp
 apply (frule (1) tcb_at_h_t_valid)
