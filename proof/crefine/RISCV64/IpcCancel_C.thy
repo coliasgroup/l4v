@@ -2999,6 +2999,13 @@ lemma x_a:
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
+lemma f_a:
+  "\<lbrakk>
+     valid_objs' s;  st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s\<rbrakk>
+       \<Longrightarrow> ep_at' bo s"
+  apply (drule (1) tcb_in_valid_state')
+  by (fastforce simp: obj_at'_def valid_tcb_state'_def)
+
 lemma x_b:
   "\<lbrakk> no_0_obj' s; reply_at' ro s\<rbrakk>
        \<Longrightarrow> ro \<noteq> 0"
@@ -3205,9 +3212,9 @@ sorry
 *)
 
 lemma threadSet_wp2:
-   "\<lbrace>\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>
+   "\<lbrace>\<lambda>s. tcb_at' thread s \<and> st_tcb_at' ((=) ts) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>
       threadSet f t
-   \<lbrace>\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
+   \<lbrace>\<lambda>rv s. tcb_at' thread s \<and> st_tcb_at' ((=) ts) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
   unfolding threadSet_def
   apply (wp add:
 
@@ -3488,7 +3495,7 @@ apply simp
   apply (rule_tac hoare_strengthen_post)
 
 *)
-  apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
+  apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> st_tcb_at' ((=) threadState) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
 (* OR hoare_post_imp *)
 
    apply (wp add: threadSet_wp2)
@@ -3505,18 +3512,20 @@ threadSet_fault_invs'
 apply clarsimp
 
 
+
   apply (frule obj_at_valid_objs', clarsimp+)
   apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
                         valid_tcb_state'_def typ_heap_simps
-                        word_sle_def)
+                        word_sle_def f_a invs_valid_objs')
   apply (rule conjI, clarsimp)
    apply (rule conjI)
-sorry
-
+     apply ( simp add: f_a invs_valid_objs')
 
 
 
 subgoal sorry
+subgoal sorry
+
  
   apply vcg
 
