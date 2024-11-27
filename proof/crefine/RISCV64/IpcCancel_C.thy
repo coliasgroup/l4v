@@ -3071,8 +3071,8 @@ lemma threadSet_wp2_x5:
 lemma threadSet_wp2_x6:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>st_tcb_at' ((=) ts) t\<rbrace>"
-apply (wpsimp wp: threadSet_pred_tcb_no_state)
-done
+  apply (wpsimp wp: threadSet_pred_tcb_no_state)
+  done
 
 lemma threadSet_wp2:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
@@ -3165,7 +3165,7 @@ lemma cancelIPC_ccorres1:
 
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
@@ -3194,46 +3194,46 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                     apply wp
                    apply vcg
 
-apply (rule_tac Q'="
-\<lambda>rv s.
-st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
-\<and> tcb_at' thread s
-\<and> valid_objs' s
-\<and> weak_sch_act_wf (ksSchedulerAction s) s
-\<and> valid_tcb_state' Structures_H.thread_state.Inactive s
-\<and> no_0_obj' s
-\<and> pspace_aligned' s
-\<and> pspace_distinct' s
-\<and> pspace_bounded' s
-\<and> valid_tcbs' s
-\<and> ((ro = None \<longrightarrow> True) \<and> (\<forall>x. ro = Some x \<longrightarrow>
-obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s
-))
-"
-in hoare_post_imp)
+                apply (rule_tac Q'="
+                \<lambda>rv s.
+                st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
+                \<and> tcb_at' thread s
+                \<and> valid_objs' s
+                \<and> weak_sch_act_wf (ksSchedulerAction s) s
+                \<and> valid_tcb_state' Structures_H.thread_state.Inactive s
+                \<and> no_0_obj' s
+                \<and> pspace_aligned' s
+                \<and> pspace_distinct' s
+                \<and> pspace_bounded' s
+                \<and> valid_tcbs' s
+                \<and> ((ro = None \<longrightarrow> True) \<and> (\<forall>x. ro = Some x \<longrightarrow>
+                obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s
+                ))
+                "
+                in hoare_post_imp)
 
-apply (clarsimp simp: replyObject_nonzero tcb_in_valid_state')
-apply (rule conjI)
-
-apply (case_tac ro)
-apply simp
-apply simp
-apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
-apply (rule_tac x=bo in exI)
-apply (rule_tac x=bicg in exI)
-apply simp
-
-apply (drule (1) tcb_in_valid_state')
-apply (simp add: replyObject_nonzero)
-
-apply (subst option.split[symmetric, where P=id, simplified])
-apply (wp )
-                      
-apply (wp hoare_case_option_wp2)
-
-apply clarsimp
-apply (frule (1) tcb_at_h_t_valid)
-apply simp
+                apply (clarsimp simp: replyObject_nonzero tcb_in_valid_state')
+                apply (rule conjI)
+                
+                apply (case_tac ro)
+                apply simp
+                apply simp
+                apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
+                apply (rule_tac x=bo in exI)
+                apply (rule_tac x=bicg in exI)
+                apply simp
+                
+                apply (drule (1) tcb_in_valid_state')
+                apply (simp add: replyObject_nonzero)
+                
+                apply (subst option.split[symmetric, where P=id, simplified])
+                apply (wp )
+                                      
+                apply (wp hoare_case_option_wp2)
+                
+                apply clarsimp
+                apply (frule (1) tcb_at_h_t_valid)
+                apply simp
 
                apply vcg
 
@@ -3292,7 +3292,7 @@ apply simp
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
           apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+        apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="0"
@@ -3314,9 +3314,9 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
             apply wp
            apply simp
 
-apply clarsimp
-apply (frule (1) tcb_at_h_t_valid)
-apply simp
+        apply clarsimp
+        apply (frule (1) tcb_at_h_t_valid)
+        apply simp
 
              apply vcg
 
@@ -3335,7 +3335,7 @@ apply simp
 
    apply (wp add: threadSet_wp2)
 
-apply clarsimp
+    apply clarsimp
 
   apply (frule obj_at_valid_objs', clarsimp+)
   apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
@@ -3348,13 +3348,13 @@ apply clarsimp
     apply (clarsimp)
    apply (rule conjI)
           apply (clarsimp simp:
-sym_refs_asrt_def
-invs'_implies
-invs_valid_objs'
-valid_objs'_valid_tcbs'
-x_d
-)
-apply (case_tac xb)
+                sym_refs_asrt_def
+                invs'_implies
+                invs_valid_objs'
+                valid_objs'_valid_tcbs'
+                x_d
+                )
+  apply (case_tac xb)
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
                      isTS_defs cte_wp_at_ctes_of
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
@@ -3364,7 +3364,7 @@ apply (case_tac xb)
                       valid_objs'_valid_tcbs'
                       x_d
                      split: thread_state.splits)
-apply (simp add: invs_valid_objs' x_d)
+  apply (simp add: invs_valid_objs' x_d)
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
                      isTS_defs cte_wp_at_ctes_of
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
@@ -3375,14 +3375,14 @@ apply (simp add: invs_valid_objs' x_d)
                       x_d
                      split: thread_state.splits endpoint.splits)
 
-          apply (clarsimp simp:
-sym_refs_asrt_def
-invs'_implies
-invs_valid_objs'
-valid_objs'_valid_tcbs'
-x_d
-)
-apply (case_tac xb)
+    apply (clarsimp simp:
+      sym_refs_asrt_def
+      invs'_implies
+      invs_valid_objs'
+      valid_objs'_valid_tcbs'
+      x_d
+      )
+   apply (case_tac xb)
     apply clarsimp
     apply (frule (3) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
@@ -3396,7 +3396,7 @@ apply (case_tac xb)
                       valid_objs'_valid_tcbs'
                       x_d
                      split: thread_state.splits endpoint.splits)
-apply (simp add: invs_valid_objs' x_d)
+   apply (simp add: invs_valid_objs' x_d)
     apply clarsimp
     apply (frule (3) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
@@ -3428,12 +3428,12 @@ apply (simp add: invs_valid_objs' x_d)
                      split: thread_state.splits endpoint.splits)
 
           apply (clarsimp simp:
-sym_refs_asrt_def
-invs'_implies
-invs_valid_objs'
-valid_objs'_valid_tcbs'
-x_d
-)
+          sym_refs_asrt_def
+          invs'_implies
+          invs_valid_objs'
+          valid_objs'_valid_tcbs'
+          x_d
+          )
     apply (frule (3) ep_blocked_in_queueD_send)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
 
@@ -3449,7 +3449,7 @@ x_d
 
   apply vcg
 
-apply clarsimp
+    apply clarsimp
   apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
 done
 
