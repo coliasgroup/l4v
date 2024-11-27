@@ -3106,7 +3106,7 @@ lemma threadSet_wp2:
     threadSet_wp2_x6
   )
 
-(*
+
 lemma cancelIPC_ccorres_helper_wp_x:
   "\<lbrace>(\<lambda>s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s)\<rbrace>
      (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
@@ -3120,7 +3120,7 @@ lemma cancelIPC_ccorres_helper_wp_x2:
            else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
    \<lbrace>\<lambda>rv s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s\<rbrace>"
 sorry
-*)
+
 
 lemma valid_drop_case: "\<lbrakk> \<lbrace>P\<rbrace> f \<lbrace>\<lambda>rv s. P' rv s\<rbrace> \<rbrakk>
                        \<Longrightarrow> \<lbrace>P\<rbrace> f \<lbrace>\<lambda>rv s. case rv of None \<Rightarrow> True | Some x \<Rightarrow> P' rv s\<rbrace>"
@@ -3259,6 +3259,28 @@ apply (wpsimp wp: hoare_case_option_wp split_del: if_split)
 *)                     
 
 
+apply (rule_tac Q'="
+\<lambda>rv s.
+
+
+st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
+\<and> tcb_at' thread s
+\<and> valid_objs' s
+\<and> weak_sch_act_wf (ksSchedulerAction s) s
+\<and> valid_tcb_state' Structures_H.thread_state.Inactive s
+\<and> no_0_obj' s
+\<and> pspace_aligned' s
+\<and> pspace_distinct' s
+\<and> pspace_bounded' s
+\<and> valid_tcbs' s
+\<and> (\<forall>x. ro = Some x \<longrightarrow>
+obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s
+)
+"
+in hoare_post_imp)
+
+subgoal sorry
+(*
 apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
 
 (*
@@ -3272,6 +3294,14 @@ apply (wp)
 apply (simp split del: if_split)
 apply (wp)
 apply (clarsimp simp: valid_objs'_valid_tcbs')
+*)
+apply (wp add: cancelIPC_ccorres_helper_wp_x hoare_case_option_wp)
+apply (case_tac ro)
+apply (simp split del: if_split)
+apply wp
+apply (simp split del: if_split)
+apply (wp add: cancelIPC_ccorres_helper_wp_x hoare_case_option_wp)
+subgoal sorry
 
 apply clarsimp
 apply (frule (1) tcb_at_h_t_valid)
