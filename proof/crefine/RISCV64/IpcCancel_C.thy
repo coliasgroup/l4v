@@ -3497,16 +3497,8 @@ apply simp
     apply vcg
    apply clarsimp
 
-(*
-    apply (rule_tac P="\<lambda>s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s"
-                 in hoare_weaken_pre)
-  apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
-  apply (wpsimp wp: threadSet_wp2)
-  apply (rule_tac hoare_strengthen_post)
-
-*)
   apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> st_tcb_at' ((=) threadState) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
-(* OR hoare_post_imp *)
+
 
    apply (wp add: threadSet_wp2)
 
