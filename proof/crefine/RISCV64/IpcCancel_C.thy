@@ -3219,7 +3219,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
-            and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread and (\<lambda>s. bound ro \<longrightarrow> obj_at' (\<lambda>r. replyTCB r = Some thread) (the ro) s)"
+            and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
         apply clarsimp
