@@ -3124,6 +3124,13 @@ lemma threadSet_wp2:
     threadSet_wp2_x6
   )
 
+lemma cancelIPC_ccorres_helper_wp_x:
+  "\<lbrace>(\<lambda>s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s)\<rbrace>
+     (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
+           else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
+   \<lbrace>\<lambda>rv s. obj_at' (\<lambda>r. replyTCB r = Some t) rp s\<rbrace>"
+sorry
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3200,6 +3207,8 @@ lemma cancelIPC_ccorres1:
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
+apply (rule_tac P="\<lambda>s. bound ro \<longrightarrow> obj_at' (\<lambda>r. replyTCB r = Some thread) (the ro) s" in ccorres_cross_over_guard)
+
                 apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
@@ -3231,7 +3240,7 @@ apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 apply (subst option.split[symmetric, where P=id, simplified]) (* see Ipc_C.thy *)
 apply (case_tac ro)
 apply (simp split del: if_split)
-apply wp
+apply (wp add: cancelIPC_ccorres_helper_wp_x)
 apply (rename_tac ro')
 apply (simp split del: if_split)
 apply wp
