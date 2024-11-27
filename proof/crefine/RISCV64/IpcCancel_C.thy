@@ -3233,25 +3233,35 @@ lemma threadSet_wp2_x2:
 lemma threadSet_wp2_x3:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>ready_qs_runnable\<rbrace>"
-  unfolding ready_qs_runnable_def
-apply (wpsimp wp: threadSet_pred_tcb_no_state)
-sorry
+  apply (wpsimp wp: threadSet_wp)
+  by (fastforce simp: ready_qs_runnable_def pred_tcb_at'_def obj_at'_def ps_clear_upd
+               split: if_splits)
 
 lemma threadSet_wp2_x4:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>sym_refs_asrt\<rbrace>"
+  unfolding sym_refs_asrt_def
+  apply (wpsimp wp: setThreadState_state_refs_of')
+  apply (clarsimp dest!: st_tcb_at_state_refs_ofD'
+                  elim!: rsubst[where P=sym_refs]
+                 intro!: ext)
+  by (fastforce simp: tcb_bound_refs'_def get_refs_def2)
+apply (wpsimp wp: threadSet_pred_tcb_no_state)
 sorry
+(*
+see lemma sts_sym_refs':
+*)
 
 lemma threadSet_wp2_x5:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s\<rbrace>"
-sorry
+  by (wp weak_sch_act_wf_lift tcb_in_cur_domain'_lift)
 
 lemma threadSet_wp2_x6:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>st_tcb_at' ((=) ts) t\<rbrace>"
-sorry
-
+apply (wpsimp wp: threadSet_pred_tcb_no_state)
+done
 
 lemma threadSet_wp2:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
