@@ -3387,15 +3387,38 @@ apply clarsimp
      apply ( simp add: f_a invs_valid_objs')
 
     apply (clarsimp)
-    apply (rule conjI)
+  apply (rule conjI, clarsimp)
+   apply (rule conjI)
+    apply (clarsimp simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
+                     isTS_defs cte_wp_at_ctes_of
+                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                      sym_refs_asrt_def
+                      ready_qs_runnable_def
+                      x_d
+                      invs_valid_objs'
+                     split: thread_state.splits)
+
+  apply (rule conjI)
+
      subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
                      isTS_defs cte_wp_at_ctes_of
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                       sym_refs_asrt_def
                       ready_qs_runnable_def
+                      x_d
+                      invs_valid_objs'
                      split: thread_state.splits)
 
-    apply clarsimp
+  apply (rule conjI)
+    apply (clarsimp simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
+                     isTS_defs cte_wp_at_ctes_of
+                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
+                      sym_refs_asrt_def
+                      ready_qs_runnable_def
+                      x_d
+                      invs_valid_objs'
+                        valid_objs'_valid_tcbs'
+                     )
     apply (frule (2) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
@@ -3427,6 +3450,8 @@ apply clarsimp
                          cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                       sym_refs_asrt_def
                       ready_qs_runnable_def
+                      x_d
+                      invs_valid_objs'
                     split: thread_state.splits endpoint.splits)
 
    apply (rule conjI)
