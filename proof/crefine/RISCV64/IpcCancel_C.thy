@@ -3604,7 +3604,7 @@ apply clarsimp
 
 
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def 
-                         isTS_defs cte_wp_at_ctes_of isRecvEP_def
+                         isTS_defs cte_wp_at_ctes_of isSendEP_def
                          cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                       sym_refs_asrt_def
                       ready_qs_runnable_def
