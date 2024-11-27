@@ -3298,9 +3298,19 @@ lemma cancelIPC_ccorres1:
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
    apply csymbr
-   apply (rule ccorres_move_c_guard_tcb)
+   apply csymbr
 
-   apply (ctac add: nullFault_ptr_new_ccorres)
+   apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
+       apply (rule threadSet_ccorres_lemma2[where P=\<top>])
+        apply vcg
+       apply (clarsimp simp: typ_heap_simps')
+       apply (erule(1) rf_sr_tcb_update_no_queue2,
+         (simp add: typ_heap_simps')+)[1]
+        apply (rule ball_tcb_cte_casesI, simp_all)[1]
+       apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+                             cfault_rel_def cthread_state_relation_def)
+       apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
+      apply ceqv
 
 (*
 apply (rule ccorres_guard_imp2)
