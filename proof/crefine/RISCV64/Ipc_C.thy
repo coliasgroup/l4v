@@ -4639,6 +4639,10 @@ lemma sendIPC_block_ccorres_helper:
              \<lbrace>hrs_htd \<acute>t_hrs \<Turnstile>\<^sub>t tcb_ptr_to_ctcb_ptr thread\<rbrace>
              (CALL thread_state_ptr_set_blockingIPCIsCall(Ptr
                          &(tcb_ptr_to_ctcb_ptr thread\<rightarrow>[''tcbState_C'']), dc'));;
+            Guard C_Guard
+             \<lbrace>hrs_htd \<acute>t_hrs \<Turnstile>\<^sub>t tcb_ptr_to_ctcb_ptr thread\<rbrace>
+             (CALL thread_state_ptr_set_replyObject(Ptr
+                         &(tcb_ptr_to_ctcb_ptr thread\<rightarrow>[''tcbState_C'']), 0));;
             CALL scheduleTCB(tcb_ptr_to_ctcb_ptr thread))"
   unfolding K_def setThreadState_def
   apply (intro ccorres_gen_asm)
