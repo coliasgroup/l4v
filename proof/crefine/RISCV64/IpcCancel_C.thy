@@ -2969,11 +2969,6 @@ lemma ctcb_relation_x_d:
   unfolding ctcb_relation_def cthread_state_relation_def
   by (cases "(tcbState tcb)", simp_all)
 
-lemma ctcb_relation_x_e:
-  "ctcb_relation tcb ctcb \<and> BlockedOnSend bo bib bicg bicgr biic = tcbState tcb \<Longrightarrow> replyObject_CL (thread_state_lift (tcbState_C ctcb)) = 0"
-  unfolding ctcb_relation_def cthread_state_relation_def
-  by (cases "(tcbState tcb)", simp_all)
-
 lemma x_a:
   "\<lbrakk>
      valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
@@ -3086,6 +3081,16 @@ lemma threadSet_wp2:
     threadSet_wp2_x6
   )
 
+lemma thread_state_to_tsType_eq_BlockedOnReceive:
+  "(thread_state_to_tsType ts = scast ThreadState_BlockedOnReceive)
+       = (\<exists>bo bicg ro. ts = BlockedOnReceive bo bicg ro)"
+  by (cases ts, simp_all add: ThreadState_defs)
+
+lemma thread_state_to_tsType_eq_BlockedOnSend:
+  "(thread_state_to_tsType ts = scast ThreadState_BlockedOnSend)
+       = (\<exists>bo bib bicg bicgr biic. ts = BlockedOnSend bo bib bicg bicgr biic)"
+  by (cases ts, simp_all add: ThreadState_defs)
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3168,6 +3173,25 @@ lemma cancelIPC_ccorres1:
                 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
+            and val="thread_state_to_tsType threadState"
+            and R="st_tcb_at' ((=) threadState) thread"
+            and R'=UNIV
+            in ccorres_symb_exec_r_known_rv)
+        apply clarsimp
+       apply (rule conseqPre, vcg)
+       apply (clarsimp simp: st_tcb_at'_def)
+       apply (frule (1) obj_at_cslift_tcb)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnReceive split: thread_state.splits)
+       apply fastforce
+      apply ceqv
+                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+
+   apply ccorres_rewrite
+                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+apply (rule ccorres_rhs_assoc)
+apply (rule ccorres_rhs_assoc)
+
+   apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
             and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
@@ -3178,7 +3202,7 @@ lemma cancelIPC_ccorres1:
        apply (frule (1) obj_at_cslift_tcb)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_d)
       apply ceqv
-      apply csymbr
+apply csymbr
                  apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
       apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
@@ -3192,6 +3216,7 @@ lemma cancelIPC_ccorres1:
                       apply (ctac (no_vcg) add: reply_unlink_ccorres)
                       apply (ctac add: setThreadState_ccorres)
                     apply wp
+                   apply vcg
                    apply vcg
 
                 apply (rule_tac Q'="
@@ -3295,18 +3320,34 @@ lemma cancelIPC_ccorres1:
         apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
-            and val="0"
-            and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
+            and val="scast ThreadState_BlockedOnSend"
+
+(*
+            and val="thread_state_to_tsType threadState"
+*)
+            and R="st_tcb_at' ((=) threadState) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
         apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
-       apply (clarsimp simp: typ_heap_simps ctcb_relation_x_e)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnSend split: thread_state.splits)
+       apply fastforce
       apply ceqv
+                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
-      apply csymbr
+apply (simp only: ThreadState_defs)
+apply ccorres_rewrite
+
+(*
+   apply (rule ccorres_Cond_rhs_Seq)
+apply (simp add: ThreadState_defs)
+apply (simp add: ThreadState_defs)
+*)
+
+                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+
 
               apply simp
             apply (ctac add: setThreadState_ccorres)
@@ -3315,6 +3356,7 @@ lemma cancelIPC_ccorres1:
            apply simp
 
         apply clarsimp
+apply (simp add: ThreadState_defs)
         apply (frule (1) tcb_at_h_t_valid)
         apply simp
 
