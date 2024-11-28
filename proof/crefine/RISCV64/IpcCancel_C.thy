@@ -3096,7 +3096,7 @@ lemma cancelIPC_ccorres1:
         \<inter> {s. slot_' s = Ptr slot}) []
    (cteDeleteOne slot) (Call cteDeleteOne_'proc)"
   shows
-  "ccorres dc xfdc (tcb_at' thread and invs' and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s) and (\<lambda>s. sym_refs (state_refs_of' s)))
+  "ccorres dc xfdc (tcb_at' thread and invs' and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s))
                    (UNIV \<inter> {s. tptr_' s = tcb_ptr_to_ctcb_ptr thread}) []
           (cancelIPC thread) (Call cancelIPC_'proc)"
   apply (cinit lift: tptr_' simp: Let_def cong: call_ignore_cong)
