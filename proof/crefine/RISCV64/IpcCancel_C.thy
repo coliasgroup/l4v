@@ -3033,6 +3033,175 @@ lemma thread_state_to_tsType_eq_BlockedOnSend:
        = (\<exists>bo bib bicg bicgr biic. ts = BlockedOnSend bo bib bicg bicgr biic)"
   by (cases ts, simp_all add: ThreadState_defs)
 
+lemma nullFault_ptr_new_ccorres:
+  shows
+    "ccorres dc xfdc
+      (tcb_at' thread)
+      (UNIV \<inter> {s. seL4_Fault_ptr_' s = Ptr &(((tcb_ptr_to_ctcb_ptr thread) :: tcb_C ptr)\<rightarrow>[''tcbFault_C''])})
+      []
+      (threadSet (tcbFault_update (\<lambda>_. None)) thread)
+      (Call seL4_Fault_NullFault_ptr_new_'proc)"
+
+   apply (rule ccorres_from_spec_modifies_heap)
+  apply (rule seL4_Fault_NullFault_ptr_new_spec)
+  apply (rule seL4_Fault_NullFault_ptr_new_modifies)
+apply simp
+apply (clarsimp simp: typ_heap_simps')
+apply (frule (2) tcb_at_h_t_valid)
+apply clarsimp
+
+(*
+ALT:
+
+  apply (rule threadSet_corres_lemma)
+  apply (rule seL4_Fault_NullFault_ptr_new_spec)
+  apply (rule seL4_Fault_NullFault_ptr_new_modifies)
+prefer 2
+apply (clarsimp simp: typ_heap_simps')
+apply (frule (2) tcb_at_h_t_valid)
+apply simp
+apply clarsimp
+*)
+
+(*
+   apply (clarsimp simp: rf_sr_def cstate_relation_def
+                         Let_def cpspace_relation_def cte_wp_at_ctes_of heap_to_user_data_def
+                         cvariable_array_map_const_add_map_option[where f="tcb_no_ctes_proj"]
+                         typ_heap_simps')
+   apply (auto simp: carch_state_relation_def cmachine_state_relation_def refill_buffer_relation_def
+                  typ_heap_simps)
+   apply (rule conjI)
+apply 
+
+apply (simp add: rf_sr_def cong: cstate_relation_only_t_hrs)
+  apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def cpspace_relation_def
+                        carch_state_relation_def cmachine_state_relation_def
+                        refill_buffer_relation_def
+                        typ_heap_simps' update_tcb_map_tos)
+  apply (simp add: map_to_ctes_upd_tcb_no_ctes map_to_tcbs_upd tcb_cte_cases_def
+                   cvariable_relation_upd_const ko_at_projectKO_opt cteSizeBits_def)
+
+apply (erule(1) rf_sr_tcb_update_no_queue2,
+-         (simp add: typ_heap_simps')+)[1]
+-        apply (rule ball_tcb_cte_casesI, simp_all)[1]
+-       apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+-                             cfault_rel_def cthread_state_relation_def)
+-       apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
+-      apply ceqv
+
+ apply (clarsimp simp: typ_heap_simps)
+
+
+(*
+   apply (rule ccorres_from_spec_modifies_heap)
+  apply (rule seL4_Fault_NullFault_ptr_new_spec)
+  apply (rule seL4_Fault_NullFault_ptr_new_modifies)
+apply simp
+apply (clarsimp simp: typ_heap_simps')
+apply (frule (2) tcb_at_h_t_valid)
+apply clarsimp
+*)
+
+ apply (clarsimp simp: typ_heap_simps)
+   apply (clarsimp simp: rf_sr_def cstate_relation_def
+                         Let_def cpspace_relation_def cte_wp_at_ctes_of heap_to_user_data_def
+                         cvariable_array_map_const_add_map_option[where f="tcb_no_ctes_proj"]
+                         typ_heap_simps')
+
+apply clarsimp
+
+   apply (frule (1) rf_sr_ctes_of_clift)
+   apply (clarsimp simp: typ_heap_simps)
+   apply (rule fst_setCTE [OF ctes_of_cte_at], assumption)
+   apply (erule bexI [rotated])
+   apply (clarsimp simp: rf_sr_def cstate_relation_def
+                         Let_def cpspace_relation_def cte_wp_at_ctes_of heap_to_user_data_def
+                         cvariable_array_map_const_add_map_option[where f="tcb_no_ctes_proj"]
+                         typ_heap_simps')
+
+  apply (rule threadSet_corres_lemma)
+  apply (rule seL4_Fault_NullFault_ptr_new_spec)
+  apply (rule seL4_Fault_NullFault_ptr_new_modifies)
+prefer 2
+apply (clarsimp simp: typ_heap_simps')
+apply (frule (2) tcb_at_h_t_valid)
+apply simp
+apply clarsimp
+
+
+
+       apply (clarsimp simp: typ_heap_simps')
+       apply (erule(1) rf_sr_tcb_update_no_queue2,
+         (simp add: typ_heap_simps')+)[1]
+        apply (rule ball_tcb_cte_casesI, simp_all)[1]
+       apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+                             cfault_rel_def cthread_state_relation_def)
+       apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
+      apply ceqv
+
+
+   apply clarsimp
+   apply (frule (1) obj_at_cslift_tcb)
+   apply (clarsimp simp: typ_heap_simps')
+   apply (rule rf_sr_tcb_update_no_queue_gen, assumption+, simp, simp_all)
+    apply (rule ball_tcb_cte_casesI, simp_all)[1]
+sorry
+
+   apply (rule ccorres_from_spec_modifies_heap)
+   apply (rule seL4_Fault_NullFault_ptr_new_spec)
+   apply (rule seL4_Fault_NullFault_ptr_new_modifies)
+   apply simp
+   apply clarsimp
+   apply (frule (2) tcb_at_h_t_valid)
+apply simp
+apply clarsimp
+
+
+
+               apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
+                                     cfault_rel_def cthread_state_relation_def)
+               apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
+              apply ceqv
+
+
+   by (auto simp: carch_state_relation_def cmachine_state_relation_def refill_buffer_relation_def
+                  typ_heap_simps')
+
+    apply clarsimp
+    apply (rule rf_sr_cte_at_valid)
+     apply simp
+     apply (erule ctes_of_cte_at)
+    apply assumption
+   apply clarsimp
+   apply (frule (1) rf_sr_ctes_of_clift)
+   apply (clarsimp simp: typ_heap_simps)
+   apply (rule fst_setCTE [OF ctes_of_cte_at], assumption)
+   apply (erule bexI [rotated])
+   apply (clarsimp simp: rf_sr_def cstate_relation_def
+                         Let_def cpspace_relation_def cte_wp_at_ctes_of heap_to_user_data_def
+                         cvariable_array_map_const_add_map_option[where f="tcb_no_ctes_proj"]
+                         typ_heap_simps')
+   apply (rule conjI)
+    apply (erule (2) cspace_cte_relation_upd_mdbI)
+    apply (simp add: cmdbnode_relation_def)
+    apply (intro arg_cong[where f="\<lambda>f. mdbNext_update f mdb" for mdb] ext word_eqI)
+    apply (simp add: sign_extend_bitwise_if' neg_mask_test_bit word_size)
+    apply (match premises in C: "canonical_address _" and A: "is_aligned _ _" (multi) \<Rightarrow>
+           \<open>match premises in H[thin]: _ (multi) \<Rightarrow> \<open>insert C A\<close>\<close>)
+    apply (drule is_aligned_weaken[where y=2], simp add: objBits_defs)
+    apply (case_tac "n < 2"; case_tac "n \<le> 38";
+           clarsimp simp: linorder_not_less linorder_not_le is_aligned_nth[THEN iffD1])
+    apply (fastforce simp: word_size dest: canonical_address_high_bits[simplified canonical_bit_def])
+   apply (erule_tac t = s'a in ssubst)
+   apply simp
+   apply (rule conjI)
+    apply (erule (1) setCTE_tcb_case)
+   by (auto simp: carch_state_relation_def cmachine_state_relation_def refill_buffer_relation_def
+                  typ_heap_simps)
+*)
+
+sorry
+
 lemma cancelIPC_ccorres1:
   assumes cteDeleteOne_ccorres:
   "\<And>w slot. ccorres dc xfdc
@@ -3054,19 +3223,9 @@ lemma cancelIPC_ccorres1:
    apply (rule getThreadState_ccorres_foo)
    apply (rename_tac threadState)
    apply csymbr
-   apply csymbr
 
-   apply (rule ccorres_split_nothrow)
-       apply (rule threadSet_ccorres_lemma2[where P=\<top>])
-        apply vcg
-       apply (clarsimp simp: typ_heap_simps')
-       apply (erule(1) rf_sr_tcb_update_no_queue2,
-         (simp add: typ_heap_simps')+)[1]
-        apply (rule ball_tcb_cte_casesI, simp_all)[1]
-       apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
-                             cfault_rel_def cthread_state_relation_def)
-       apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
-      apply ceqv
+    apply (rule ccorres_move_c_guard_tcb)
+    apply (ctac add: nullFault_ptr_new_ccorres)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="thread_state_to_tsType threadState"
