@@ -2954,42 +2954,6 @@ lemma BlockedOnReceive_replyObject_no_0:
   using assms
   by (auto simp: valid_tcb_state'_def)
 
-(*
-lemma isBlockedOnReceive_equiv:
-  "isBlockedOnReceive st = is_BlockedOnReceive st"
-  by (case_tac st; simp add: isBlockedOnReceive_def)
-
-lemma ctcb_relation_blockingObject:
-  "\<lbrakk> ctcb_relation tcb ctcb ; isBlockedOnReceive (tcbState tcb) \<or> isBlockedOnSend (tcbState tcb) \<rbrakk>
-   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb))
-      = blockingObject (tcbState tcb)"
-  apply (erule disjE;
-          case_tac "tcbState tcb";
-            clarsimp simp:
-              isTS_defs ctcb_relation_def cthread_state_relation_def)+
-  done
-
-lemma ctcb_relation_blockingObject2:
-  "\<lbrakk> ctcb_relation tcb ctcb ; (\<exists>bo bicg ro. BlockedOnReceive bo bicg ro = tcbState tcb) \<or> (\<exists>bo bib bicg bicgr biic. BlockedOnSend bo bib bicg bicgr biic = tcbState tcb) \<rbrakk>
-   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb))
-      = blockingObject (tcbState tcb)"
-  apply (erule disjE;
-          case_tac "tcbState tcb";
-            clarsimp simp:
-              isTS_defs ctcb_relation_def cthread_state_relation_def)+
-  done
-
-lemma ctcb_relation_blockingObject3:
-  "\<lbrakk> ctcb_relation tcb ctcb ; BlockedOnReceive bo bicg ro = tcbState tcb \<rbrakk>
-   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb))
-      = blockingObject (tcbState tcb)"
-  apply (
-          case_tac "tcbState tcb";
-            clarsimp simp:
-              isTS_defs ctcb_relation_def cthread_state_relation_def)+
-  done
-*)
-
 lemma ctcb_relation_BlockedOnReceive_blockingObject:
   assumes "ctcb_relation tcb ctcb"
   assumes "BlockedOnReceive bo bicg ro = tcbState tcb"
