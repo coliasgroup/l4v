@@ -3416,12 +3416,7 @@ apply ccorres_rewrite
                 invs'_implies
                 x_d
                 )
-    subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def invs'_def
-                     isTS_defs 
-                     cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      ready_qs_runnable_def
-                      invs_valid_objs'
-                      valid_objs'_valid_tcbs'
+    subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs 
                      split: thread_state.splits)
   apply (simp add: invs_valid_objs' x_d)
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
@@ -3433,7 +3428,6 @@ apply ccorres_rewrite
                       valid_objs'_valid_tcbs'
                       x_d
                      split: thread_state.splits endpoint.splits)
-
     apply (clarsimp simp:
       sym_refs_asrt_def
       invs'_implies
