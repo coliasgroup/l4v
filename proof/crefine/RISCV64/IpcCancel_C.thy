@@ -2994,21 +2994,6 @@ lemma BlockedOnSend_ep_at':
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
-lemma x_a:
-  "\<lbrakk>
-     valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
-       \<Longrightarrow> reply_at' ro s"
-  apply (drule (1) tcb_in_valid_state')
-  by (fastforce simp: obj_at'_def valid_tcb_state'_def)
-
-lemma x_d_x:
-  "\<lbrakk> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
-   \<rbrakk> \<Longrightarrow>
-   \<exists>tcb. ko_at' tcb thread s \<and>
-     tcbState tcb = BlockedOnReceive bo bicg (Some ro)"
-  apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
-  done
-
 lemma sym_ref_BlockedOnReceive_replyObject_linked:
   assumes sy: "sym_refs (state_refs_of' s)"
   and vo: "valid_objs' s"
