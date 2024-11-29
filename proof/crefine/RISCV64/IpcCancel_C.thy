@@ -3033,6 +3033,246 @@ lemma thread_state_to_tsType_eq_BlockedOnSend:
        = (\<exists>bo bib bicg bicgr biic. ts = BlockedOnSend bo bib bicg bicgr biic)"
   by (cases ts, simp_all add: ThreadState_defs)
 
+lemma fst_setCTE02:
+  notes option.case_cong_weak [cong]
+  assumes ct: "tcb_at' thread s"
+  shows   "\<exists>(v, s') \<in> fst (threadSet (tcbFault_update (\<lambda>_. None)) thread s).
+           (s' = s \<lparr> ksPSpace := ksPSpace s' \<rparr>)
+           \<and> (dom (ksPSpace s) = dom (ksPSpace s'))
+           \<and> (\<forall> x \<in> dom (ksPSpace s).
+                case (the (ksPSpace s x)) of
+                    | KOTCB t \<Rightarrow> (\<exists>t'. ksPSpace s' x = Some (KOTCB t') \<and> tcb_no_ctes_proj t = tcb_no_ctes_proj t')
+                    | _       \<Rightarrow> ksPSpace s' x = ksPSpace s x)"
+  using ct
+  apply -
+  apply (clarsimp simp: setCTE_def setObject_def
+    bind_def return_def assert_opt_def gets_def split_beta get_def
+    modify_def put_def)
+  apply (erule cte_wp_atE')
+   apply (rule ps_clear_lookupAround2, assumption+)
+     apply simp
+    apply (erule is_aligned_no_overflow)
+   apply (simp (no_asm_simp) del: fun_upd_apply cong: option.case_cong)
+   apply (simp add: return_def updateObject_cte
+     bind_def assert_opt_def gets_def split_beta get_def
+     modify_def put_def unless_def when_def
+     objBits_simps
+     cong: bex_cong)
+   apply (rule bexI [where x = "((), s)"])
+    apply (frule_tac s' = s in in_magnitude_check [where v = "()"])
+      apply (simp add: cte_level_bits_def)
+     apply assumption
+    apply (simp add: objBits_defs cte_level_bits_def)
+    apply (erule bexI [rotated])
+    apply (simp  cong: if_cong)
+    apply rule
+    apply (simp split: kernel_object.splits)
+    apply (fastforce simp: tcb_no_ctes_proj_def)
+   apply (simp add: cte_level_bits_def objBits_defs)
+  (* clag *)
+  apply (rule ps_clear_lookupAround2, assumption+)
+    apply (erule (1) tcb_cte_cases_in_range1)
+   apply (erule (1) tcb_cte_cases_in_range2)
+  apply (simp add: return_def del: fun_upd_apply cong: bex_cong option.case_cong)
+  apply (subst updateObject_cte_tcb)
+   apply assumption
+  apply (simp add: bind_def split_beta in_alignCheck' objBits_simps magnitudeCheck_def
+            split: option.splits kernel_object.splits)
+   apply (clarsimp simp: read_magnitudeCheck_def return_def)
+  apply (fastforce simp: gets_the_def gets_def return_def get_def bind_def)
+  done
+
+lemma fst_setCTE2:
+  assumes ct: "tcb_at' thread s"
+  and     rl: "\<And>s'. \<lbrakk> ((), s') \<in> fst (threadSet (tcbFault_update (\<lambda>_. None)) thread s);
+           (s' = s \<lparr> ksPSpace := ksPSpace s' \<rparr>);
+           (map_to_eps (ksPSpace s) = map_to_eps (ksPSpace s'));
+           (map_to_ntfns (ksPSpace s) = map_to_ntfns (ksPSpace s'));
+           (map_to_scs (ksPSpace s) = map_to_scs (ksPSpace s'));
+           (map_to_replies (ksPSpace s) = map_to_replies (ksPSpace s'));
+           (map_to_ptes (ksPSpace s) = map_to_ptes (ksPSpace s'));
+           (map_to_asidpools (ksPSpace s) = map_to_asidpools (ksPSpace s'));
+           (map_to_user_data (ksPSpace s) = map_to_user_data (ksPSpace s'));
+           (map_to_user_data_device (ksPSpace s) = map_to_user_data_device (ksPSpace s'));
+           (map_option tcb_no_ctes_proj \<circ> map_to_tcbs (ksPSpace s)
+              = map_option tcb_no_ctes_proj \<circ> map_to_tcbs (ksPSpace s'));
+           \<forall>T p. typ_at' T p s = typ_at' T p s'\<rbrakk> \<Longrightarrow> P"
+  shows   "P"
+proof -
+  from fst_setCTE0 [where cte = cte, OF ct]
+  obtain s' where
+    "((), s')\<in>fst (setCTE dest cte s)"
+    "s' = s\<lparr>ksPSpace := ksPSpace s'\<rparr>"
+    "dom (ksPSpace s) = dom (ksPSpace s')"
+    "(\<forall>p \<in> dom (ksPSpace s').
+       case the (ksPSpace s p) of
+         KOTCB t \<Rightarrow> \<exists>t'. ksPSpace s' p = Some (KOTCB t') \<and> tcb_no_ctes_proj t = tcb_no_ctes_proj t'
+       | KOCTE _ \<Rightarrow> \<exists>cte. ksPSpace s' p = Some (KOCTE cte)
+       | _ \<Rightarrow> ksPSpace s' p = ksPSpace s p)"
+    by clarsimp
+  note thms = this
+
+  have ceq: "ctes_of s' = (ctes_of s)(dest \<mapsto> cte)"
+    by (rule use_valid [OF thms(1) setCTE_ctes_of_wp]) simp
+
+  show ?thesis
+  proof (rule rl)
+    show "map_to_eps (ksPSpace s) = map_to_eps (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: endpoint option) = projectKO_opt ko" using xin thms(4) ceq
+        by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_ep)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: endpoint option) = projectKO_opt (the (ksPSpace s x))"  using ko ko'
+        by simp
+    qed fact
+
+    (* clag \<dots> *)
+    show "map_to_ntfns (ksPSpace s) = map_to_ntfns (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: Structures_H.notification option) = projectKO_opt ko" using xin thms(4) ceq
+        by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_ntfn)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: Structures_H.notification option) = projectKO_opt (the (ksPSpace s x))" using ko ko'
+        by simp
+    qed fact
+
+    (* clag \<dots> *)
+    show "map_to_scs (ksPSpace s) = map_to_scs (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: Structures_H.sched_context option) = projectKO_opt ko" using xin thms(4) ceq
+        by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_sc)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: Structures_H.sched_context option) = projectKO_opt (the (ksPSpace s x))" using ko ko'
+        by simp
+    qed fact
+
+    (* clag \<dots> *)
+    show "map_to_replies (ksPSpace s) = map_to_replies (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: Structures_H.reply option) = projectKO_opt ko" using xin thms(4) ceq
+        by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_reply)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: Structures_H.reply option) = projectKO_opt (the (ksPSpace s x))" using ko ko'
+        by simp
+    qed fact
+
+    show "map_to_ptes (ksPSpace s) = map_to_ptes (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: pte option) = projectKO_opt ko" using xin thms(4) ceq
+        by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_pte)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: pte option) = projectKO_opt (the (ksPSpace s x))" using ko ko'
+        by simp
+    qed fact
+
+    show "map_to_asidpools (ksPSpace s) = map_to_asidpools (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: asidpool option) = projectKO_opt ko" using xin thms(4) ceq
+        by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_asidpool)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: asidpool option) = projectKO_opt (the (ksPSpace s x))" using ko ko'
+        by simp
+    qed fact
+
+    show "map_to_user_data (ksPSpace s) = map_to_user_data (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: user_data option) = projectKO_opt ko" using xin thms(4) ceq
+        by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_user_data)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: user_data option) = projectKO_opt (the (ksPSpace s x))" using ko ko'
+        by simp
+    qed fact
+
+    show "map_to_user_data_device (ksPSpace s) = map_to_user_data_device (ksPSpace s')"
+    proof (rule map_comp_eqI)
+      fix x
+      assume xin: "x \<in> dom (ksPSpace s')"
+      then obtain ko where ko: "ksPSpace s x = Some ko" by (clarsimp simp: thms(3)[symmetric])
+      moreover from xin obtain ko' where ko': "ksPSpace s' x = Some ko'" by clarsimp
+      ultimately have "(projectKO_opt ko' :: user_data_device option) = projectKO_opt ko" using xin thms(4) ceq
+             by - (drule (1) bspec, cases ko, auto simp: projectKO_opt_user_data_device)
+      thus "(projectKO_opt (the (ksPSpace s' x)) :: user_data_device option) = projectKO_opt (the (ksPSpace s x))" using ko ko'
+             by simp
+    qed fact
+
+
+    note sta = setCTE_typ_at'[where P="\<lambda>x. x = y" for y]
+    show typ_at: "\<forall>T p. typ_at' T p s = typ_at' T p s'"
+      using use_valid[OF _ sta, OF thms(1), OF refl]
+      by auto
+
+    show "map_option tcb_no_ctes_proj \<circ> map_to_tcbs (ksPSpace s) =
+      map_option tcb_no_ctes_proj \<circ> map_to_tcbs (ksPSpace s')"
+    proof (rule ext)
+      fix x
+
+      have dm: "dom (map_to_tcbs (ksPSpace s)) = dom (map_to_tcbs (ksPSpace s'))"
+        using thms(3) thms(4)
+        apply -
+        apply (rule set_eqI)
+        apply rule
+        apply (frule map_comp_subset_domD)
+        apply simp
+        apply (drule (1) bspec)
+        apply (clarsimp simp: projectKOs dom_map_comp)
+        apply (frule map_comp_subset_domD)
+        apply (drule (1) bspec)
+        apply (auto simp: dom_map_comp projectKOs split: kernel_object.splits)
+        apply fastforce
+        done
+
+      {
+        assume "x \<in> dom (map_to_tcbs (ksPSpace s))"
+        hence "map_option tcb_no_ctes_proj (map_to_tcbs (ksPSpace s) x)
+          = map_option tcb_no_ctes_proj (map_to_tcbs (ksPSpace s') x)"
+          using thms(3) thms(4)
+          apply -
+          apply (frule map_comp_subset_domD)
+          apply simp
+          apply (drule (1) bspec)
+          apply (clarsimp simp: dom_map_comp projectKOs projectKO_opt_tcb)
+          apply (case_tac y)
+          apply simp_all
+          apply clarsimp
+          done
+      } moreover
+      {
+        assume "x \<notin> dom (map_to_tcbs (ksPSpace s))"
+        hence "map_option tcb_no_ctes_proj (map_to_tcbs (ksPSpace s) x)
+          = map_option tcb_no_ctes_proj (map_to_tcbs (ksPSpace s') x)"
+          apply -
+          apply (frule subst [OF dm])
+          apply (simp add: dom_def)
+          done
+      } ultimately show "(map_option tcb_no_ctes_proj \<circ> (map_to_tcbs (ksPSpace s))) x
+          = (map_option tcb_no_ctes_proj \<circ> (map_to_tcbs (ksPSpace s'))) x"
+          by auto
+    qed
+  qed fact+
+qed
+
+
 lemma nullFault_ptr_new_ccorres:
   shows
     "ccorres dc xfdc
@@ -3048,7 +3288,7 @@ lemma nullFault_ptr_new_ccorres:
 apply simp
 apply (clarsimp simp: typ_heap_simps')
 apply (frule (2) tcb_at_h_t_valid)
-apply clarsimp
+apply (clarsimp simp: typ_heap_simps')
 
 (*
 ALT:
