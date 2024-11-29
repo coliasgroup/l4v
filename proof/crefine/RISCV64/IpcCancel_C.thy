@@ -3400,38 +3400,19 @@ apply ccorres_rewrite
    apply (rule conjI)
      apply (clarsimp simp: invs_valid_objs' f_a)
 
-          apply (clarsimp simp:
-                sym_refs_asrt_def
-                invs_valid_objs'
-                valid_objs'_valid_tcbs'
-                x_d
-                )   apply (rule conjI)
+          apply clarsimp
+apply (rule conjI)
 
   apply (case_tac xb)
-          apply (clarsimp simp:
-                sym_refs_asrt_def
-                invs'_implies
-                valid_objs'_valid_tcbs'
-                x_d
-                )
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
     subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs 
                      split: thread_state.splits)
-          apply (clarsimp simp:
-                sym_refs_asrt_def
-                invs'_implies
-                valid_objs'_valid_tcbs'
-                x_d
-                )
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
                      split: thread_state.splits )
-sorry
-    apply (clarsimp simp:
-      sym_refs_asrt_def
-      invs'_implies
-      invs_valid_objs'
-      valid_objs'_valid_tcbs'
-      x_d
-      )
+
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
+
    apply (case_tac xb)
     apply clarsimp
     apply (frule (3) ep_blocked_in_queueD_recv)
@@ -3446,6 +3427,7 @@ sorry
                       valid_objs'_valid_tcbs'
                       x_d
                      split: thread_state.splits endpoint.splits)
+
    apply (simp add: invs_valid_objs' x_d)
     apply clarsimp
     apply (frule (3) ep_blocked_in_queueD_recv)
