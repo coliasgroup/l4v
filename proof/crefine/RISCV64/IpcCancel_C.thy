@@ -3062,8 +3062,7 @@ lemma cancelIPC_ccorres1:
        apply (rule threadSet_ccorres_lemma2[where P=\<top>])
         apply vcg
        apply (clarsimp simp: typ_heap_simps')
-       apply (erule(1) rf_sr_tcb_update_no_queue2,
-         (simp add: typ_heap_simps')+)[1]
+       apply (erule(1) rf_sr_tcb_update_no_queue2, (simp add: typ_heap_simps')+)[1]
         apply (rule ball_tcb_cte_casesI, simp_all)[1]
        apply (clarsimp simp: ctcb_relation_def seL4_Fault_lift_NullFault
                              cfault_rel_def cthread_state_relation_def)
@@ -3269,11 +3268,11 @@ lemma cancelIPC_ccorres1:
        apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
                              sym_ref_BlockedOnReceive_replyObject_linked)
   subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs
-                   split: thread_state.splits)
+                  split: thread_state.splits)
       apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
                             sym_ref_BlockedOnReceive_replyObject_linked)
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
-                   split: thread_state.splits)
+                  split: thread_state.splits)
      apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
                            sym_ref_BlockedOnReceive_replyObject_linked)
      apply (case_tac ro)
@@ -3281,13 +3280,13 @@ lemma cancelIPC_ccorres1:
       apply (frule (3) ep_blocked_in_queueD_recv)
       apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isRecvEP_def
-                   split: thread_state.splits endpoint.splits)
+                  split: thread_state.splits endpoint.splits)
 
      apply (clarsimp simp: invs_valid_objs' sym_ref_BlockedOnReceive_replyObject_linked)
      apply (frule (3) ep_blocked_in_queueD_recv)
      apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isRecvEP_def
-                   split: thread_state.splits endpoint.splits)
+                  split: thread_state.splits endpoint.splits)
     apply (rule conjI)
      apply (clarsimp simp: inQ_def)
     apply clarsimp
@@ -3297,13 +3296,13 @@ lemma cancelIPC_ccorres1:
     apply (rule conjI)
      apply (clarsimp simp: sym_refs_asrt_def invs'_implies)
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
-                   split: thread_state.splits endpoint.splits)
+                  split: thread_state.splits endpoint.splits)
     apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
                           sym_ref_BlockedOnReceive_replyObject_linked)
     apply (frule (3) ep_blocked_in_queueD_send)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
-                   split: thread_state.splits endpoint.splits)
+                  split: thread_state.splits endpoint.splits)
    apply vcg
   apply (auto simp:  cthread_state_relation_def typ_heap_simps )
   done
