@@ -3364,13 +3364,14 @@ apply ccorres_rewrite
   apply (frule obj_at_valid_objs', clarsimp+)
   apply (clarsimp simp: valid_obj'_def valid_tcb'_def valid_tcb_state'_def invs_valid_objs' valid_BlockedOnReceive_ep_at' )
   apply (rule conjI, clarsimp)
+  apply (rename_tac bo bicg ro)
    apply (rule conjI)
      apply (clarsimp simp: invs_valid_objs' valid_BlockedOnReceive_ep_at')
 
           apply clarsimp
 apply (rule conjI)
 
-  apply (case_tac xb)
+  apply (case_tac ro)
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
     subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs 
                      split: thread_state.splits)
@@ -3380,7 +3381,7 @@ apply (rule conjI)
 
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
 
-   apply (case_tac xb)
+   apply (case_tac ro)
     apply clarsimp
     apply (frule (3) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
