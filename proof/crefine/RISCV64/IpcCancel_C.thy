@@ -3395,31 +3395,33 @@ apply ccorres_rewrite
     apply clarsimp
 
   apply (frule obj_at_valid_objs', clarsimp+)
-  apply (clarsimp simp: projectKOs valid_obj'_def valid_tcb'_def
-                        valid_tcb_state'_def typ_heap_simps
-                        word_sle_def f_a invs_valid_objs')
+  apply (clarsimp simp: valid_obj'_def valid_tcb'_def valid_tcb_state'_def invs_valid_objs' f_a )
   apply (rule conjI, clarsimp)
    apply (rule conjI)
-     apply ( simp add: f_a invs_valid_objs')
+     apply (clarsimp simp: invs_valid_objs' f_a)
 
-    apply (clarsimp)
+    apply clarsimp
    apply (rule conjI)
           apply (clarsimp simp:
                 sym_refs_asrt_def
-                invs'_implies
                 invs_valid_objs'
                 valid_objs'_valid_tcbs'
                 x_d
                 )
   apply (case_tac xb)
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
-                     isTS_defs cte_wp_at_ctes_of
+          apply (clarsimp simp:
+                sym_refs_asrt_def
+                invs_valid_objs'
+                valid_objs'_valid_tcbs'
+                invs'_implies
+                x_d
+                )
+    subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def invs'_def
+                     isTS_defs 
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
-                      sym_refs_asrt_def
                       ready_qs_runnable_def
                       invs_valid_objs'
                       valid_objs'_valid_tcbs'
-                      x_d
                      split: thread_state.splits)
   apply (simp add: invs_valid_objs' x_d)
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
