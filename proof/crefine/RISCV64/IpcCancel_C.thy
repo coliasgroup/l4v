@@ -3011,26 +3011,17 @@ proof -
     done
 qed
 
-lemma threadSet_wp2_x4:
-  "\<lbrace>\<lambda>s. sym_refs_asrt s\<rbrace>
-   threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>\<lambda>rv. sym_refs_asrt\<rbrace>"
-  unfolding sym_refs_asrt_def
-  apply (wpsimp wp: threadSet_state_refs_of')
-      apply simp
-     apply (force simp: tcb_bound_refs'_def)+
-  done
-
 lemma cancelIPC_threadSet_wp:
-   "threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s
-         \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
-  by (wpsimp wp:
-    threadSet_fault_invs'
-    threadSet_wp2_x4
-    weak_sch_act_wf_lift tcb_in_cur_domain'_lift
-    threadSet_pred_tcb_no_state
-  )
+   shows "threadSet (tcbFault_update (\<lambda>_. None)) t
+           \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s
+             \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
+proof -
+  have sy: "threadSet (tcbFault_update (\<lambda>_. None)) t \<lbrace>sym_refs_asrt\<rbrace>"
+    by - (unfold sym_refs_asrt_def, wpsimp wp: threadSet_state_refs_of',
+            simp, (force simp: tcb_bound_refs'_def)+)
+  show ?thesis by (wpsimp wp: threadSet_fault_invs' threadSet_pred_tcb_no_state
+                    weak_sch_act_wf_lift tcb_in_cur_domain'_lift sy)
+qed
 
 lemma thread_state_to_tsType_eq_BlockedOnReceive:
   "(thread_state_to_tsType ts = scast ThreadState_BlockedOnReceive)
