@@ -3114,7 +3114,7 @@ lemma threadSet_wp2_x6:
 
 lemma threadSet_wp2:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>\<lambda>s. tcb_at' t s \<and> st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s\<rbrace>"
+   \<lbrace>\<lambda>s. tcb_at' t s \<and> st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
   by (wpsimp wp:
     threadSet_wp2_x1
     threadSet_wp2_x2
@@ -3385,8 +3385,7 @@ apply ccorres_rewrite
               tcb_at' thread s
               \<and> st_tcb_at' ((=) threadState) thread s
               \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s
-              \<and> sym_refs_asrt s
-              \<and> ready_qs_runnable s"
+              \<and> sym_refs_asrt s"
         in hoare_strengthen_post)
 
    apply (wp add: threadSet_wp2)
