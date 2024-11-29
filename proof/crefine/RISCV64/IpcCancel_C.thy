@@ -3350,10 +3350,6 @@ apply csymbr
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="scast ThreadState_BlockedOnSend"
-
-(*
-            and val="thread_state_to_tsType threadState"
-*)
             and R="st_tcb_at' ((=) threadState) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
@@ -3409,7 +3405,7 @@ apply (rule conjI)
                      split: thread_state.splits)
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
-                     split: thread_state.splits )
+                     split: thread_state.splits)
 
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
 
@@ -3418,7 +3414,8 @@ apply (rule conjI)
     apply (frule (3) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
 
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
+    subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def
                      isTS_defs cte_wp_at_ctes_of isRecvEP_def isSendEP_def
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                       sym_refs_asrt_def
@@ -3426,13 +3423,14 @@ apply (rule conjI)
                       invs_valid_objs'
                       valid_objs'_valid_tcbs'
                       x_d
+
                      split: thread_state.splits endpoint.splits)
 
-   apply (simp add: invs_valid_objs' x_d)
-    apply clarsimp
+   apply (clarsimp simp: invs_valid_objs' x_d)
     apply (frule (3) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
-    subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
+    subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
+obj_at'_def projectKOs pred_tcb_at'_def invs'_def
                      isTS_defs cte_wp_at_ctes_of isRecvEP_def isSendEP_def
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
                       sym_refs_asrt_def
@@ -3441,7 +3439,6 @@ apply (rule conjI)
                       valid_objs'_valid_tcbs'
                       x_d
                      split: thread_state.splits endpoint.splits)
-
    apply (rule conjI)
     apply (clarsimp simp: inQ_def)
    apply clarsimp
@@ -3449,6 +3446,8 @@ apply (rule conjI)
     apply (clarsimp simp: invs_valid_objs' f_b)
    apply clarsimp
    apply (rule conjI)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies)
+
     subgoal by (auto simp: obj_at'_def projectKOs pred_tcb_at'_def invs'_def
                      isTS_defs cte_wp_at_ctes_of isRecvEP_def isSendEP_def
                      cthread_state_relation_def sch_act_wf_weak valid_ep'_def
