@@ -3300,7 +3300,7 @@ lemma cancelIPC_ccorres1:
 
       apply (case_tac ro)
        apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
-  subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs 
+  subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs
                    split: thread_state.splits)
       apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
