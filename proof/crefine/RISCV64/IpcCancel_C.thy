@@ -3013,14 +3013,14 @@ lemma ctcb_relation_BlockedOnSend_blockingObject:
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 
-lemma f_a:
+lemma valid_BlockedOnReceive_ep_at':
   "\<lbrakk>
      valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s\<rbrakk>
        \<Longrightarrow> ep_at' bo s"
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
-lemma f_b:
+lemma valid_BlockedOnSend_ep_at':
   "\<lbrakk>
      valid_objs' s; st_tcb_at' ((=) (BlockedOnSend x xa xb xc xd)) t s\<rbrakk>
        \<Longrightarrow> ep_at' x s"
@@ -3362,10 +3362,10 @@ apply ccorres_rewrite
     apply clarsimp
 
   apply (frule obj_at_valid_objs', clarsimp+)
-  apply (clarsimp simp: valid_obj'_def valid_tcb'_def valid_tcb_state'_def invs_valid_objs' f_a )
+  apply (clarsimp simp: valid_obj'_def valid_tcb'_def valid_tcb_state'_def invs_valid_objs' valid_BlockedOnReceive_ep_at' )
   apply (rule conjI, clarsimp)
    apply (rule conjI)
-     apply (clarsimp simp: invs_valid_objs' f_a)
+     apply (clarsimp simp: invs_valid_objs' valid_BlockedOnReceive_ep_at')
 
           apply clarsimp
 apply (rule conjI)
@@ -3397,7 +3397,7 @@ apply (rule conjI)
     apply (clarsimp simp: inQ_def)
    apply clarsimp
    apply (rule conjI)
-    apply (clarsimp simp: invs_valid_objs' f_b)
+    apply (clarsimp simp: invs_valid_objs' valid_BlockedOnSend_ep_at')
    apply clarsimp
    apply (rule conjI)
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies)
