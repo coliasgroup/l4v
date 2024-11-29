@@ -2923,7 +2923,7 @@ lemma reply_unlink_ccorres:
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_' simp: getThreadState_def)
   apply (rule ccorres_move_c_guard_tcb)
-  apply clarsimp
+  apply (clarsimp simp: getReply_def liftM_def assert_opt_def )
 sorry (* FIXME RT: reply_unlink_ccorres *)
 
 lemma reply_pop_ccorres:
