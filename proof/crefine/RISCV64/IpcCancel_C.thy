@@ -2940,19 +2940,19 @@ lemma reply_remove_ccorres:
     (replyRemove replyPtr tcbPtr) (Call reply_remove_'proc)"
 sorry (* FIXME RT: reply_remove_ccorres *)
 
-lemma cancelIPC_ccorres1_helper2:
-  "\<And>a b c. (getBlockingObject (Structures_H.thread_state.BlockedOnReceive a b c)) = return a"
+lemma getBlockingObject_BlockedOnReceive:
+  "(getBlockingObject (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) = return bo"
   unfolding getBlockingObject_def epBlocked_def by simp
 
-lemma cancelIPC_ccorres1_helper3:
-  "\<And>a b c d e. (getBlockingObject (Structures_H.thread_state.BlockedOnSend a b c d e)) = return a"
+lemma getBlockingObject_BlockedOnSend:
+  "(getBlockingObject (Structures_H.thread_state.BlockedOnSend bo bib bicg bicgr biic)) = return bo"
   unfolding getBlockingObject_def epBlocked_def by simp
 
-lemma replyObject_nonzero:
+lemma BlockedOnReceive_replyObject_no_0:
   assumes "valid_tcb_state' ts s" "no_0_obj' s"
-  shows "\<forall>replyOpt. ts = BlockedOnReceive a b replyOpt \<longrightarrow> replyOpt \<noteq> Some 0"
+  shows "ts = BlockedOnReceive bo bicg ro \<longrightarrow> ro \<noteq> Some 0"
   using assms
-  by (fastforce simp: valid_tcb_state'_def)
+  by (auto simp: valid_tcb_state'_def)
 
 lemma ctcb_relation_x_b:
   "ctcb_relation tcb ctcb \<and> BlockedOnReceive bo bicg ro = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
@@ -3142,9 +3142,7 @@ lemma cancelIPC_ccorres1:
             \<comment> \<open>BlockedOnReceive\<close>
             apply (rename_tac bo bicg ro)
             apply (unfold blockedCancelIPC_def)
-            apply (simp add: word_sle_def ccorres_cond_iffs cong: call_ignore_cong)
-            apply (unfold cancelIPC_ccorres1_helper2)
-            apply (simp only: return_bind)
+            apply (simp add: ccorres_cond_iffs getBlockingObject_BlockedOnReceive return_bind)
             apply (rule ccorres_rhs_assoc)+
             apply csymbr
             apply csymbr
@@ -3237,7 +3235,7 @@ apply csymbr
                 "
                 in hoare_post_imp)
 
-                apply (clarsimp simp: replyObject_nonzero tcb_in_valid_state')
+                apply (clarsimp simp: BlockedOnReceive_replyObject_no_0 tcb_in_valid_state')
                 apply (rule conjI)
                 
                 apply (case_tac ro)
@@ -3249,7 +3247,7 @@ apply csymbr
                 apply simp
                 
                 apply (drule (1) tcb_in_valid_state')
-                apply (simp add: replyObject_nonzero)
+                apply (simp add: BlockedOnReceive_replyObject_no_0)
                 
                 apply (subst option.split[symmetric, where P=id, simplified])
                 apply (wp )
@@ -3291,7 +3289,7 @@ apply csymbr
 
       \<comment> \<open>clag\<close>
       apply (rename_tac bo bib bicg bicgr biic)
-      apply (unfold cancelIPC_ccorres1_helper3)
+      apply (unfold getBlockingObject_BlockedOnSend)
       apply (simp only: return_bind)
       apply (rule ccorres_rhs_assoc)+
       apply csymbr
