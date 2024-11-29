@@ -3016,7 +3016,6 @@ lemma threadSet_wp2_x2:
    \<lbrace>invs'\<rbrace>"
   by (wpsimp wp: threadSet_fault_invs')
 
-
 lemma threadSet_wp2_x4:
   "\<lbrace>\<lambda>s. sym_refs_asrt s\<rbrace>
    threadSet (tcbFault_update (\<lambda>_. None)) t
