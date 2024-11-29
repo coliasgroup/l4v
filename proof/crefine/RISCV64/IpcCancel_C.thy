@@ -2946,8 +2946,10 @@ lemma getBlockingObject_BlockedOnSend_return:
   unfolding getBlockingObject_def epBlocked_def by simp
 
 lemma BlockedOnReceive_replyObject_no_0:
-  assumes "valid_tcb_state' ts s" "no_0_obj' s"
-  shows "ts = BlockedOnReceive bo bicg ro \<longrightarrow> ro \<noteq> Some 0"
+  assumes "no_0_obj' s"
+  assumes "valid_tcb_state' ts s"
+  assumes "ts = BlockedOnReceive bo bicg ro"
+  shows "ro \<noteq> Some 0"
   using assms
   by (auto simp: valid_tcb_state'_def)
 
@@ -2968,8 +2970,7 @@ lemma ctcb_relation_BlockedOnReceive_replyObject:
 lemma ctcb_relation_BlockedOnSend_blockingObject:
   assumes "ctcb_relation tcb ctcb"
   assumes "BlockedOnSend bo bib bicg bicgr biic = tcbState tcb"
-  shows
-    "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
+  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
   using assms
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
@@ -2993,12 +2994,16 @@ lemma BlockedOnSend_ep_at':
 
 lemma sym_ref_BlockedOnReceive_replyObject_linked:
   assumes sy: "sym_refs (state_refs_of' s)"
-    and vo: "valid_objs' s"
-    and st: "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
+  assumes vo: "valid_objs' s"
+  assumes st: "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
   shows "obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
 proof -
-  from vo and st have re: "reply_at' ro s" by - (drule (1) tcb_in_valid_state', fastforce simp: obj_at'_def valid_tcb_state'_def)
-  from st have ko: "\<exists>tcb. ko_at' tcb thread s \<and> tcbState tcb = BlockedOnReceive bo bicg (Some ro)" by - (clarsimp simp: st_tcb_at'_def obj_at'_def)
+  from vo and st have re:
+    "reply_at' ro s"
+    by - (drule (1) tcb_in_valid_state', fastforce simp: obj_at'_def valid_tcb_state'_def)
+  from st have ko:
+    "\<exists>tcb. ko_at' tcb thread s \<and> tcbState tcb = BlockedOnReceive bo bicg (Some ro)"
+    by - (clarsimp simp: st_tcb_at'_def obj_at'_def)
   from sy and vo and st and re and ko show ?thesis
     apply -
     apply (clarsimp simp: st_tcb_at'_def)
@@ -3016,7 +3021,8 @@ proof -
   have sy: "threadSet (tcbFault_update (\<lambda>_. None)) t \<lbrace>sym_refs_asrt\<rbrace>"
     by - (unfold sym_refs_asrt_def, wpsimp wp: threadSet_state_refs_of',
             simp, (force simp: tcb_bound_refs'_def)+)
-  show ?thesis by (wpsimp wp: threadSet_fault_invs' threadSet_pred_tcb_no_state
+  show ?thesis
+    by (wpsimp wp: threadSet_fault_invs' threadSet_pred_tcb_no_state
                     weak_sch_act_wf_lift tcb_in_cur_domain'_lift sy)
 qed
 
