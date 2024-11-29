@@ -2940,11 +2940,11 @@ lemma reply_remove_ccorres:
     (replyRemove replyPtr tcbPtr) (Call reply_remove_'proc)"
 sorry (* FIXME RT: reply_remove_ccorres *)
 
-lemma getBlockingObject_BlockedOnReceive:
+lemma getBlockingObject_BlockedOnReceive_return:
   "(getBlockingObject (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) = return bo"
   unfolding getBlockingObject_def epBlocked_def by simp
 
-lemma getBlockingObject_BlockedOnSend:
+lemma getBlockingObject_BlockedOnSend_return:
   "(getBlockingObject (Structures_H.thread_state.BlockedOnSend bo bib bicg bicgr biic)) = return bo"
   unfolding getBlockingObject_def epBlocked_def by simp
 
@@ -3009,7 +3009,7 @@ lemma x_d_x:
   apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
   done
 
-lemma BlockedOnReceive_replyObject_linked:
+lemma sym_ref_BlockedOnReceive_replyObject_linked:
   assumes "sym_refs (state_refs_of' s)"
   assumes "valid_objs' s"
   assumes "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
@@ -3121,7 +3121,7 @@ lemma cancelIPC_ccorres1:
             \<comment> \<open>BlockedOnReceive\<close>
             apply (rename_tac bo bicg ro)
             apply (unfold blockedCancelIPC_def)
-            apply (simp add: ccorres_cond_iffs getBlockingObject_BlockedOnReceive return_bind)
+            apply (simp add: ccorres_cond_iffs getBlockingObject_BlockedOnReceive_return return_bind)
             apply (rule ccorres_rhs_assoc)+
             apply csymbr
             apply csymbr
@@ -3255,7 +3255,7 @@ apply csymbr
 
       \<comment> \<open>clag\<close>
       apply (rename_tac bo bib bicg bicgr biic)
-      apply (unfold getBlockingObject_BlockedOnSend)
+      apply (unfold getBlockingObject_BlockedOnSend_return)
       apply (simp only: return_bind)
       apply (rule ccorres_rhs_assoc)+
       apply csymbr
@@ -3340,14 +3340,14 @@ apply ccorres_rewrite
 apply (rule conjI)
 
   apply (case_tac ro)
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
     subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs 
                      split: thread_state.splits)
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
                      split: thread_state.splits)
 
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
 
    apply (case_tac ro)
     apply clarsimp
@@ -3357,7 +3357,7 @@ apply (rule conjI)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isRecvEP_def
                      split: thread_state.splits endpoint.splits)
 
-   apply (clarsimp simp: invs_valid_objs' BlockedOnReceive_replyObject_linked)
+   apply (clarsimp simp: invs_valid_objs' sym_ref_BlockedOnReceive_replyObject_linked)
     apply (frule (3) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isRecvEP_def
@@ -3372,7 +3372,7 @@ apply (rule conjI)
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
                      split: thread_state.splits endpoint.splits)
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
     apply (frule (3) ep_blocked_in_queueD_send)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
