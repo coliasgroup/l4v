@@ -3009,12 +3009,13 @@ lemma x_d_x:
   apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
   done
 
-lemma x_d:
-  "\<lbrakk> sym_refs (state_refs_of' s)
-   ; valid_objs' s
-   ; st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
-   \<rbrakk> \<Longrightarrow>
-   obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
+lemma BlockedOnReceive_replyObject_linked:
+  assumes "sym_refs (state_refs_of' s)"
+  assumes "valid_objs' s"
+  assumes "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
+  shows "obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
+  using assms
+  apply -
   apply (drule (1) x_a)
   apply (frule x_d_x)
   apply (clarsimp simp: st_tcb_at'_def)
@@ -3339,14 +3340,14 @@ apply ccorres_rewrite
 apply (rule conjI)
 
   apply (case_tac ro)
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
     subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs 
                      split: thread_state.splits)
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
                      split: thread_state.splits)
 
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
 
    apply (case_tac ro)
     apply clarsimp
@@ -3356,7 +3357,7 @@ apply (rule conjI)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isRecvEP_def
                      split: thread_state.splits endpoint.splits)
 
-   apply (clarsimp simp: invs_valid_objs' x_d)
+   apply (clarsimp simp: invs_valid_objs' BlockedOnReceive_replyObject_linked)
     apply (frule (3) ep_blocked_in_queueD_recv)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isRecvEP_def
@@ -3371,7 +3372,7 @@ apply (rule conjI)
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
                      split: thread_state.splits endpoint.splits)
-          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' BlockedOnReceive_replyObject_linked)
     apply (frule (3) ep_blocked_in_queueD_send)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
