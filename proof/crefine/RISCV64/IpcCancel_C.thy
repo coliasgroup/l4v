@@ -3010,19 +3010,21 @@ lemma x_d_x:
   done
 
 lemma sym_ref_BlockedOnReceive_replyObject_linked:
-  assumes "sym_refs (state_refs_of' s)"
-  assumes "valid_objs' s"
-  assumes "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
+  assumes sy: "sym_refs (state_refs_of' s)"
+  and vo: "valid_objs' s"
+  and st: "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
   shows "obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
-  using assms
-  apply -
-  apply (drule (1) x_a)
-  apply (frule x_d_x)
-  apply (clarsimp simp: st_tcb_at'_def)
-  apply (frule (1) sym_ref_Receive_or_Reply_replyTCB')
-  apply simp
-  apply (clarsimp simp: obj_at'_def)
-  done
+proof -
+  from vo and st have re: "reply_at' ro s" by - (drule (1) tcb_in_valid_state', fastforce simp: obj_at'_def valid_tcb_state'_def)
+  from st have ko: "\<exists>tcb. ko_at' tcb thread s \<and> tcbState tcb = BlockedOnReceive bo bicg (Some ro)" by - (clarsimp simp: st_tcb_at'_def obj_at'_def)
+  from sy and vo and st and re and ko show ?thesis
+    apply -
+    apply (clarsimp simp: st_tcb_at'_def)
+    apply (frule (1) sym_ref_Receive_or_Reply_replyTCB')
+    apply simp
+    apply (clarsimp simp: obj_at'_def)
+    done
+qed
 
 lemma threadSet_wp2_x2:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
