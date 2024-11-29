@@ -2996,8 +2996,8 @@ lemma BlockedOnSend_ep_at':
 
 lemma sym_ref_BlockedOnReceive_replyObject_linked:
   assumes sy: "sym_refs (state_refs_of' s)"
-  and vo: "valid_objs' s"
-  and st: "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
+    and vo: "valid_objs' s"
+    and st: "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
   shows "obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
 proof -
   from vo and st have re: "reply_at' ro s" by - (drule (1) tcb_in_valid_state', fastforce simp: obj_at'_def valid_tcb_state'_def)
@@ -3006,13 +3006,13 @@ proof -
     apply -
     apply (clarsimp simp: st_tcb_at'_def)
     apply (frule (1) sym_ref_Receive_or_Reply_replyTCB')
-    apply simp
+     apply simp
     apply (clarsimp simp: obj_at'_def)
     done
 qed
 
 lemma cancelIPC_threadSet_wp:
-   shows "threadSet (tcbFault_update (\<lambda>_. None)) t
+  shows "threadSet (tcbFault_update (\<lambda>_. None)) t
            \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s
              \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
 proof -
