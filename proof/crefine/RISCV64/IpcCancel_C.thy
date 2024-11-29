@@ -3073,23 +3073,11 @@ lemma x_d:
   apply (clarsimp simp: obj_at'_def)
   done
 
-lemma threadSet_wp2_x1:
-   "threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>tcb_at' t\<rbrace>"
-  by (wpsimp)
-
 lemma threadSet_wp2_x2:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
    \<lbrace>invs'\<rbrace>"
   by (wpsimp wp: threadSet_fault_invs')
 
-
-lemma threadSet_wp2_x3:
-   "threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>ready_qs_runnable\<rbrace>"
-  apply (wpsimp wp: threadSet_wp)
-  by (fastforce simp: ready_qs_runnable_def pred_tcb_at'_def obj_at'_def ps_clear_upd
-               split: if_splits)
 
 lemma threadSet_wp2_x4:
   "\<lbrace>\<lambda>s. sym_refs_asrt s\<rbrace>
@@ -3114,11 +3102,9 @@ lemma threadSet_wp2_x6:
 
 lemma threadSet_wp2:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>\<lambda>s. tcb_at' t s \<and> st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
+   \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
   by (wpsimp wp:
-    threadSet_wp2_x1
     threadSet_wp2_x2
-    threadSet_wp2_x3
     threadSet_wp2_x4
     threadSet_wp2_x5
     threadSet_wp2_x6
