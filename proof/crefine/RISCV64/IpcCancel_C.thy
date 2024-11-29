@@ -3114,7 +3114,7 @@ lemma cancelIPC_ccorres1:
    apply csymbr
    apply csymbr
 
-   apply (rule ccorres_split_nothrow) (* _novcg, _dc *)
+   apply (rule ccorres_split_nothrow)
        apply (rule threadSet_ccorres_lemma2[where P=\<top>])
         apply vcg
        apply (clarsimp simp: typ_heap_simps')
@@ -3160,8 +3160,7 @@ lemma cancelIPC_ccorres1:
        apply (clarsimp simp: typ_heap_simps ctcb_relation_x_b)
       apply ceqv
       apply csymbr
-                apply (simp only: fun_app_def list_case_If
-                                  return_bind ccorres_seq_skip)
+                apply (simp only: list_case_If)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
                 apply (rule ccorres_rhs_assoc2)
@@ -3179,8 +3178,7 @@ lemma cancelIPC_ccorres1:
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
-       apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnReceive split: thread_state.splits)
-       apply fastforce
+       apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnReceive)
       apply ceqv
                 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
