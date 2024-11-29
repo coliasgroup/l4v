@@ -2954,20 +2954,63 @@ lemma BlockedOnReceive_replyObject_no_0:
   using assms
   by (auto simp: valid_tcb_state'_def)
 
-lemma ctcb_relation_x_b:
-  "ctcb_relation tcb ctcb \<and> BlockedOnReceive bo bicg ro = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
-  unfolding ctcb_relation_def cthread_state_relation_def
-  by (cases "(tcbState tcb)", simp_all)
+(*
+lemma isBlockedOnReceive_equiv:
+  "isBlockedOnReceive st = is_BlockedOnReceive st"
+  by (case_tac st; simp add: isBlockedOnReceive_def)
 
-lemma ctcb_relation_x_c:
-  "ctcb_relation tcb ctcb \<and> BlockedOnSend bo bib bicg bicgr biic = tcbState tcb \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
-  unfolding ctcb_relation_def cthread_state_relation_def
-  by (cases "(tcbState tcb)", simp_all)
+lemma ctcb_relation_blockingObject:
+  "\<lbrakk> ctcb_relation tcb ctcb ; isBlockedOnReceive (tcbState tcb) \<or> isBlockedOnSend (tcbState tcb) \<rbrakk>
+   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb))
+      = blockingObject (tcbState tcb)"
+  apply (erule disjE;
+          case_tac "tcbState tcb";
+            clarsimp simp:
+              isTS_defs ctcb_relation_def cthread_state_relation_def)+
+  done
 
-lemma ctcb_relation_x_d:
-  "ctcb_relation tcb ctcb \<and> BlockedOnReceive bo bicg ro = tcbState tcb \<Longrightarrow> replyObject_CL (thread_state_lift (tcbState_C ctcb)) = option_to_0 ro"
-  unfolding ctcb_relation_def cthread_state_relation_def
-  by (cases "(tcbState tcb)", simp_all)
+lemma ctcb_relation_blockingObject2:
+  "\<lbrakk> ctcb_relation tcb ctcb ; (\<exists>bo bicg ro. BlockedOnReceive bo bicg ro = tcbState tcb) \<or> (\<exists>bo bib bicg bicgr biic. BlockedOnSend bo bib bicg bicgr biic = tcbState tcb) \<rbrakk>
+   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb))
+      = blockingObject (tcbState tcb)"
+  apply (erule disjE;
+          case_tac "tcbState tcb";
+            clarsimp simp:
+              isTS_defs ctcb_relation_def cthread_state_relation_def)+
+  done
+
+lemma ctcb_relation_blockingObject3:
+  "\<lbrakk> ctcb_relation tcb ctcb ; BlockedOnReceive bo bicg ro = tcbState tcb \<rbrakk>
+   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb))
+      = blockingObject (tcbState tcb)"
+  apply (
+          case_tac "tcbState tcb";
+            clarsimp simp:
+              isTS_defs ctcb_relation_def cthread_state_relation_def)+
+  done
+*)
+
+lemma ctcb_relation_BlockedOnReceive_blockingObject:
+  assumes "ctcb_relation tcb ctcb"
+  assumes "BlockedOnReceive bo bicg ro = tcbState tcb"
+  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
+  using assms
+  by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
+
+lemma ctcb_relation_BlockedOnReceive_replyObject:
+  assumes "ctcb_relation tcb ctcb"
+  assumes "BlockedOnReceive bo bicg ro = tcbState tcb"
+  shows "replyObject_CL (thread_state_lift (tcbState_C ctcb)) = option_to_0 ro"
+  using assms
+  by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
+
+lemma ctcb_relation_BlockedOnSend_blockingObject:
+  assumes "ctcb_relation tcb ctcb"
+  assumes "BlockedOnSend bo bib bicg bicgr biic = tcbState tcb"
+  shows
+    "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
+  using assms
+  by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 lemma x_a:
   "\<lbrakk>
@@ -3157,7 +3200,7 @@ lemma cancelIPC_ccorres1:
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
-       apply (clarsimp simp: typ_heap_simps ctcb_relation_x_b)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnReceive_blockingObject)
       apply ceqv
       apply csymbr
                 apply (simp only: list_case_If)
@@ -3196,7 +3239,7 @@ apply (rule ccorres_rhs_assoc)
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
-       apply (clarsimp simp: typ_heap_simps ctcb_relation_x_d)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnReceive_replyObject)
       apply ceqv
 apply csymbr
                  apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
@@ -3304,7 +3347,7 @@ apply csymbr
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
-       apply (clarsimp simp: typ_heap_simps ctcb_relation_x_c)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnSend_blockingObject)
       apply ceqv
 
         apply csymbr
