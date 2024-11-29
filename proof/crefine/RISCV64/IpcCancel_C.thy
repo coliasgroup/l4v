@@ -3014,16 +3014,20 @@ lemma ctcb_relation_BlockedOnSend_blockingObject:
 
 
 lemma valid_BlockedOnReceive_ep_at':
-  "\<lbrakk>
-     valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s\<rbrakk>
-       \<Longrightarrow> ep_at' bo s"
+  assumes "valid_objs' s"
+  assumes "st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s"
+  shows "ep_at' bo s"
+  using assms
+  apply -
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
 lemma valid_BlockedOnSend_ep_at':
-  "\<lbrakk>
-     valid_objs' s; st_tcb_at' ((=) (BlockedOnSend x xa xb xc xd)) t s\<rbrakk>
-       \<Longrightarrow> ep_at' x s"
+  assumes "valid_objs' s"
+  assumes "st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) t s"
+  shows "ep_at' bo s"
+  using assms
+  apply -
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
