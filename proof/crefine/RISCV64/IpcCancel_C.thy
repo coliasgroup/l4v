@@ -3237,7 +3237,7 @@ apply (rule ccorres_rhs_assoc)
       apply ceqv
 apply csymbr
 
-      apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
+      apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm)
 
                     apply wpc
                       \<comment> \<open>None\<close>
