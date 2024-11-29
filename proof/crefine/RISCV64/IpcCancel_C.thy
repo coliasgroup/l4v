@@ -3380,7 +3380,14 @@ apply ccorres_rewrite
 
     apply vcg
 
-  apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> st_tcb_at' ((=) threadState) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
+  apply (rule_tac
+          Q'="\<lambda>rv s.
+              tcb_at' thread s
+              \<and> st_tcb_at' ((=) threadState) thread s
+              \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s
+              \<and> sym_refs_asrt s
+              \<and> ready_qs_runnable s"
+        in hoare_strengthen_post)
 
    apply (wp add: threadSet_wp2)
 
