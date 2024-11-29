@@ -3080,7 +3080,7 @@ lemma cancelIPC_ccorres1:
         apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType)
        apply ceqv
       apply wpc
-             \<comment> \<open>BlockedOnReceive\<close>
+            \<comment> \<open>BlockedOnReceive\<close>
              apply (rename_tac bo bicg ro)
              apply (unfold blockedCancelIPC_def)
              apply (simp add: ccorres_cond_iffs getBlockingObject_BlockedOnReceive_return return_bind)
@@ -3172,13 +3172,13 @@ lemma cancelIPC_ccorres1:
               apply (frule (1) tcb_at_h_t_valid)
               apply simp
              apply vcg
-        \<comment> \<open>BlockedOnReply case\<close>
+          \<comment> \<open>BlockedOnReply case\<close>
             apply (simp add: ThreadState_defs ccorres_cond_iffs
                              Collect_False Collect_True word_sle_def
                        cong: call_ignore_cong del: Collect_const)
             apply simp
             apply (ctac add: reply_remove_tcb_ccorres)
-           \<comment> \<open>BlockedOnNotification\<close>
+          \<comment> \<open>BlockedOnNotification\<close>
            apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                       cong: call_ignore_cong)
            apply (rule ccorres_symb_exec_r)
@@ -3188,15 +3188,15 @@ lemma cancelIPC_ccorres1:
             apply (rule subset_refl)
            apply (rule conseqPre, vcg)
            apply clarsimp
-          \<comment> \<open>Running, Inactive, and Idle\<close>
+         \<comment> \<open>Running, Inactive, and Idle\<close>
           apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                      cong: call_ignore_cong,
                  rule ccorres_return_Skip)+
 
-       \<comment> \<open>BlockedOnSend\<close>
+      \<comment> \<open>BlockedOnSend\<close>
        apply (simp add: word_sle_def ccorres_cond_iffs
                   cong: call_ignore_cong)
-       \<comment> \<open>clag\<close>
+      \<comment> \<open>clag\<close>
        apply (rename_tac bo bib bicg bicgr biic)
        apply (unfold getBlockingObject_BlockedOnSend_return)
        apply (simp only: return_bind)
@@ -3248,7 +3248,7 @@ lemma cancelIPC_ccorres1:
       apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                  cong: call_ignore_cong,
              rule ccorres_return_Skip)
-     \<comment> \<open>Post wp proofs\<close>
+    \<comment> \<open>Post wp proofs\<close>
      apply vcg
     apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s
                                \<and> st_tcb_at' ((=) threadState) thread s
