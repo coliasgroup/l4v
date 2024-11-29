@@ -508,7 +508,8 @@ lemma ctcb_relation_unat_dom_eq:
 
 lemma threadSet_queued_ccorres [corres]:
   shows "ccorres dc xfdc (tcb_at' thread)
-        {s. v64_' s = from_bool v \<and> thread_state_ptr_' s = Ptr &(tcb_ptr_to_ctcb_ptr thread\<rightarrow>[''tcbState_C''])} []
+        {s. v64_' s = from_bool v
+            \<and> thread_state_ptr_' s = Ptr &(tcb_ptr_to_ctcb_ptr thread\<rightarrow>[''tcbState_C''])} []
         (threadSet (tcbQueued_update (\<lambda>_. v)) thread)
         (Call thread_state_ptr_set_tcbQueued_'proc)"
   apply (rule threadSet_corres_lemma)
@@ -3015,12 +3016,12 @@ qed
 
 lemma cancelIPC_threadSet_wp:
   shows "threadSet (tcbFault_update (\<lambda>_. None)) t
-           \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s
-             \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
+         \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s
+              \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
 proof -
   have sy: "threadSet (tcbFault_update (\<lambda>_. None)) t \<lbrace>sym_refs_asrt\<rbrace>"
-    by - (unfold sym_refs_asrt_def, wpsimp wp: threadSet_state_refs_of',
-            simp, (force simp: tcb_bound_refs'_def)+)
+    by - (unfold sym_refs_asrt_def, wpsimp wp: threadSet_state_refs_of', simp,
+          (force simp: tcb_bound_refs'_def)+)
   show ?thesis
     by (wpsimp wp: threadSet_fault_invs' threadSet_pred_tcb_no_state
                     weak_sch_act_wf_lift tcb_in_cur_domain'_lift sy)
@@ -3069,10 +3070,10 @@ lemma cancelIPC_ccorres1:
        apply (case_tac "tcbState tcb", simp_all add: is_cap_fault_def)[1]
       apply ceqv
      apply (rule_tac xf'=ret__unsigned_longlong_'
-              and val="thread_state_to_tsType threadState"
-              and R="st_tcb_at' ((=) threadState) thread"
-              and R'=UNIV
-              in ccorres_symb_exec_r_known_rv)
+                 and val="thread_state_to_tsType threadState"
+                 and R="st_tcb_at' ((=) threadState) thread"
+                 and R'=UNIV
+                 in ccorres_symb_exec_r_known_rv)
         apply (rule conseqPre, vcg)
         apply (clarsimp simp: st_tcb_at'_def)
         apply (frule (1) obj_at_cslift_tcb)
@@ -3089,10 +3090,10 @@ lemma cancelIPC_ccorres1:
              apply (rule ccorres_pre_getEndpoint)
              apply (rule ccorres_assert)
              apply (rule_tac xf'=ret__unsigned_longlong_'
-                      and val="bo"
-                      and R="st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
-                      and R'=UNIV
-                      in ccorres_symb_exec_r_known_rv)
+                         and val="bo"
+                         and R="st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
+                         and R'=UNIV
+                         in ccorres_symb_exec_r_known_rv)
                 apply (rule conseqPre, vcg)
                 apply (clarsimp simp: st_tcb_at'_def)
                 apply (frule (1) obj_at_cslift_tcb)
@@ -3106,10 +3107,10 @@ lemma cancelIPC_ccorres1:
               apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
                 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
                 apply (rule_tac xf'=ret__unsigned_longlong_'
-                         and val="thread_state_to_tsType threadState"
-                         and R="st_tcb_at' ((=) threadState) thread"
-                         and R'=UNIV
-                         in ccorres_symb_exec_r_known_rv)
+                            and val="thread_state_to_tsType threadState"
+                            and R="st_tcb_at' ((=) threadState) thread"
+                            and R'=UNIV
+                            in ccorres_symb_exec_r_known_rv)
                    apply (rule conseqPre, vcg)
                    apply (clarsimp simp: st_tcb_at'_def)
                    apply (frule (1) obj_at_cslift_tcb)
@@ -3119,10 +3120,10 @@ lemma cancelIPC_ccorres1:
                  apply (rule ccorres_rhs_assoc)
                  apply (rule ccorres_rhs_assoc)
                  apply (rule_tac xf'=ret__unsigned_longlong_'
-                          and val="option_to_0 ro"
-                          and R="st_tcb_at' ((=) threadState) thread"
-                          and R'=UNIV
-                          in ccorres_symb_exec_r_known_rv)
+                             and val="option_to_0 ro"
+                             and R="st_tcb_at' ((=) threadState) thread"
+                             and R'=UNIV
+                             in ccorres_symb_exec_r_known_rv)
                     apply (rule conseqPre, vcg)
                     apply (clarsimp simp: st_tcb_at'_def)
                     apply (frule (1) obj_at_cslift_tcb)
@@ -3142,8 +3143,8 @@ lemma cancelIPC_ccorres1:
                  apply vcg
                 apply vcg
                apply (rule_tac
-                       Q'="\<lambda>rv s.
-                             st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
+                        Q'="\<lambda>rv s.
+                               st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
                                \<and> tcb_at' thread s
                                \<and> valid_objs' s
                                \<and> weak_sch_act_wf (ksSchedulerAction s) s
@@ -3154,7 +3155,7 @@ lemma cancelIPC_ccorres1:
                                \<and> valid_tcbs' s
                                \<and> (ro = None \<longrightarrow> True)
                                \<and> (\<forall>x. ro = Some x \<longrightarrow> obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s)"
-                       in hoare_post_imp)
+                        in hoare_post_imp)
                 apply clarsimp
                 apply (rule conjI)
                  apply (case_tac ro)
@@ -3205,10 +3206,10 @@ lemma cancelIPC_ccorres1:
        apply (rule ccorres_pre_getEndpoint)
        apply (rule ccorres_assert)
        apply (rule_tac xf'=ret__unsigned_longlong_'
-                and val="bo"
-                and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
-                and R'=UNIV
-                in ccorres_symb_exec_r_known_rv)
+                   and val="bo"
+                   and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
+                   and R'=UNIV
+                   in ccorres_symb_exec_r_known_rv)
           apply (rule conseqPre, vcg)
           apply (clarsimp simp: st_tcb_at'_def)
           apply (frule (1) obj_at_cslift_tcb)
@@ -3222,14 +3223,15 @@ lemma cancelIPC_ccorres1:
         apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
           apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
           apply (rule_tac xf'=ret__unsigned_longlong_'
-                   and val="scast ThreadState_BlockedOnSend"
-                   and R="st_tcb_at' ((=) threadState) thread"
-                   and R'=UNIV
-                   in ccorres_symb_exec_r_known_rv)
+                      and val="scast ThreadState_BlockedOnSend"
+                      and R="st_tcb_at' ((=) threadState) thread"
+                      and R'=UNIV
+                      in ccorres_symb_exec_r_known_rv)
              apply (rule conseqPre, vcg)
              apply (clarsimp simp: st_tcb_at'_def)
              apply (frule (1) obj_at_cslift_tcb)
-             apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnSend)
+             apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
+                                   thread_state_to_tsType_eq_BlockedOnSend)
              apply fastforce
             apply ceqv
            apply (simp only: ThreadState_defs)
@@ -3248,13 +3250,11 @@ lemma cancelIPC_ccorres1:
              rule ccorres_return_Skip)
      \<comment> \<open>Post wp proofs\<close>
      apply vcg
-    apply (rule_tac
-            Q'="\<lambda>rv s.
-                tcb_at' thread s
-                \<and> st_tcb_at' ((=) threadState) thread s
-                \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s
-                \<and> sym_refs_asrt s"
-          in hoare_strengthen_post)
+    apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s
+                               \<and> st_tcb_at' ((=) threadState) thread s
+                               \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s
+                               \<and> sym_refs_asrt s"
+                in hoare_strengthen_post)
      apply (wp add: cancelIPC_threadSet_wp)
     apply clarsimp
     apply (frule obj_at_valid_objs', clarsimp+)
@@ -3266,13 +3266,16 @@ lemma cancelIPC_ccorres1:
      apply clarsimp
      apply (rule conjI)
       apply (case_tac ro)
-       apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
+       apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
+                             sym_ref_BlockedOnReceive_replyObject_linked)
   subgoal by (auto simp: obj_at'_def  pred_tcb_at'_def valid_ep'_def isTS_defs
                    split: thread_state.splits)
-      apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
+      apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
+                            sym_ref_BlockedOnReceive_replyObject_linked)
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs
                    split: thread_state.splits)
-     apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
+     apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
+                           sym_ref_BlockedOnReceive_replyObject_linked)
      apply (case_tac ro)
       apply clarsimp
       apply (frule (3) ep_blocked_in_queueD_recv)
@@ -3295,7 +3298,8 @@ lemma cancelIPC_ccorres1:
      apply (clarsimp simp: sym_refs_asrt_def invs'_implies)
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
                    split: thread_state.splits endpoint.splits)
-    apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' sym_ref_BlockedOnReceive_replyObject_linked)
+    apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
+                          sym_ref_BlockedOnReceive_replyObject_linked)
     apply (frule (3) ep_blocked_in_queueD_send)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
