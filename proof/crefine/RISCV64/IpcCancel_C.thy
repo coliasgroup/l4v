@@ -3037,9 +3037,10 @@ lemma threadSet_wp2_x6:
   apply (wpsimp wp: threadSet_pred_tcb_no_state)
   done
 
-lemma threadSet_wp2:
+lemma cancelIPC_threadSet_wp:
    "threadSet (tcbFault_update (\<lambda>_. None)) t
-   \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
+   \<lbrace>\<lambda>s. st_tcb_at' ((=) ts) t s \<and> invs' s
+         \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s\<rbrace>"
   by (wpsimp wp:
     threadSet_wp2_x2
     threadSet_wp2_x4
@@ -3311,7 +3312,7 @@ apply ccorres_rewrite
               \<and> sym_refs_asrt s"
         in hoare_strengthen_post)
 
-   apply (wp add: threadSet_wp2)
+   apply (wp add: cancelIPC_threadSet_wp)
 
     apply clarsimp
 
