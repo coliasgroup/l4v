@@ -3012,7 +3012,6 @@ lemma ctcb_relation_BlockedOnSend_blockingObject:
   using assms
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
-
 lemma valid_BlockedOnReceive_ep_at':
   assumes "valid_objs' s"
   assumes "st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s"
