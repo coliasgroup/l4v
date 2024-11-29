@@ -3223,10 +3223,8 @@ lemma cancelIPC_ccorres1:
        apply (frule (1) obj_at_cslift_tcb)
        apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnReceive)
       apply ceqv
-                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
    apply ccorres_rewrite
-                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 apply (rule ccorres_rhs_assoc)
 apply (rule ccorres_rhs_assoc)
 
@@ -3242,7 +3240,6 @@ apply (rule ccorres_rhs_assoc)
        apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnReceive_replyObject)
       apply ceqv
 apply csymbr
-                 apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
       apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm) (* gen_asm2 ? *)
 
@@ -3374,7 +3371,6 @@ apply csymbr
        apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnSend split: thread_state.splits)
        apply fastforce
       apply ceqv
-                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
 apply (simp only: ThreadState_defs)
 apply ccorres_rewrite
@@ -3385,7 +3381,6 @@ apply (simp add: ThreadState_defs)
 apply (simp add: ThreadState_defs)
 *)
 
-                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
 
 
               apply simp
