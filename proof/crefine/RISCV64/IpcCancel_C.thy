@@ -3012,12 +3012,6 @@ lemma ctcb_relation_BlockedOnSend_blockingObject:
   using assms
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
-lemma x_a:
-  "\<lbrakk>
-     valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
-       \<Longrightarrow> reply_at' ro s"
-  apply (drule (1) tcb_in_valid_state')
-  by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
 lemma f_a:
   "\<lbrakk>
@@ -3033,23 +3027,12 @@ lemma f_b:
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
-lemma x_b:
-  "\<lbrakk> no_0_obj' s; reply_at' ro s\<rbrakk>
-       \<Longrightarrow> ro \<noteq> 0"
-proof
-  apply_end (simp add: obj_at'_def no_0_obj'_def)
-qed
-
-lemma x_c:
+lemma x_a:
   "\<lbrakk>
-      valid_objs' s;
-      no_0_obj' s;
-      st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) t s
-  \<rbrakk> \<Longrightarrow> ro \<noteq> 0"
-  apply (drule x_a)
-  apply simp
-  apply (simp add: x_b)
-  done
+     valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive bo bicg (Some ro))) t s\<rbrakk>
+       \<Longrightarrow> reply_at' ro s"
+  apply (drule (1) tcb_in_valid_state')
+  by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
 lemma x_d_x:
   "\<lbrakk> st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s
