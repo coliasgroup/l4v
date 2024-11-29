@@ -3367,14 +3367,6 @@ apply csymbr
 apply (simp only: ThreadState_defs)
 apply ccorres_rewrite
 
-(*
-   apply (rule ccorres_Cond_rhs_Seq)
-apply (simp add: ThreadState_defs)
-apply (simp add: ThreadState_defs)
-*)
-
-
-
             apply (ctac add: setThreadState_ccorres)
              apply vcg
             apply wp
