@@ -3227,7 +3227,7 @@ apply (rule ccorres_rhs_assoc)
 
    apply (rule_tac xf'=ret__unsigned_longlong_'
             and val="option_to_0 ro"
-            and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
+            and R="st_tcb_at' ((=) threadState) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
        apply (rule conseqPre, vcg)
