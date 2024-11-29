@@ -3385,7 +3385,6 @@ apply ccorres_rewrite
 
   apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> st_tcb_at' ((=) threadState) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
 
-
    apply (wp add: threadSet_wp2)
 
     apply clarsimp
@@ -3432,22 +3431,13 @@ apply (rule conjI)
           apply (clarsimp simp: sym_refs_asrt_def invs'_implies)
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
                      split: thread_state.splits endpoint.splits)
-
-          apply (clarsimp simp:
-          sym_refs_asrt_def
-          invs'_implies
-          invs_valid_objs'
-          valid_objs'_valid_tcbs'
-          x_d
-          )
+          apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs' x_d)
     apply (frule (3) ep_blocked_in_queueD_send)
     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
     subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def
                      split: thread_state.splits endpoint.splits)
-
   apply vcg
-
-  apply (auto simp: isTS_defs cthread_state_relation_def typ_heap_simps weak_sch_act_wf_def)
+  apply (auto simp:  cthread_state_relation_def typ_heap_simps )
 done
 
 end
