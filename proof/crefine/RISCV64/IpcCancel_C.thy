@@ -3174,7 +3174,6 @@ lemma cancelIPC_ccorres1:
             and R="st_tcb_at' ((=) threadState) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
-        apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
@@ -3196,7 +3195,6 @@ lemma cancelIPC_ccorres1:
             and R="st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
-        apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
@@ -3217,7 +3215,6 @@ lemma cancelIPC_ccorres1:
             and R="st_tcb_at' ((=) threadState) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
-        apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
@@ -3233,7 +3230,6 @@ apply (rule ccorres_rhs_assoc)
             and R="pspace_bounded' and valid_objs' and no_0_obj' and st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
-        apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
@@ -3273,11 +3269,10 @@ apply csymbr
                 "
                 in hoare_post_imp)
 
-                apply (clarsimp simp: BlockedOnReceive_replyObject_no_0 tcb_in_valid_state')
+                apply clarsimp
                 apply (rule conjI)
                 
                 apply (case_tac ro)
-                apply simp
                 apply simp
                 apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
                 apply (rule_tac x=bo in exI)
@@ -3288,7 +3283,6 @@ apply csymbr
                 apply (simp add: BlockedOnReceive_replyObject_no_0)
                 
                 apply (subst option.split[symmetric, where P=id, simplified])
-                apply (wp )
                                       
                 apply (wp hoare_case_option_wp2)
                 
@@ -3340,7 +3334,6 @@ apply csymbr
             and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
-        apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
@@ -3348,7 +3341,7 @@ apply csymbr
       apply ceqv
 
         apply csymbr
-          apply (simp only: fun_app_def list_case_If return_bind ccorres_seq_skip)
+          apply (simp only: list_case_If)
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
           apply (rule ccorres_rhs_assoc2)
@@ -3364,11 +3357,10 @@ apply csymbr
             and R="st_tcb_at' ((=) threadState) thread"
             and R'=UNIV
             in ccorres_symb_exec_r_known_rv)
-        apply clarsimp
        apply (rule conseqPre, vcg)
        apply (clarsimp simp: st_tcb_at'_def)
        apply (frule (1) obj_at_cslift_tcb)
-       apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnSend split: thread_state.splits)
+       apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnSend)
        apply fastforce
       apply ceqv
 
@@ -3383,14 +3375,12 @@ apply (simp add: ThreadState_defs)
 
 
 
-              apply simp
             apply (ctac add: setThreadState_ccorres)
              apply vcg
             apply wp
            apply simp
 
-        apply clarsimp
-apply (simp add: ThreadState_defs)
+        apply (clarsimp simp: ThreadState_defs)
         apply (frule (1) tcb_at_h_t_valid)
         apply simp
 
@@ -3404,7 +3394,6 @@ apply (simp add: ThreadState_defs)
     \<comment> \<open>Post wp proofs\<close>
 
     apply vcg
-   apply clarsimp
 
   apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s \<and> st_tcb_at' ((=) threadState) thread s \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s \<and> sym_refs_asrt s \<and> ready_qs_runnable s" in hoare_strengthen_post)
 
