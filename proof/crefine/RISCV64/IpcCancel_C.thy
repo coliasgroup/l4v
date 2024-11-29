@@ -3251,23 +3251,20 @@ apply csymbr
                    apply vcg
                    apply vcg
 
-                apply (rule_tac Q'="
-                \<lambda>rv s.
-                st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
-                \<and> tcb_at' thread s
-                \<and> valid_objs' s
-                \<and> weak_sch_act_wf (ksSchedulerAction s) s
-                \<and> valid_tcb_state' Structures_H.thread_state.Inactive s
-                \<and> no_0_obj' s
-                \<and> pspace_aligned' s
-                \<and> pspace_distinct' s
-                \<and> pspace_bounded' s
-                \<and> valid_tcbs' s
-                \<and> ((ro = None \<longrightarrow> True) \<and> (\<forall>x. ro = Some x \<longrightarrow>
-                obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s
-                ))
-                "
-                in hoare_post_imp)
+                apply (rule_tac
+                        Q'="\<lambda>rv s.
+                              st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
+                                \<and> tcb_at' thread s
+                                \<and> valid_objs' s
+                                \<and> weak_sch_act_wf (ksSchedulerAction s) s
+                                \<and> no_0_obj' s
+                                \<and> pspace_aligned' s
+                                \<and> pspace_distinct' s
+                                \<and> pspace_bounded' s
+                                \<and> valid_tcbs' s
+                                \<and> (ro = None \<longrightarrow> True)
+                                \<and> (\<forall>x. ro = Some x \<longrightarrow> obj_at' (\<lambda>reply. replyTCB reply = Some thread) x s)"
+                        in hoare_post_imp)
 
                 apply clarsimp
                 apply (rule conjI)
