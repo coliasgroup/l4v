@@ -2917,8 +2917,9 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_tcbs' and pspace_aligned' and pspace_distinct'
-       and st_tcb_at' (\<lambda>st. \<exists>oref cg. st = Structures_H.BlockedOnReceive oref cg (Some replyPtr)
-                                    \<or> st = Structures_H.BlockedOnReply (Some replyPtr)) tcbPtr
+       and st_tcb_at' (\<lambda>st. (\<exists>oref cg. st = Structures_H.BlockedOnReceive oref cg (Some replyPtr))
+                            \<or> st = Structures_H.BlockedOnReply (Some replyPtr))
+                      tcbPtr
        and obj_at' (\<lambda>reply. replyTCB reply = Some tcbPtr) replyPtr)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
