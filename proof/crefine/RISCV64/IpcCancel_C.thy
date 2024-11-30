@@ -508,8 +508,7 @@ lemma ctcb_relation_unat_dom_eq:
 
 lemma threadSet_queued_ccorres [corres]:
   shows "ccorres dc xfdc (tcb_at' thread)
-        {s. v64_' s = from_bool v
-            \<and> thread_state_ptr_' s = Ptr &(tcb_ptr_to_ctcb_ptr thread\<rightarrow>[''tcbState_C''])} []
+        {s. v64_' s = from_bool v \<and> thread_state_ptr_' s = Ptr &(tcb_ptr_to_ctcb_ptr thread\<rightarrow>[''tcbState_C''])} []
         (threadSet (tcbQueued_update (\<lambda>_. v)) thread)
         (Call thread_state_ptr_set_tcbQueued_'proc)"
   apply (rule threadSet_corres_lemma)
