@@ -3004,7 +3004,7 @@ proof -
     by - (drule (1) tcb_in_valid_state', fastforce simp: obj_at'_def valid_tcb_state'_def)
   from st have ko:
     "\<exists>tcb. ko_at' tcb thread s \<and> tcbState tcb = BlockedOnReceive bo bicg (Some ro)"
-    by - (clarsimp simp: st_tcb_at'_def obj_at'_def)
+    by (clarsimp simp: st_tcb_at'_def obj_at'_def)
   from sy and vo and st and re and ko show ?thesis
     apply -
     apply (clarsimp simp: st_tcb_at'_def)
@@ -3024,17 +3024,17 @@ proof -
           (force simp: tcb_bound_refs'_def)+)
   show ?thesis
     by (wpsimp wp: threadSet_fault_invs' threadSet_pred_tcb_no_state
-                    weak_sch_act_wf_lift tcb_in_cur_domain'_lift sy)
+                   weak_sch_act_wf_lift tcb_in_cur_domain'_lift sy)
 qed
 
 lemma thread_state_to_tsType_eq_BlockedOnReceive:
   "(thread_state_to_tsType ts = scast ThreadState_BlockedOnReceive)
-       = (\<exists>bo bicg ro. ts = BlockedOnReceive bo bicg ro)"
+      = (\<exists>bo bicg ro. ts = BlockedOnReceive bo bicg ro)"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma thread_state_to_tsType_eq_BlockedOnSend:
   "(thread_state_to_tsType ts = scast ThreadState_BlockedOnSend)
-       = (\<exists>bo bib bicg bicgr biic. ts = BlockedOnSend bo bib bicg bicgr biic)"
+      = (\<exists>bo bib bicg bicgr biic. ts = BlockedOnSend bo bib bicg bicgr biic)"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma cancelIPC_ccorres1:
