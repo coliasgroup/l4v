@@ -2739,7 +2739,8 @@ lemma epQueue_tail_sign[simp]:
 (* Clag from cancelSignal_ccorres_helper *)
 
 lemma cancelIPC_ccorres_helper:
-  "ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
+  "\<lbrakk>epptr = Ptr ep\<rbrakk> \<Longrightarrow>
+   ccorres dc xfdc (invs' and (\<lambda>s. sym_refs (state_refs_of' s)) and
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
                             \<and> blockingObject st = ep) thread
         and ko_at' ep' ep)
@@ -2747,11 +2748,11 @@ lemma cancelIPC_ccorres_helper:
         []
         (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
                          else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-        (\<acute>queue :== CALL ep_ptr_get_queue(Ptr ep);;
+        (\<acute>queue :== CALL ep_ptr_get_queue(epptr);;
          \<acute>queue :== CALL tcbEPDequeue(tcb_ptr_to_ctcb_ptr thread,\<acute>queue);;
-          CALL ep_ptr_set_queue(Ptr ep,\<acute>queue);;
+          CALL ep_ptr_set_queue(epptr,\<acute>queue);;
           IF head_C \<acute>queue = NULL THEN
-              CALL endpoint_ptr_set_state(Ptr ep,scast EPState_Idle)
+              CALL endpoint_ptr_set_state(epptr,scast EPState_Idle)
           FI)"
   apply (rule ccorres_from_vcg)
   apply (rule allI)
