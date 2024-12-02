@@ -2914,6 +2914,36 @@ lemma reply_remove_tcb_ccorres:
     (replyRemoveTCB tptr) (Call reply_remove_tcb_'proc)"
 sorry (* FIXME RT: reply_remove_tcb_corres *)
 
+lemma map_to_replies_from_reply_at:
+  "reply_at' p s \<Longrightarrow> map_to_replies (ksPSpace s) p \<noteq> None"
+  unfolding obj_at'_def
+  by clarsimp
+
+lemma reply_at_h_t_valid:
+  "\<lbrakk> reply_at' replyPtr s; (s, s') \<in> rf_sr \<rbrakk> \<Longrightarrow> s' \<Turnstile>\<^sub>c PTR(reply_C) replyPtr"
+  apply (drule cmap_relation_reply)
+  apply (drule map_to_replies_from_reply_at)
+  apply (clarsimp simp add: cmap_relation_def)
+  apply (drule (1) bspec [OF _ domI])
+  apply (clarsimp simp add: dom_def image_def)
+  apply (drule equalityD1)
+  apply (drule subsetD)
+   apply simp
+   apply (rule exI [where x = replyPtr])
+   apply simp
+  apply (clarsimp simp: typ_heap_simps)
+  done
+
+lemma c_guard_abs_reply:
+  "\<forall>s s'. (s, s') \<in> rf_sr \<and> reply_at' (ptr_val p) s \<and> True
+              \<longrightarrow> s' \<Turnstile>\<^sub>c (p :: reply_C ptr)"
+  apply clarsimp
+  apply (drule (1) reply_at_h_t_valid)
+  apply simp
+  done
+
+lemmas ccorres_move_c_guard_reply = ccorres_move_c_guards[OF c_guard_abs_reply]
+
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_tcbs' and pspace_aligned' and pspace_distinct'
@@ -2924,7 +2954,7 @@ lemma reply_unlink_ccorres:
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_')
-  apply (rule ccorres_move_c_guard_tcb)
+  apply (rule ccorres_move_c_guard_reply)
   apply (clarsimp simp: getReply_def liftM_def)
 
   apply (clarsimp simp: getReply_def liftM_def assert_opt_def )
