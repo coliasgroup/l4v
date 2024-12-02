@@ -2954,6 +2954,9 @@ lemma reply_unlink_ccorres:
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_')
+
+
+
   apply (rule ccorres_move_c_guard_reply)
   apply (clarsimp simp: getReply_def liftM_def)
 
