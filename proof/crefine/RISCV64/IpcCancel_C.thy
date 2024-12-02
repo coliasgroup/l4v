@@ -2944,6 +2944,14 @@ lemma c_guard_abs_reply:
 
 lemmas ccorres_move_c_guard_reply = ccorres_move_c_guards[OF c_guard_abs_reply]
 
+lemmas getObject_return_reply
+    = getObject_return[OF meta_eq_to_obj_eq, OF loadObject_reply,
+                       unfolded objBits_simps, simplified]
+
+lemma liftM_getObject_return_reply:
+  "ko_at' v p s \<Longrightarrow>  liftM f (getObject p) s = return (f (v::reply)) s"
+  by (simp add: liftM_def bind_def getObject_return_reply return_def objBits_defs)
+
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_tcbs' and pspace_aligned' and pspace_distinct'
@@ -2954,6 +2962,11 @@ lemma reply_unlink_ccorres:
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_')
+  apply (clarsimp simp: getReply_def)
+
+  apply (drule obj_at_ko_at', clarsimp)
+
+  apply (clarsimp simp: obj_at'_def liftM_getObject_return_reply)
 
 
 
