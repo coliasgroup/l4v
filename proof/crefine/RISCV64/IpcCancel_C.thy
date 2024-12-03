@@ -2962,6 +2962,18 @@ lemma reply_unlink_ccorres:
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_')
+  apply (rule ccorres_move_c_guard_reply)
+
+  apply (rule monadic_rewrite_ccorres_assemble[OF _ liftM_getObject_return_reply,rotated])
+
+
+   apply (rule monadic_rewrite_ccorres_assemble)
+
+
+  apply (rule monadic_rewrite_ccorres_assemble[OF _ liftM_getObject_return_reply,rotated], simp)
+
+  apply (rule liftM_getObject_return_reply)
+
   apply (clarsimp simp: getReply_def)
 
   apply (drule obj_at_ko_at', clarsimp)
@@ -2970,7 +2982,6 @@ lemma reply_unlink_ccorres:
 
 
 
-  apply (rule ccorres_move_c_guard_reply)
   apply (clarsimp simp: getReply_def liftM_def)
 
   apply (clarsimp simp: getReply_def liftM_def assert_opt_def )
