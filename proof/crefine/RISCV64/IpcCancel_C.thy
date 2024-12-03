@@ -2949,7 +2949,7 @@ lemmas getObject_return_reply
                        unfolded objBits_simps, simplified]
 
 lemma liftM_getObject_return_reply:
-  "ko_at' v p s \<Longrightarrow>  liftM f (getObject p) s = return (f (v::reply)) s"
+  "ko_at' v p s \<Longrightarrow> liftM f (getObject p) s = return (f (v::reply)) s"
   by (simp add: liftM_def bind_def getObject_return_reply return_def objBits_defs)
 
 lemma reply_unlink_ccorres:
