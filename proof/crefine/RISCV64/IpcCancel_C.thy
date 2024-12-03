@@ -2940,46 +2940,46 @@ lemma reply_remove_ccorres:
 sorry (* FIXME RT: reply_remove_ccorres *)
 
 lemma getBlockingObject_BlockedOnReceive_return:
-  "(getBlockingObject (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) = return bo"
+  "(getBlockingObject (Structures_H.thread_state.BlockedOnReceive oref cg ro)) = return oref"
   unfolding getBlockingObject_def epBlocked_def by simp
 
 lemma getBlockingObject_BlockedOnSend_return:
-  "(getBlockingObject (Structures_H.thread_state.BlockedOnSend bo bib bicg bicgr biic)) = return bo"
+  "(getBlockingObject (Structures_H.thread_state.BlockedOnSend oref badge cg cgr isc)) = return oref"
   unfolding getBlockingObject_def epBlocked_def by simp
 
 lemma BlockedOnReceive_replyObject_no_0:
   assumes "no_0_obj' s"
   assumes "valid_tcb_state' ts s"
-  assumes "ts = BlockedOnReceive bo bicg ro"
+  assumes "ts = BlockedOnReceive oref cg ro"
   shows "ro \<noteq> Some 0"
   using assms
   by (auto simp: valid_tcb_state'_def)
 
 lemma ctcb_relation_BlockedOnReceive_blockingObject:
   assumes "ctcb_relation tcb ctcb"
-  assumes "BlockedOnReceive bo bicg ro = tcbState tcb"
-  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
+  assumes "BlockedOnReceive oref cg ro = tcbState tcb"
+  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = oref"
   using assms
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 lemma ctcb_relation_BlockedOnReceive_replyObject:
   assumes "ctcb_relation tcb ctcb"
-  assumes "BlockedOnReceive bo bicg ro = tcbState tcb"
+  assumes "BlockedOnReceive oref cg ro = tcbState tcb"
   shows "replyObject_CL (thread_state_lift (tcbState_C ctcb)) = option_to_0 ro"
   using assms
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 lemma ctcb_relation_BlockedOnSend_blockingObject:
   assumes "ctcb_relation tcb ctcb"
-  assumes "BlockedOnSend bo bib bicg bicgr biic = tcbState tcb"
-  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = bo"
+  assumes "BlockedOnSend oref badge cg cgr isc = tcbState tcb"
+  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = oref"
   using assms
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 lemma BlockedOnReceive_ep_at':
   assumes "valid_objs' s"
-  assumes "st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) t s"
-  shows "ep_at' bo s"
+  assumes "st_tcb_at' ((=) (BlockedOnReceive oref cg ro)) t s"
+  shows "ep_at' oref s"
   using assms
   apply -
   apply (drule (1) tcb_in_valid_state')
@@ -2987,8 +2987,8 @@ lemma BlockedOnReceive_ep_at':
 
 lemma BlockedOnSend_ep_at':
   assumes "valid_objs' s"
-  assumes "st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) t s"
-  shows "ep_at' bo s"
+  assumes "st_tcb_at' ((=) (BlockedOnSend oref badge cg cgr isc)) t s"
+  shows "ep_at' oref s"
   using assms
   apply -
   apply (drule (1) tcb_in_valid_state')
@@ -2997,14 +2997,14 @@ lemma BlockedOnSend_ep_at':
 lemma sym_ref_BlockedOnReceive_replyObject_linked:
   assumes sy: "sym_refs (state_refs_of' s)"
   assumes vo: "valid_objs' s"
-  assumes st: "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg (Some ro))) thread s"
+  assumes st: "st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive oref cg (Some ro))) thread s"
   shows "obj_at' (\<lambda>reply. replyTCB reply = Some thread) ro s"
 proof -
   from vo and st have ra:
     "reply_at' ro s"
     by - (drule (1) tcb_in_valid_state', fastforce simp: obj_at'_def valid_tcb_state'_def)
   from st have ko:
-    "\<exists>tcb. ko_at' tcb thread s \<and> tcbState tcb = BlockedOnReceive bo bicg (Some ro)"
+    "\<exists>tcb. ko_at' tcb thread s \<and> tcbState tcb = BlockedOnReceive oref cg (Some ro)"
     by (clarsimp simp: st_tcb_at'_def obj_at'_def)
   from sy and vo and st and ra and ko show ?thesis
     apply -
@@ -3030,12 +3030,12 @@ qed
 
 lemma thread_state_to_tsType_eq_BlockedOnReceive:
   "(thread_state_to_tsType ts = scast ThreadState_BlockedOnReceive)
-      = (\<exists>bo bicg ro. ts = BlockedOnReceive bo bicg ro)"
+      = (\<exists>oref cg ro. ts = BlockedOnReceive oref cg ro)"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma thread_state_to_tsType_eq_BlockedOnSend:
   "(thread_state_to_tsType ts = scast ThreadState_BlockedOnSend)
-      = (\<exists>bo bib bicg bicgr biic. ts = BlockedOnSend bo bib bicg bicgr biic)"
+      = (\<exists>oref badge cg cgr isc. ts = BlockedOnSend oref badge cg cgr isc)"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma cancelIPC_ccorres1:
@@ -3081,7 +3081,7 @@ lemma cancelIPC_ccorres1:
        apply ceqv
       apply wpc
             \<comment> \<open>BlockedOnReceive\<close>
-             apply (rename_tac bo bicg ro)
+             apply (rename_tac oref cg ro)
              apply (unfold blockedCancelIPC_def)
              apply (simp add: ccorres_cond_iffs getBlockingObject_BlockedOnReceive_return return_bind)
              apply (rule ccorres_rhs_assoc)+
@@ -3090,8 +3090,8 @@ lemma cancelIPC_ccorres1:
              apply (rule ccorres_pre_getEndpoint)
              apply (rule ccorres_assert)
              apply (rule_tac xf'=ret__unsigned_longlong_'
-                         and val="bo"
-                         and R="st_tcb_at' ((=) (BlockedOnReceive bo bicg ro)) thread"
+                         and val="oref"
+                         and R="st_tcb_at' ((=) (BlockedOnReceive oref cg ro)) thread"
                          and R'=UNIV
                          in ccorres_symb_exec_r_known_rv)
                 apply (rule conseqPre, vcg)
@@ -3144,7 +3144,7 @@ lemma cancelIPC_ccorres1:
                 apply vcg
                apply (rule_tac
                         Q'="\<lambda>rv s.
-                               st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive bo bicg ro)) thread s
+                               st_tcb_at' ((=) (Structures_H.thread_state.BlockedOnReceive oref cg ro)) thread s
                                \<and> tcb_at' thread s
                                \<and> valid_objs' s
                                \<and> weak_sch_act_wf (ksSchedulerAction s) s
@@ -3161,8 +3161,8 @@ lemma cancelIPC_ccorres1:
                  apply (case_tac ro)
                   apply simp
                  apply (clarsimp simp: st_tcb_at'_def obj_at'_def)
-                 apply (rule_tac x=bo in exI)
-                 apply (rule_tac x=bicg in exI)
+                 apply (rule_tac x=oref in exI)
+                 apply (rule_tac x=cg in exI)
                  apply simp
                 apply (drule (1) tcb_in_valid_state')
                 apply (simp add: BlockedOnReceive_replyObject_no_0)
@@ -3200,7 +3200,7 @@ apply vcg
        apply (simp add: word_sle_def ccorres_cond_iffs
                   cong: call_ignore_cong)
       \<comment> \<open>clag\<close>
-       apply (rename_tac bo bib bicg bicgr biic)
+       apply (rename_tac oref badge cg cgr isc)
        apply (unfold getBlockingObject_BlockedOnSend_return)
        apply (simp only: return_bind)
        apply (rule ccorres_rhs_assoc)+
@@ -3209,8 +3209,8 @@ apply vcg
        apply (rule ccorres_pre_getEndpoint)
        apply (rule ccorres_assert)
        apply (rule_tac xf'=ret__unsigned_longlong_'
-                   and val="bo"
-                   and R="st_tcb_at' ((=) (BlockedOnSend bo bib bicg bicgr biic)) thread"
+                   and val="oref"
+                   and R="st_tcb_at' ((=) (BlockedOnSend oref badge cg cgr isc)) thread"
                    and R'=UNIV
                    in ccorres_symb_exec_r_known_rv)
           apply (rule conseqPre, vcg)
@@ -3266,7 +3266,7 @@ apply vcg
     apply (frule obj_at_valid_objs', clarsimp+)
     apply (clarsimp simp: valid_obj'_def valid_tcb'_def valid_tcb_state'_def invs_valid_objs' BlockedOnReceive_ep_at' )
     apply (rule conjI, clarsimp)
-     apply (rename_tac bo bicg ro)
+     apply (rename_tac oref cg ro)
      apply (rule conjI)
       apply (clarsimp simp: invs_valid_objs' BlockedOnReceive_ep_at')
      apply clarsimp
