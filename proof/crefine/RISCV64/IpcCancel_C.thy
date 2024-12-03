@@ -2744,15 +2744,15 @@ lemma cancelIPC_ccorres_helper:
          st_tcb_at' (\<lambda>st. (isBlockedOnSend st \<or> isBlockedOnReceive st)
                             \<and> blockingObject st = ep) thread
         and ko_at' ep' ep)
-        UNIV
+        {s. epptr_' s = Ptr ep}
         []
         (setEndpoint ep (if remove1 thread (epQueue ep') = [] then Structures_H.endpoint.IdleEP
                          else epQueue_update (\<lambda>_. remove1 thread (epQueue ep')) ep'))
-        (\<acute>queue :== CALL ep_ptr_get_queue(epptr);;
+        (\<acute>queue :== CALL ep_ptr_get_queue(\<acute>epptr);;
          \<acute>queue :== CALL tcbEPDequeue(tcb_ptr_to_ctcb_ptr thread,\<acute>queue);;
-          CALL ep_ptr_set_queue(epptr,\<acute>queue);;
+          CALL ep_ptr_set_queue(\<acute>epptr,\<acute>queue);;
           IF head_C \<acute>queue = NULL THEN
-              CALL endpoint_ptr_set_state(epptr,scast EPState_Idle)
+              CALL endpoint_ptr_set_state(\<acute>epptr,scast EPState_Idle)
           FI)"
   apply (rule ccorres_from_vcg)
   apply (rule allI)
@@ -3099,7 +3099,7 @@ lemma cancelIPC_ccorres1:
                 apply (frule (1) obj_at_cslift_tcb)
                 apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnReceive_blockingObject)
                apply ceqv
-              apply csymbr
+              apply (rule ccorres_symb_exec_r)
               apply (simp only: list_case_If)
               apply (rule ccorres_rhs_assoc2)
               apply (rule ccorres_rhs_assoc2)
@@ -3172,6 +3172,9 @@ lemma cancelIPC_ccorres1:
               apply (frule (1) tcb_at_h_t_valid)
               apply simp
              apply vcg
+apply (rule conseqPre, vcg)
+apply clarsimp
+apply vcg
           \<comment> \<open>BlockedOnReply case\<close>
             apply (simp add: ThreadState_defs ccorres_cond_iffs
                              Collect_False Collect_True word_sle_def
@@ -3215,7 +3218,7 @@ lemma cancelIPC_ccorres1:
           apply (frule (1) obj_at_cslift_tcb)
           apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnSend_blockingObject)
          apply ceqv
-        apply csymbr
+apply (rule ccorres_symb_exec_r)
         apply (simp only: list_case_If)
         apply (rule ccorres_rhs_assoc2)
         apply (rule ccorres_rhs_assoc2)
@@ -3244,6 +3247,9 @@ lemma cancelIPC_ccorres1:
         apply (frule (1) tcb_at_h_t_valid)
         apply simp
        apply vcg
+apply (rule conseqPre, vcg)
+apply clarsimp
+apply vcg
   \<comment> \<open>Restart\<close>
       apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                  cong: call_ignore_cong,
