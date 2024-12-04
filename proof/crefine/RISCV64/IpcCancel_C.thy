@@ -2990,7 +2990,6 @@ proof -
     "\<exists>tcb. ko_at' tcb thread s \<and> tcbState tcb = BlockedOnReceive oref cg (Some ro)"
     by (clarsimp simp: st_tcb_at'_def obj_at'_def)
   from sy and vo and st and ra and ko show ?thesis
-    apply -
     apply (clarsimp simp: st_tcb_at'_def)
     apply (frule (1) sym_ref_Receive_or_Reply_replyTCB')
      apply simp
