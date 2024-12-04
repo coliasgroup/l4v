@@ -2970,14 +2970,12 @@ lemma ctcb_relation_BlockedOnSend_blockingObject:
 lemma BlockedOnReceive_ep_at':
   "\<lbrakk> valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive oref cg ro)) t s \<rbrakk>
    \<Longrightarrow> ep_at' oref s"
-  apply (drule (1) tcb_in_valid_state')
-  by (fastforce simp: obj_at'_def valid_tcb_state'_def)
+  by (fastforce dest!: tcb_in_valid_state' simp: obj_at'_def valid_tcb_state'_def)
 
 lemma BlockedOnSend_ep_at':
   "\<lbrakk> valid_objs' s; st_tcb_at' ((=) (BlockedOnSend oref badge cg cgr isc)) t s \<rbrakk>
    \<Longrightarrow> ep_at' oref s"
-  apply (drule (1) tcb_in_valid_state')
-  by (fastforce simp: obj_at'_def valid_tcb_state'_def)
+  by (fastforce dest!: tcb_in_valid_state' simp: obj_at'_def valid_tcb_state'_def)
 
 lemma sym_ref_BlockedOnReceive_replyObject_linked:
   assumes sy: "sym_refs (state_refs_of' s)"
