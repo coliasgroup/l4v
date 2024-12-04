@@ -2948,49 +2948,34 @@ lemma getBlockingObject_BlockedOnSend_return:
   unfolding getBlockingObject_def epBlocked_def by simp
 
 lemma BlockedOnReceive_replyObject_no_0:
-  assumes "no_0_obj' s"
-  assumes "valid_tcb_state' ts s"
-  assumes "ts = BlockedOnReceive oref cg ro"
-  shows "ro \<noteq> Some 0"
-  using assms
+  "\<lbrakk> no_0_obj' s; valid_tcb_state' ts s; ts = BlockedOnReceive oref cg ro \<rbrakk>
+   \<Longrightarrow> ro \<noteq> Some 0"
   by (auto simp: valid_tcb_state'_def)
 
 lemma ctcb_relation_BlockedOnReceive_blockingObject:
-  assumes "ctcb_relation tcb ctcb"
-  assumes "BlockedOnReceive oref cg ro = tcbState tcb"
-  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = oref"
-  using assms
+  "\<lbrakk> ctcb_relation tcb ctcb; BlockedOnReceive oref cg ro = tcbState tcb \<rbrakk>
+   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = oref"
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 lemma ctcb_relation_BlockedOnReceive_replyObject:
-  assumes "ctcb_relation tcb ctcb"
-  assumes "BlockedOnReceive oref cg ro = tcbState tcb"
-  shows "replyObject_CL (thread_state_lift (tcbState_C ctcb)) = option_to_0 ro"
-  using assms
+  "\<lbrakk> ctcb_relation tcb ctcb; BlockedOnReceive oref cg ro = tcbState tcb \<rbrakk>
+   \<Longrightarrow> replyObject_CL (thread_state_lift (tcbState_C ctcb)) = option_to_0 ro"
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 lemma ctcb_relation_BlockedOnSend_blockingObject:
-  assumes "ctcb_relation tcb ctcb"
-  assumes "BlockedOnSend oref badge cg cgr isc = tcbState tcb"
-  shows "blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = oref"
-  using assms
+  "\<lbrakk> ctcb_relation tcb ctcb; BlockedOnSend oref badge cg cgr isc = tcbState tcb \<rbrakk>
+   \<Longrightarrow> blockingObject_CL (thread_state_lift (tcbState_C ctcb)) = oref"
   by (cases "(tcbState tcb)", simp_all add: ctcb_relation_def cthread_state_relation_def)
 
 lemma BlockedOnReceive_ep_at':
-  assumes "valid_objs' s"
-  assumes "st_tcb_at' ((=) (BlockedOnReceive oref cg ro)) t s"
-  shows "ep_at' oref s"
-  using assms
-  apply -
+  "\<lbrakk> valid_objs' s; st_tcb_at' ((=) (BlockedOnReceive oref cg ro)) t s \<rbrakk>
+   \<Longrightarrow> ep_at' oref s"
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
 lemma BlockedOnSend_ep_at':
-  assumes "valid_objs' s"
-  assumes "st_tcb_at' ((=) (BlockedOnSend oref badge cg cgr isc)) t s"
-  shows "ep_at' oref s"
-  using assms
-  apply -
+  "\<lbrakk> valid_objs' s; st_tcb_at' ((=) (BlockedOnSend oref badge cg cgr isc)) t s \<rbrakk>
+   \<Longrightarrow> ep_at' oref s"
   apply (drule (1) tcb_in_valid_state')
   by (fastforce simp: obj_at'_def valid_tcb_state'_def)
 
