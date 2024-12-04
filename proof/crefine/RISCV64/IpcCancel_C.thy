@@ -3012,13 +3012,13 @@ proof -
 qed
 
 lemma thread_state_to_tsType_eq_BlockedOnReceive:
-  "(thread_state_to_tsType ts = scast ThreadState_BlockedOnReceive)
-    = (\<exists>oref cg ro. ts = BlockedOnReceive oref cg ro)"
+  "BlockedOnReceive oref cg ro = ts
+   \<Longrightarrow> thread_state_to_tsType ts = scast ThreadState_BlockedOnReceive"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma thread_state_to_tsType_eq_BlockedOnSend:
-  "(thread_state_to_tsType ts = scast ThreadState_BlockedOnSend)
-    = (\<exists>oref badge cg cgr isc. ts = BlockedOnSend oref badge cg cgr isc)"
+  "BlockedOnSend oref badge cg cgr isc = ts
+   \<Longrightarrow> thread_state_to_tsType ts = scast ThreadState_BlockedOnSend"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma cancelIPC_ccorres1:
@@ -3097,7 +3097,8 @@ lemma cancelIPC_ccorres1:
                    apply (rule conseqPre, vcg)
                    apply (clarsimp simp: st_tcb_at'_def)
                    apply (frule (1) obj_at_cslift_tcb)
-                   apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType thread_state_to_tsType_eq_BlockedOnReceive)
+                   apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
+                                          thread_state_to_tsType_eq_BlockedOnReceive)
                   apply ceqv
                  apply ccorres_rewrite
                  apply (rule ccorres_rhs_assoc)
@@ -3216,9 +3217,8 @@ apply (rule ccorres_symb_exec_r)
              apply (rule conseqPre, vcg)
              apply (clarsimp simp: st_tcb_at'_def)
              apply (frule (1) obj_at_cslift_tcb)
-             apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
-                                   thread_state_to_tsType_eq_BlockedOnSend)
-             apply fastforce
+apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
+                                        thread_state_to_tsType_eq_BlockedOnSend)
             apply ceqv
            apply (simp only: ThreadState_defs)
            apply ccorres_rewrite
