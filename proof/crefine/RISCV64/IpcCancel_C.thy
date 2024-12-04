@@ -3013,12 +3013,12 @@ qed
 
 lemma thread_state_to_tsType_eq_BlockedOnReceive:
   "(thread_state_to_tsType ts = scast ThreadState_BlockedOnReceive)
-      = (\<exists>oref cg ro. ts = BlockedOnReceive oref cg ro)"
+    = (\<exists>oref cg ro. ts = BlockedOnReceive oref cg ro)"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma thread_state_to_tsType_eq_BlockedOnSend:
   "(thread_state_to_tsType ts = scast ThreadState_BlockedOnSend)
-      = (\<exists>oref badge cg cgr isc. ts = BlockedOnSend oref badge cg cgr isc)"
+    = (\<exists>oref badge cg cgr isc. ts = BlockedOnSend oref badge cg cgr isc)"
   by (cases ts, simp_all add: ThreadState_defs)
 
 lemma cancelIPC_ccorres1:
