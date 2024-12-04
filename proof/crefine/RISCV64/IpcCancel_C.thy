@@ -3230,14 +3230,10 @@ apply vcg
      apply (rule conjI)
       apply (clarsimp simp: invs_valid_objs' BlockedOnReceive_ep_at')
      apply clarsimp
-
-apply (frule tcb_in_valid_state')
-apply (simp add: invs'_implies)
-apply (elim conjE exE)
-
+     apply (frule tcb_in_valid_state')
+      apply (simp add: invs'_implies)
+     apply (elim conjE exE)
      apply (rule conjI)
-
-
       apply (case_tac ro)
        apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
                              sym_ref_BlockedOnReceive_replyObject_linked)
@@ -3245,11 +3241,10 @@ apply (elim conjE exE)
                   split: thread_state.splits)
       apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
                             sym_ref_BlockedOnReceive_replyObject_linked)
-apply (simp only: conj_assoc[symmetric])
-apply (rule conjI)
-subgoal by (auto simp: st_tcb_at'_def obj_at'_def isTS_defs valid_ep'_def  split: thread_state.splits)
-subgoal by (auto simp: invs'_implies valid_tcb_state'_def BlockedOnReceive_replyObject_no_0)
-
+      apply (simp only: conj_assoc[symmetric])
+      apply (rule conjI)
+  subgoal by (auto simp: st_tcb_at'_def obj_at'_def isTS_defs valid_ep'_def  split: thread_state.splits)
+  subgoal by (auto simp: invs'_implies valid_tcb_state'_def BlockedOnReceive_replyObject_no_0)
      apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
                            sym_ref_BlockedOnReceive_replyObject_linked)
      apply (case_tac ro)
@@ -3258,16 +3253,15 @@ subgoal by (auto simp: invs'_implies valid_tcb_state'_def BlockedOnReceive_reply
       apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isRecvEP_def
                   split: thread_state.splits endpoint.splits)
-      apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
-                            sym_ref_BlockedOnReceive_replyObject_linked)
-      apply (frule (3) ep_blocked_in_queueD_recv)
-      apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
-apply (simp only: conj_assoc[symmetric])
-apply (rule conjI)
+     apply (clarsimp simp: sym_refs_asrt_def invs'_implies valid_objs'_valid_tcbs'
+                           sym_ref_BlockedOnReceive_replyObject_linked)
+     apply (frule (3) ep_blocked_in_queueD_recv)
+     apply (frule (1) ko_at_valid_ep'[OF _ invs_valid_objs'])
+     apply (simp only: conj_assoc[symmetric])
+     apply (rule conjI)
   subgoal by (auto simp: obj_at'_def pred_tcb_at'_def valid_ep'_def isTS_defs isSendEP_def isRecvEP_def
                   split: thread_state.splits endpoint.splits)
-subgoal by (auto simp: invs'_implies valid_tcb_state'_def BlockedOnReceive_replyObject_no_0)
-
+  subgoal by (auto simp: invs'_implies valid_tcb_state'_def BlockedOnReceive_replyObject_no_0)
     apply (rule conjI)
      apply (clarsimp simp: inQ_def)
     apply clarsimp
