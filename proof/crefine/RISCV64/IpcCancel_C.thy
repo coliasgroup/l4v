@@ -2992,7 +2992,7 @@ proof -
   from sy and vo and st and ra and ko show ?thesis
     apply (clarsimp simp: st_tcb_at'_def)
     apply (frule (1) sym_ref_Receive_or_Reply_replyTCB')
-     apply simp
+    apply simp
     apply (clarsimp simp: obj_at'_def)
     done
 qed
