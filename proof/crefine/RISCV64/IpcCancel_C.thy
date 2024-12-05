@@ -3063,7 +3063,7 @@ lemma cancelIPC_ccorres1:
         apply (clarsimp simp: typ_heap_simps ctcb_relation_thread_state_to_tsType)
        apply ceqv
       apply wpc
-            \<comment> \<open>BlockedOnReceive\<close>
+             \<comment> \<open>BlockedOnReceive\<close>
              apply (rename_tac oref cg ro)
              apply (unfold blockedCancelIPC_def)
              apply (simp add: ccorres_cond_iffs getBlockingObject_BlockedOnReceive_return return_bind)
@@ -3083,66 +3083,66 @@ lemma cancelIPC_ccorres1:
                 apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnReceive_blockingObject)
                apply ceqv
               apply (rule ccorres_symb_exec_r)
-              apply (simp only: list_case_If)
-              apply (rule ccorres_rhs_assoc2)
-              apply (rule ccorres_rhs_assoc2)
-              apply (rule ccorres_rhs_assoc2)
-              apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-                apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
-                apply (rule_tac xf'=ret__unsigned_longlong_'
-                            and val="thread_state_to_tsType threadState"
-                            and R="st_tcb_at' ((=) threadState) thread"
-                            and R'=UNIV
-                            in ccorres_symb_exec_r_known_rv)
-                   apply (rule conseqPre, vcg)
-                   apply (clarsimp simp: st_tcb_at'_def)
-                   apply (frule (1) obj_at_cslift_tcb)
-                   apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
-                                          thread_state_to_tsType_eq_BlockedOnReceive)
-                  apply ceqv
-                 apply ccorres_rewrite
-                 apply (rule ccorres_rhs_assoc)
-                 apply (rule ccorres_rhs_assoc)
-                 apply (rule_tac xf'=ret__unsigned_longlong_'
-                             and val="option_to_0 ro"
-                             and R="st_tcb_at' ((=) threadState) thread"
-                             and R'=UNIV
-                             in ccorres_symb_exec_r_known_rv)
-                    apply (rule conseqPre, vcg)
-                    apply (clarsimp simp: st_tcb_at'_def)
-                    apply (frule (1) obj_at_cslift_tcb)
-                    apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnReceive_replyObject)
-                   apply ceqv
-                  apply csymbr
-                  apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm)
-                  apply wpc
-                    \<comment> \<open>None\<close>
-                   apply simp
-                   apply (ctac add: setThreadState_ccorres)
-                   \<comment> \<open>Some\<close>
-                  apply simp
-                  apply (ctac (no_vcg) add: reply_unlink_ccorres)
-                   apply (ctac add: setThreadState_ccorres)
-                  apply wp
-                 apply vcg
-                apply vcg
-               apply (subst option.split[symmetric, where P=id, simplified])
-               apply (wpsimp wp: hoare_case_option_wp2)
-apply simp
+                apply (simp only: list_case_If)
+                apply (rule ccorres_rhs_assoc2)
+                apply (rule ccorres_rhs_assoc2)
+                apply (rule ccorres_rhs_assoc2)
+                apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+                  apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+                  apply (rule_tac xf'=ret__unsigned_longlong_'
+                              and val="thread_state_to_tsType threadState"
+                              and R="st_tcb_at' ((=) threadState) thread"
+                              and R'=UNIV
+                              in ccorres_symb_exec_r_known_rv)
+                     apply (rule conseqPre, vcg)
+                     apply (clarsimp simp: st_tcb_at'_def)
+                     apply (frule (1) obj_at_cslift_tcb)
+                     apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
+                                            thread_state_to_tsType_eq_BlockedOnReceive)
+                    apply ceqv
+                   apply ccorres_rewrite
+                   apply (rule ccorres_rhs_assoc)
+                   apply (rule ccorres_rhs_assoc)
+                   apply (rule_tac xf'=ret__unsigned_longlong_'
+                               and val="option_to_0 ro"
+                               and R="st_tcb_at' ((=) threadState) thread"
+                               and R'=UNIV
+                               in ccorres_symb_exec_r_known_rv)
+                      apply (rule conseqPre, vcg)
+                      apply (clarsimp simp: st_tcb_at'_def)
+                      apply (frule (1) obj_at_cslift_tcb)
+                      apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnReceive_replyObject)
+                     apply ceqv
+                    apply csymbr
+                    apply (rule_tac P="ro \<noteq> Some 0" in ccorres_gen_asm)
+                    apply wpc
+                      \<comment> \<open>None\<close>
+                     apply simp
+                     apply (ctac add: setThreadState_ccorres)
+                    \<comment> \<open>Some\<close>
+                    apply simp
+                    apply (ctac (no_vcg) add: reply_unlink_ccorres)
+                     apply (ctac add: setThreadState_ccorres)
+                    apply wp
+                   apply vcg
+                  apply vcg
+                 apply (subst option.split[symmetric, where P=id, simplified])
+                 apply (wpsimp wp: hoare_case_option_wp2)
+                 apply simp
+                apply clarsimp
+                apply (frule (1) tcb_at_h_t_valid)
+                apply simp
+               apply vcg
+              apply (rule conseqPre, vcg)
               apply clarsimp
-              apply (frule (1) tcb_at_h_t_valid)
-              apply simp
              apply vcg
-apply (rule conseqPre, vcg)
-apply clarsimp
-apply vcg
-          \<comment> \<open>BlockedOnReply case\<close>
+            \<comment> \<open>BlockedOnReply case\<close>
             apply (simp add: ThreadState_defs ccorres_cond_iffs
                              Collect_False Collect_True word_sle_def
                        cong: call_ignore_cong del: Collect_const)
             apply simp
             apply (ctac add: reply_remove_tcb_ccorres)
-          \<comment> \<open>BlockedOnNotification\<close>
+           \<comment> \<open>BlockedOnNotification\<close>
            apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                       cong: call_ignore_cong)
            apply (rule ccorres_symb_exec_r)
@@ -3152,15 +3152,15 @@ apply vcg
             apply (rule subset_refl)
            apply (rule conseqPre, vcg)
            apply clarsimp
-         \<comment> \<open>Running, Inactive, and Idle\<close>
+          \<comment> \<open>Running, Inactive, and Idle\<close>
           apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                      cong: call_ignore_cong,
                  rule ccorres_return_Skip)+
 
-      \<comment> \<open>BlockedOnSend\<close>
+       \<comment> \<open>BlockedOnSend\<close>
        apply (simp add: word_sle_def ccorres_cond_iffs
                   cong: call_ignore_cong)
-      \<comment> \<open>clag\<close>
+       \<comment> \<open>clag\<close>
        apply (rename_tac oref badge cg cgr isc)
        apply (unfold getBlockingObject_BlockedOnSend_return)
        apply (simp only: return_bind)
@@ -3179,42 +3179,42 @@ apply vcg
           apply (frule (1) obj_at_cslift_tcb)
           apply (clarsimp simp: typ_heap_simps ctcb_relation_BlockedOnSend_blockingObject)
          apply ceqv
-apply (rule ccorres_symb_exec_r)
-        apply (simp only: list_case_If)
-        apply (rule ccorres_rhs_assoc2)
-        apply (rule ccorres_rhs_assoc2)
-        apply (rule ccorres_rhs_assoc2)
-        apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
-          apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
-          apply (rule_tac xf'=ret__unsigned_longlong_'
-                      and val="scast ThreadState_BlockedOnSend"
-                      and R="st_tcb_at' ((=) threadState) thread"
-                      and R'=UNIV
-                      in ccorres_symb_exec_r_known_rv)
-             apply (rule conseqPre, vcg)
-             apply (clarsimp simp: st_tcb_at'_def)
-             apply (frule (1) obj_at_cslift_tcb)
-apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
-                                        thread_state_to_tsType_eq_BlockedOnSend)
-            apply ceqv
-           apply (simp only: ThreadState_defs)
-           apply ccorres_rewrite
-           apply (ctac add: setThreadState_ccorres)
-          apply vcg
-         apply wp
-         apply simp
-        apply (clarsimp simp: ThreadState_defs)
-        apply (frule (1) tcb_at_h_t_valid)
-        apply simp
+        apply (rule ccorres_symb_exec_r)
+          apply (simp only: list_case_If)
+          apply (rule ccorres_rhs_assoc2)
+          apply (rule ccorres_rhs_assoc2)
+          apply (rule ccorres_rhs_assoc2)
+          apply (ctac (no_vcg) add: cancelIPC_ccorres_helper)
+            apply (rule_tac P="tcb_at' thread" in ccorres_cross_over_guard)
+            apply (rule_tac xf'=ret__unsigned_longlong_'
+                        and val="scast ThreadState_BlockedOnSend"
+                        and R="st_tcb_at' ((=) threadState) thread"
+                        and R'=UNIV
+                        in ccorres_symb_exec_r_known_rv)
+               apply (rule conseqPre, vcg)
+               apply (clarsimp simp: st_tcb_at'_def)
+               apply (frule (1) obj_at_cslift_tcb)
+               apply (fastforce simp: typ_heap_simps ctcb_relation_thread_state_to_tsType
+                                                       thread_state_to_tsType_eq_BlockedOnSend)
+              apply ceqv
+             apply (simp only: ThreadState_defs)
+             apply ccorres_rewrite
+             apply (ctac add: setThreadState_ccorres)
+            apply vcg
+           apply wp
+           apply simp
+          apply (clarsimp simp: ThreadState_defs)
+          apply (frule (1) tcb_at_h_t_valid)
+          apply simp
+         apply vcg
+        apply (rule conseqPre, vcg)
+        apply clarsimp
        apply vcg
-apply (rule conseqPre, vcg)
-apply clarsimp
-apply vcg
-  \<comment> \<open>Restart\<close>
+      \<comment> \<open>Restart\<close>
       apply (simp add: word_sle_def ThreadState_defs ccorres_cond_iffs
                  cong: call_ignore_cong,
              rule ccorres_return_Skip)
-    \<comment> \<open>Post wp proofs\<close>
+     \<comment> \<open>Post wp proofs\<close>
      apply vcg
     apply (rule_tac Q'="\<lambda>rv s. tcb_at' thread s
                                \<and> st_tcb_at' ((=) threadState) thread s
