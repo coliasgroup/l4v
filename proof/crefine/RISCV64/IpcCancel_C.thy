@@ -2952,6 +2952,92 @@ lemma liftM_getObject_return_reply:
   "ko_at' v p s \<Longrightarrow> liftM f (getObject p) s = return (f (v::reply)) s"
   by (simp add: liftM_def bind_def getObject_return_reply return_def objBits_defs)
 
+lemma updateReply_tcb_ccorres:
+  "ccorres dc xfdc
+    (reply_at' reply)
+    {s. reply' s = reply_Ptr reply}
+    hs
+    (updateReply reply (replyTCB_update (\<lambda>_. None)))
+    (Basic (\<lambda>s. globals_update (t_hrs_'_update
+      (hrs_mem_update (heap_update (Ptr &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
+  unfolding updateReply_def
+  apply (cinitlift reply')
+  apply (erule ssubst)
+  apply (rule ccorres_guard_imp2)
+  apply (rule ccorres_pre_getCTE)
+  apply (rule_tac P = "\<lambda>s. ctes_of s dest = Some rva" in
+    ccorres_from_vcg [where P' = "{s. ccap_relation cap (val s)}"])
+  apply (rule allI)
+  apply (rule conseqPre)
+  apply vcg
+  apply clarsimp
+  apply (rule fst_setCTE [OF ctes_of_cte_at], assumption)
+   apply (erule bexI [rotated])
+   apply (clarsimp simp: cte_wp_at_ctes_of)
+   apply (frule (1) rf_sr_ctes_of_clift)
+   apply (clarsimp simp add: rf_sr_def cstate_relation_def
+     Let_def cpspace_relation_def
+     cvariable_array_map_const_add_map_option[where f="tcb_no_ctes_proj"])
+   apply (simp add:typ_heap_simps)
+   apply (rule conjI)
+    apply (erule (3) cpspace_cte_relation_upd_capI)
+   apply (frule_tac f="ksPSpace" in arg_cong)
+   apply (erule_tac t = s' in ssubst)
+    apply simp
+   apply (simp add: heap_to_user_data_def heap_to_device_data_def)
+   apply (rule conjI)
+    apply (erule (1) setCTE_tcb_case)
+   by (auto simp: carch_state_relation_def cmachine_state_relation_def
+                  refill_buffer_relation_def typ_heap_simps)
+
+
+  apply (rule setObject_ccorres_helper)
+    apply (simp_all add: objBits_simps pageBits_def)
+  apply (rule conseqPre, vcg)
+  apply (rule subsetI, clarsimp simp: Collect_const_mem)
+  apply (rule cmap_relationE1, erule rf_sr_cpspace_asidpool_relation,
+         erule ko_at_projectKO_opt)
+  apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def)
+  apply (rule conjI)
+   apply (clarsimp simp: cpspace_relation_def typ_heap_simps
+                         update_asidpool_map_to_asidpools
+                         update_asidpool_map_tos)
+   apply (case_tac y')
+   apply clarsimp
+   apply (erule cmap_relation_updI,
+          erule ko_at_projectKO_opt, simp+)
+  apply (rule conjI)
+   apply (simp add: Let_def typ_heap_simps refill_buffer_relation_def image_def dom_def
+                    cvariable_array_map_relation_def update_asidpool_map_tos)
+  apply (simp add: cready_queues_relation_def
+                   carch_state_relation_def
+                   cmachine_state_relation_def
+                   Let_def typ_heap_simps
+                   update_asidpool_map_tos)
+  done
+
+  apply (rule ccorres_guard_imp2)
+   apply (rule threadSet_ccorres_lemma4 [where P=\<top> and P'=\<top>])
+    apply vcg
+   prefer 2
+   apply (rule conjI, simp)
+   apply assumption
+  apply clarsimp
+  apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def)
+  apply (clarsimp simp: cmachine_state_relation_def carch_state_relation_def cpspace_relation_def
+                        refill_buffer_relation_def)
+  apply (clarsimp simp: update_tcb_map_tos typ_heap_simps')
+  apply (simp add: map_to_ctes_upd_tcb_no_ctes map_to_tcbs_upd tcb_cte_cases_def cteSizeBits_def)
+  apply (simp add: cep_relations_drop_fun_upd
+                   cvariable_relation_upd_const ko_at_projectKO_opt)
+  apply (drule ko_at_projectKO_opt)
+  apply (erule (2) cmap_relation_upd_relI)
+    subgoal by (simp add: ctcb_relation_def)
+   apply assumption
+  apply simp
+  done
+sorry
+
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_tcbs' and pspace_aligned' and pspace_distinct'
@@ -2962,9 +3048,15 @@ lemma reply_unlink_ccorres:
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_')
+  apply (rule ccorres_symb_exec_l)
+  apply (rule ccorres_symb_exec_l)
+  apply (rule ccorres_symb_exec_l)
+  apply (rule ccorres_symb_exec_l)
+  apply (rule ccorres_symb_exec_l)
   apply (rule ccorres_move_c_guard_reply)
-  apply (clarsimp simp: getReply_def liftM_def)
 
+
+  apply (clarsimp simp: getReply_def liftM_def)
   apply (rule monadic_rewrite_ccorres_assemble[OF _ liftM_getObject_return_reply,rotated])
 
 
