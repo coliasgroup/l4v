@@ -3056,8 +3056,9 @@ lemma reply_unlink_ccorres:
   apply (rule ccorres_move_c_guard_reply)
  apply (ctac add: updateReply_tcb_ccorres)
 apply (ctac add: setThreadState_ccorres)
-apply (wpsimp wp: updateReply_wp_all)
+apply (wp updateReply_wp_all)
 apply vcg
+apply (wp gts_inv')
 apply wpsimp
 
 
