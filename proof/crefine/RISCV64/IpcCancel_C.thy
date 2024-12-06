@@ -3048,7 +3048,11 @@ lemma reply_unlink_ccorres:
        and st_tcb_at' (\<lambda>st. (\<exists>oref cg. st = Structures_H.BlockedOnReceive oref cg (Some replyPtr))
                             \<or> st = Structures_H.BlockedOnReply (Some replyPtr))
                       tcbPtr
-       and obj_at' (\<lambda>reply. replyTCB reply = Some tcbPtr) replyPtr)
+       and obj_at' (\<lambda>reply. replyTCB reply = Some tcbPtr) replyPtr
+and valid_objs'
+         and (\<lambda>s. weak_sch_act_wf (ksSchedulerAction s) s) and no_0_obj'
+
+)
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_')
@@ -3072,7 +3076,7 @@ lemma reply_unlink_ccorres:
     apply wp
    apply (simp add: getReply_def getObject_def split: option.splits)
   apply (clarsimp simp: st_tcb_at'_def obj_at'_def valid_reply'_def)
-
+done
 
 
   apply (clarsimp simp: getObject_def readObject_def omonad_defs split_def gets_the_def gets_def
