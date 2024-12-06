@@ -3038,6 +3038,10 @@ lemma updateReply_tcb_ccorres:
   done
 sorry
 
+lemma empty_fail_assert_opt:
+  "empty_fail (assert_opt opt)"
+  by simp
+
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_tcbs' and pspace_aligned' and pspace_distinct'
@@ -3066,6 +3070,10 @@ apply (wp gts_wp')
                  split: option.splits)
 apply wpsimp
 apply wp
+apply simp
+apply wpsimp
+apply wp
+apply (simp add: getReply_def getObject_def split: option.splits)
 
 
 
