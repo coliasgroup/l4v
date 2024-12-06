@@ -3078,44 +3078,6 @@ and valid_objs'
   apply (clarsimp simp: st_tcb_at'_def obj_at'_def valid_reply'_def)
 done
 
-
-  apply (clarsimp simp: getObject_def readObject_def omonad_defs split_def gets_the_def gets_def
-                        get_def bind_def return_def assert_opt_def fail_def obj_at'_def
-                        lookupAround2_known1 loadObject_default_def in_omonad
-                 split: option.splits)
-
-apply (simp add: replyUnlink_assertion_def)
-
-
-apply (wpsimp wp: gts_inv')
-
-apply (wpsimp simp: replyUnlink_assertion_def)
-
-
-  apply (clarsimp simp: getReply_def liftM_def)
-  apply (rule monadic_rewrite_ccorres_assemble[OF _ liftM_getObject_return_reply,rotated])
-
-
-   apply (rule monadic_rewrite_ccorres_assemble)
-
-
-  apply (rule monadic_rewrite_ccorres_assemble[OF _ liftM_getObject_return_reply,rotated], simp)
-
-  apply (rule liftM_getObject_return_reply)
-
-  apply (clarsimp simp: getReply_def)
-
-  apply (drule obj_at_ko_at', clarsimp)
-
-  apply (clarsimp simp: obj_at'_def liftM_getObject_return_reply)
-
-
-
-  apply (clarsimp simp: getReply_def liftM_def)
-
-  apply (clarsimp simp: getReply_def liftM_def assert_opt_def )
-sorry (* FIXME RT: reply_unlink_ccorres *)
-
 lemma reply_pop_ccorres:
   "ccorres dc xfdc
     (invs' and tcb_at' tcbPtr and reply_at' replyPtr)
