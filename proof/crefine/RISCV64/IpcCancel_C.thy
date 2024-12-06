@@ -3059,6 +3059,7 @@ apply (ctac add: setThreadState_ccorres)
 apply (wp updateReply_wp_all)
 apply vcg
 apply (wp gts_inv')
+apply (wpsimp wp: gts_inv')
 
 apply (wpsimp simp: replyUnlink_assertion_def)
 
