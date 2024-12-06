@@ -3214,7 +3214,7 @@ lemma cancelIPC_ccorres1:
                                \<and> st_tcb_at' ((=) threadState) thread s
                                \<and> invs' s \<and> weak_sch_act_wf (ksSchedulerAction s) s
                                \<and> sym_refs_asrt s"
-                in hoare_strengthen_post)
+                 in hoare_strengthen_post)
      apply (wp add: cancelIPC_threadSet_wp)
     apply clarsimp
     apply (frule obj_at_valid_objs', clarsimp+)
