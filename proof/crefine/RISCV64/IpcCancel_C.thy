@@ -3053,7 +3053,7 @@ lemma cancelIPC_ccorres1:
      apply (rule_tac xf'=ret__unsigned_longlong_'
                  and val="thread_state_to_tsType threadState"
                  and R="st_tcb_at' ((=) threadState) thread"
-                 in ccorres_symb_exec_r_known_rv[where R'=UNIV])
+                  in ccorres_symb_exec_r_known_rv[where R'=UNIV])
         apply (rule conseqPre, vcg)
         apply (clarsimp simp: st_tcb_at'_def)
         apply (frule (1) obj_at_cslift_tcb)
@@ -3073,7 +3073,7 @@ lemma cancelIPC_ccorres1:
              apply (rule_tac xf'=ret__unsigned_longlong_'
                          and val="oref"
                          and R="st_tcb_at' ((=) (BlockedOnReceive oref cg ro)) thread"
-                         in ccorres_symb_exec_r_known_rv[where R'=UNIV])
+                          in ccorres_symb_exec_r_known_rv[where R'=UNIV])
                 apply (rule conseqPre, vcg)
                 apply (clarsimp simp: st_tcb_at'_def)
                 apply (frule (1) obj_at_cslift_tcb)
@@ -3089,7 +3089,7 @@ lemma cancelIPC_ccorres1:
                   apply (rule_tac xf'=ret__unsigned_longlong_'
                               and val="thread_state_to_tsType threadState"
                               and R="st_tcb_at' ((=) threadState) thread"
-                              in ccorres_symb_exec_r_known_rv[where R'=UNIV])
+                               in ccorres_symb_exec_r_known_rv[where R'=UNIV])
                      apply (rule conseqPre, vcg)
                      apply (clarsimp simp: st_tcb_at'_def)
                      apply (frule (1) obj_at_cslift_tcb)
@@ -3102,7 +3102,7 @@ lemma cancelIPC_ccorres1:
                    apply (rule_tac xf'=ret__unsigned_longlong_'
                                and val="option_to_0 ro"
                                and R="st_tcb_at' ((=) threadState) thread"
-                               in ccorres_symb_exec_r_known_rv[where R'=UNIV])
+                                in ccorres_symb_exec_r_known_rv[where R'=UNIV])
                       apply (rule conseqPre, vcg)
                       apply (clarsimp simp: st_tcb_at'_def)
                       apply (frule (1) obj_at_cslift_tcb)
@@ -3168,7 +3168,7 @@ lemma cancelIPC_ccorres1:
        apply (rule_tac xf'=ret__unsigned_longlong_'
                    and val="oref"
                    and R="st_tcb_at' ((=) (BlockedOnSend oref badge cg cgr isc)) thread"
-                   in ccorres_symb_exec_r_known_rv[where R'=UNIV])
+                    in ccorres_symb_exec_r_known_rv[where R'=UNIV])
           apply (rule conseqPre, vcg)
           apply (clarsimp simp: st_tcb_at'_def)
           apply (frule (1) obj_at_cslift_tcb)
@@ -3184,7 +3184,7 @@ lemma cancelIPC_ccorres1:
             apply (rule_tac xf'=ret__unsigned_longlong_'
                         and val="scast ThreadState_BlockedOnSend"
                         and R="st_tcb_at' ((=) threadState) thread"
-                        in ccorres_symb_exec_r_known_rv[where R'=UNIV])
+                         in ccorres_symb_exec_r_known_rv[where R'=UNIV])
                apply (rule conseqPre, vcg)
                apply (clarsimp simp: st_tcb_at'_def)
                apply (frule (1) obj_at_cslift_tcb)
