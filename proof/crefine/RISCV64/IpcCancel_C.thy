@@ -3064,7 +3064,7 @@ and valid_objs'
             apply (rule ccorres_move_c_guard_reply)
             apply (ctac add: updateReply_tcb_ccorres)
               apply (ctac add: setThreadState_ccorres)
-             apply (wpsimp wp: updateReply_valid_objs' )
+             apply (wpsimp wp: updateReply_valid_objs')
             apply vcg
            apply (wp gts_inv')
           apply (wp gts_wp')
