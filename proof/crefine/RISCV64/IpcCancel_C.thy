@@ -3058,9 +3058,13 @@ lemma reply_unlink_ccorres:
          apply (rule ccorres_symb_exec_l)
             apply (rule ccorres_stateAssert)
             apply (rule ccorres_move_c_guard_reply)
+
+
             apply (ctac add: updateReply_tcb_ccorres)
+
               apply (ctac add: setThreadState_ccorres)
-             apply (wp updateReply_wp_all)
+
+   apply (wpsimp wp: updateReply_valid_objs' )
             apply vcg
            apply (wp gts_inv')
           apply (wp gts_wp')
@@ -3072,6 +3076,12 @@ lemma reply_unlink_ccorres:
     apply wp
    apply (simp add: getReply_def getObject_def split: option.splits)
 
+apply clarsimp
+apply (clarsimp
+simp:
+obj_at'_def
+reply_at'_def
+)
 
 
 
