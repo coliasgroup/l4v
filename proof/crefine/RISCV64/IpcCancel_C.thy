@@ -3052,28 +3052,25 @@ lemma reply_unlink_ccorres:
     (\<lbrace>\<acute>reply = Ptr replyPtr\<rbrace> \<inter> \<lbrace>\<acute>tcb = tcb_ptr_to_ctcb_ptr tcbPtr\<rbrace>) []
     (replyUnlink replyPtr tcbPtr) (Call reply_unlink_'proc)"
   apply (cinit lift: reply_' tcb_')
-  apply (rule ccorres_symb_exec_l)
-  apply (rule ccorres_symb_exec_l)
-        apply (rule ccorres_assert)
-  apply (rule ccorres_symb_exec_l)
-   apply (rule ccorres_stateAssert)
-  apply (rule ccorres_move_c_guard_reply)
- apply (ctac add: updateReply_tcb_ccorres)
-apply (ctac add: setThreadState_ccorres)
-apply (wp updateReply_wp_all)
-apply vcg
-apply (wp gts_inv')
-apply (wp gts_wp')
-  apply (clarsimp simp: getObject_def readObject_def omonad_defs split_def gets_the_def gets_def
-                        get_def bind_def return_def assert_opt_def fail_def obj_at'_def
-                        lookupAround2_known1 loadObject_default_def in_omonad
-                 split: option.splits)
-apply wpsimp
-apply wp
-apply simp
-apply wpsimp
-apply wp
-apply (simp add: getReply_def getObject_def split: option.splits)
+   apply (rule ccorres_symb_exec_l)
+      apply (rule ccorres_symb_exec_l)
+         apply (rule ccorres_assert)
+         apply (rule ccorres_symb_exec_l)
+            apply (rule ccorres_stateAssert)
+            apply (rule ccorres_move_c_guard_reply)
+            apply (ctac add: updateReply_tcb_ccorres)
+              apply (ctac add: setThreadState_ccorres)
+             apply (wp updateReply_wp_all)
+            apply vcg
+           apply (wp gts_inv')
+          apply (wp gts_wp')
+         apply simp
+        apply wpsimp
+       apply wp
+      apply simp
+     apply wpsimp
+    apply wp
+   apply (simp add: getReply_def getObject_def split: option.splits)
 
 
 
