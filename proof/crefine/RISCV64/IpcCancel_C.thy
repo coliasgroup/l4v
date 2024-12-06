@@ -2952,6 +2952,36 @@ lemma liftM_getObject_return_reply:
   "ko_at' v p s \<Longrightarrow> liftM f (getObject p) s = return (f (v::reply)) s"
   by (simp add: liftM_def bind_def getObject_return_reply return_def objBits_defs)
 
+lemma updateSchedContext_ccorres_lemma4x:
+  "\<lbrakk> \<And>s sc. \<Gamma> \<turnstile> (Q s sc) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(scPtr \<mapsto> injectKOS (g sc))\<rparr>, s') \<in> rf_sr};
+     \<And>sc. scSize (g sc) = scSize sc;
+          \<And>s s' sc sc'. \<lbrakk> (s, s') \<in> rf_sr; P sc; ko_at' sc scPtr s;
+                             cslift s' (Ptr scPtr) = Some sc';
+                             csched_context_relation sc sc'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s sc \<rbrakk>
+   \<Longrightarrow> ccorres dc xfdc
+         (obj_at' (P :: sched_context \<Rightarrow> bool) scPtr and P') R hs
+         (updateSchedContext scPtr g) c"
+  apply (rule ccorres_from_vcg)
+  apply (rule allI)
+  apply (case_tac "obj_at' P scPtr \<sigma>")
+   apply (drule obj_at_ko_at', clarsimp)
+   apply (rule conseqPre, rule conseqPost)
+      apply assumption
+     apply clarsimp
+     apply (rule rev_bexI, rule updateSchedContext_eq)
+        apply assumption
+       apply (clarsimp simp: obj_at_simps)
+      apply simp
+     apply simp
+    apply simp
+   apply clarsimp
+   apply (drule (1) obj_at_cslift_sc)
+  apply fastforce
+  apply simp
+  apply (rule hoare_complete')
+  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+  done
+
 lemma updateReply_tcb_ccorres:
   "ccorres dc xfdc
     (reply_at' reply)
@@ -2964,6 +2994,8 @@ lemma updateReply_tcb_ccorres:
   apply (cinitlift reply')
   apply (erule ssubst)
   apply (rule ccorres_guard_imp2)
+   apply (simp add: getReply_def getObject_def split: option.splits)
+
   apply (rule ccorres_pre_getCTE)
   apply (rule_tac P = "\<lambda>s. ctes_of s dest = Some rva" in
     ccorres_from_vcg [where P' = "{s. ccap_relation cap (val s)}"])
