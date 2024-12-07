@@ -2914,6 +2914,66 @@ lemma reply_remove_tcb_ccorres:
     (replyRemoveTCB tptr) (Call reply_remove_tcb_'proc)"
 sorry (* FIXME RT: reply_remove_tcb_corres *)
 
+
+(* 000 *)
+
+lemma updateSchedContext_ccorres_lemma4x:
+  "\<lbrakk> \<And>s sc. \<Gamma> \<turnstile> (Q s sc) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(scPtr \<mapsto> injectKOS (g sc))\<rparr>, s') \<in> rf_sr};
+     \<And>sc. scSize (g sc) = scSize sc;
+          \<And>s s' sc sc'. \<lbrakk> (s, s') \<in> rf_sr; P sc; ko_at' sc scPtr s;
+                             cslift s' (Ptr scPtr) = Some sc';
+                             csched_context_relation sc sc'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s sc \<rbrakk>
+   \<Longrightarrow> ccorres dc xfdc
+         (obj_at' (P :: sched_context \<Rightarrow> bool) scPtr and P') R hs
+         (updateSchedContext scPtr g) c"
+  apply (rule ccorres_from_vcg)
+  apply (rule allI)
+  apply (case_tac "obj_at' P scPtr \<sigma>")
+   apply (drule obj_at_ko_at', clarsimp)
+   apply (rule conseqPre, rule conseqPost)
+      apply assumption
+     apply clarsimp
+     apply (rule rev_bexI, rule updateSchedContext_eq)
+        apply assumption
+       apply (clarsimp simp: obj_at_simps)
+      apply simp
+     apply simp
+    apply simp
+   apply clarsimp
+   apply (drule (1) obj_at_cslift_sc)
+  apply fastforce
+  apply simp
+  apply (rule hoare_complete')
+  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+  done
+
+lemma threadSet_ccorres_lemma4x:
+  "\<lbrakk> \<And>s tcb. \<Gamma> \<turnstile> (Q s tcb) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(thread \<mapsto> injectKOS (F tcb))\<rparr>, s') \<in> rf_sr};
+          \<And>s s' tcb tcb'. \<lbrakk> (s, s') \<in> rf_sr; P tcb; ko_at' tcb thread s;
+                             cslift s' (tcb_ptr_to_ctcb_ptr thread) = Some tcb';
+                             ctcb_relation tcb tcb'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s tcb \<rbrakk>
+         \<Longrightarrow> ccorres dc xfdc (obj_at' (P :: tcb \<Rightarrow> bool) thread and P') R hs (threadSet F thread) c"
+  apply (rule ccorres_from_vcg)
+  apply (rule allI)
+  apply (case_tac "obj_at' P thread \<sigma>")
+   apply (drule obj_at_ko_at', clarsimp)
+   apply (rule conseqPre, rule conseqPost)
+      apply assumption
+     apply clarsimp
+     apply (rule rev_bexI, rule threadSet_eq)
+      apply assumption
+     apply simp
+    apply simp
+   apply clarsimp
+   apply (drule(1) obj_at_cslift_tcb, clarsimp)
+  apply simp
+  apply (rule hoare_complete')
+  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+  done
+
+(* 000 *)
+
+
 lemma map_to_replies_from_reply_at:
   "reply_at' p s \<Longrightarrow> map_to_replies (ksPSpace s) p \<noteq> None"
   unfolding obj_at'_def
@@ -2974,62 +3034,7 @@ lemma updateReply_eq:
   apply (clarsimp simp: setReply_def)
   done
 
-lemma updateSchedContext_ccorres_lemma4x:
-  "\<lbrakk> \<And>s sc. \<Gamma> \<turnstile> (Q s sc) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(scPtr \<mapsto> injectKOS (g sc))\<rparr>, s') \<in> rf_sr};
-     \<And>sc. scSize (g sc) = scSize sc;
-          \<And>s s' sc sc'. \<lbrakk> (s, s') \<in> rf_sr; P sc; ko_at' sc scPtr s;
-                             cslift s' (Ptr scPtr) = Some sc';
-                             csched_context_relation sc sc'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s sc \<rbrakk>
-   \<Longrightarrow> ccorres dc xfdc
-         (obj_at' (P :: sched_context \<Rightarrow> bool) scPtr and P') R hs
-         (updateSchedContext scPtr g) c"
-  apply (rule ccorres_from_vcg)
-  apply (rule allI)
-  apply (case_tac "obj_at' P scPtr \<sigma>")
-   apply (drule obj_at_ko_at', clarsimp)
-   apply (rule conseqPre, rule conseqPost)
-      apply assumption
-     apply clarsimp
-     apply (rule rev_bexI, rule updateSchedContext_eq)
-        apply assumption
-       apply (clarsimp simp: obj_at_simps)
-      apply simp
-     apply simp
-    apply simp
-   apply clarsimp
-   apply (drule (1) obj_at_cslift_sc)
-  apply fastforce
-  apply simp
-  apply (rule hoare_complete')
-  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-  done
-
-
-lemma threadSet_ccorres_lemma4x:
-  "\<lbrakk> \<And>s tcb. \<Gamma> \<turnstile> (Q s tcb) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(thread \<mapsto> injectKOS (F tcb))\<rparr>, s') \<in> rf_sr};
-          \<And>s s' tcb tcb'. \<lbrakk> (s, s') \<in> rf_sr; P tcb; ko_at' tcb thread s;
-                             cslift s' (tcb_ptr_to_ctcb_ptr thread) = Some tcb';
-                             ctcb_relation tcb tcb'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s tcb \<rbrakk>
-         \<Longrightarrow> ccorres dc xfdc (obj_at' (P :: tcb \<Rightarrow> bool) thread and P') R hs (threadSet F thread) c"
-  apply (rule ccorres_from_vcg)
-  apply (rule allI)
-  apply (case_tac "obj_at' P thread \<sigma>")
-   apply (drule obj_at_ko_at', clarsimp)
-   apply (rule conseqPre, rule conseqPost)
-      apply assumption
-     apply clarsimp
-     apply (rule rev_bexI, rule threadSet_eq)
-      apply assumption
-     apply simp
-    apply simp
-   apply clarsimp
-   apply (drule(1) obj_at_cslift_tcb, clarsimp)
-  apply simp
-  apply (rule hoare_complete')
-  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-  done
-
-lemma updateReply_tcb_ccorres:
+lemma updateReply_ccorres_lemma4:
   "\<lbrakk> \<And>s reply. \<Gamma> \<turnstile> (Q s reply) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> injectKOS (g reply))\<rparr>, s') \<in> rf_sr};
           \<And>s s' reply reply'. \<lbrakk> (s, s') \<in> rf_sr; P reply; ko_at' reply replyPtr s;
                              cslift s' (Ptr replyPtr) = Some reply';
@@ -3037,7 +3042,6 @@ lemma updateReply_tcb_ccorres:
    \<Longrightarrow> ccorres dc xfdc
          (obj_at' (P :: reply \<Rightarrow> bool) replyPtr and P') R hs
          (updateReply replyPtr g) c"
-
   apply (rule ccorres_from_vcg)
   apply (rule allI)
   apply (case_tac "obj_at' P replyPtr \<sigma>")
@@ -3050,15 +3054,21 @@ lemma updateReply_tcb_ccorres:
        apply (clarsimp simp: obj_at_simps)
      apply simp
     apply simp
+
    apply (drule (1) obj_at_cslift_reply)
 
    apply (drule(1) obj_at_cslift_tcb, clarsimp)
   apply simp
   apply (rule hoare_complete')
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-  done
 
-(*
+(* other case *)
+  apply simp
+  apply (rule hoare_complete')
+  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+done
+
+lemma updateReply_tcb_ccorres:
   "ccorres dc xfdc
     (reply_at' reply)
     {s. reply' s = reply_Ptr reply}
@@ -3066,120 +3076,6 @@ lemma updateReply_tcb_ccorres:
     (updateReply reply (replyTCB_update (\<lambda>_. None)))
     (Basic (\<lambda>s. globals_update (t_hrs_'_update
       (hrs_mem_update (heap_update (Ptr &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
-*)
-
-  apply (rule ccorres_from_vcg)
-  apply (rule allI)
-  apply (case_tac "reply_at' reply \<sigma>")
-
-   apply (drule obj_at_ko_at', clarsimp)
-
-
-   apply (rule conseqPre, rule conseqPost)
-      subgoal sorry
-     apply clarsimp
-     apply (rule rev_bexI, rule updateReply_eq)
-        apply assumption
-       apply (clarsimp simp: obj_at_simps)
-      apply simp
-     apply simp
-    apply simp
-   apply clarsimp
-
-        apply assumption
-       apply (clarsimp simp: obj_at_simps)
-      apply simp
-     apply simp
-    apply simp
-   apply clarsimp
-   apply (drule (1) obj_at_cslift_sc)
-
-(* other case *)
-  apply simp
-  apply (rule hoare_complete')
-  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-
-
-done
-
-  unfolding updateReply_def
-  apply (cinitlift reply')
-  apply (erule ssubst)
-  apply (rule ccorres_guard_imp2)
-   apply (simp add: getReply_def getObject_def split: option.splits)
-
-  apply (rule ccorres_pre_getCTE)
-  apply (rule_tac P = "\<lambda>s. ctes_of s dest = Some rva" in
-    ccorres_from_vcg [where P' = "{s. ccap_relation cap (val s)}"])
-  apply (rule allI)
-  apply (rule conseqPre)
-  apply vcg
-  apply clarsimp
-  apply (rule fst_setCTE [OF ctes_of_cte_at], assumption)
-   apply (erule bexI [rotated])
-   apply (clarsimp simp: cte_wp_at_ctes_of)
-   apply (frule (1) rf_sr_ctes_of_clift)
-   apply (clarsimp simp add: rf_sr_def cstate_relation_def
-     Let_def cpspace_relation_def
-     cvariable_array_map_const_add_map_option[where f="tcb_no_ctes_proj"])
-   apply (simp add:typ_heap_simps)
-   apply (rule conjI)
-    apply (erule (3) cpspace_cte_relation_upd_capI)
-   apply (frule_tac f="ksPSpace" in arg_cong)
-   apply (erule_tac t = s' in ssubst)
-    apply simp
-   apply (simp add: heap_to_user_data_def heap_to_device_data_def)
-   apply (rule conjI)
-    apply (erule (1) setCTE_tcb_case)
-   by (auto simp: carch_state_relation_def cmachine_state_relation_def
-                  refill_buffer_relation_def typ_heap_simps)
-
-
-  apply (rule setObject_ccorres_helper)
-    apply (simp_all add: objBits_simps pageBits_def)
-  apply (rule conseqPre, vcg)
-  apply (rule subsetI, clarsimp simp: Collect_const_mem)
-  apply (rule cmap_relationE1, erule rf_sr_cpspace_asidpool_relation,
-         erule ko_at_projectKO_opt)
-  apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def)
-  apply (rule conjI)
-   apply (clarsimp simp: cpspace_relation_def typ_heap_simps
-                         update_asidpool_map_to_asidpools
-                         update_asidpool_map_tos)
-   apply (case_tac y')
-   apply clarsimp
-   apply (erule cmap_relation_updI,
-          erule ko_at_projectKO_opt, simp+)
-  apply (rule conjI)
-   apply (simp add: Let_def typ_heap_simps refill_buffer_relation_def image_def dom_def
-                    cvariable_array_map_relation_def update_asidpool_map_tos)
-  apply (simp add: cready_queues_relation_def
-                   carch_state_relation_def
-                   cmachine_state_relation_def
-                   Let_def typ_heap_simps
-                   update_asidpool_map_tos)
-  done
-
-  apply (rule ccorres_guard_imp2)
-   apply (rule threadSet_ccorres_lemma4 [where P=\<top> and P'=\<top>])
-    apply vcg
-   prefer 2
-   apply (rule conjI, simp)
-   apply assumption
-  apply clarsimp
-  apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def)
-  apply (clarsimp simp: cmachine_state_relation_def carch_state_relation_def cpspace_relation_def
-                        refill_buffer_relation_def)
-  apply (clarsimp simp: update_tcb_map_tos typ_heap_simps')
-  apply (simp add: map_to_ctes_upd_tcb_no_ctes map_to_tcbs_upd tcb_cte_cases_def cteSizeBits_def)
-  apply (simp add: cep_relations_drop_fun_upd
-                   cvariable_relation_upd_const ko_at_projectKO_opt)
-  apply (drule ko_at_projectKO_opt)
-  apply (erule (2) cmap_relation_upd_relI)
-    subgoal by (simp add: ctcb_relation_def)
-   apply assumption
-  apply simp
-  done
 sorry
 
 lemma empty_fail_assert_opt:
