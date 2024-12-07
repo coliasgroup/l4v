@@ -2914,10 +2914,35 @@ lemma reply_remove_tcb_ccorres:
     (replyRemoveTCB tptr) (Call reply_remove_tcb_'proc)"
 sorry (* FIXME RT: reply_remove_tcb_corres *)
 
+lemma map_to_replies_from_reply_at:
+  "reply_at' p s \<Longrightarrow> map_to_replies (ksPSpace s) p \<noteq> None"
+  unfolding obj_at'_def
+  by clarsimp
 
+lemma reply_at_h_t_valid:
+  "\<lbrakk> reply_at' replyPtr s; (s, s') \<in> rf_sr \<rbrakk> \<Longrightarrow> s' \<Turnstile>\<^sub>c PTR(reply_C) replyPtr"
+  apply (drule cmap_relation_reply)
+  apply (drule map_to_replies_from_reply_at)
+  apply (clarsimp simp add: cmap_relation_def)
+  apply (drule (1) bspec [OF _ domI])
+  apply (clarsimp simp add: dom_def image_def)
+  apply (drule equalityD1)
+  apply (drule subsetD)
+   apply simp
+   apply (rule exI [where x = replyPtr])
+   apply simp
+  apply (clarsimp simp: typ_heap_simps)
+  done
 
+lemma c_guard_abs_reply:
+  "\<forall>s s'. (s, s') \<in> rf_sr \<and> reply_at' (ptr_val p) s \<and> True
+              \<longrightarrow> s' \<Turnstile>\<^sub>c (p :: reply_C ptr)"
+  apply clarsimp
+  apply (drule (1) reply_at_h_t_valid)
+  apply simp
+  done
 
-
+lemmas ccorres_move_c_guard_reply = ccorres_move_c_guards[OF c_guard_abs_reply]
 
 lemma updateReply_eq:
   "\<lbrakk>ko_at' reply replyPtr s\<rbrakk>
@@ -2981,12 +3006,6 @@ lemma updateReply_ccorres_lemma4:
   apply (simp add: cnvalid_def nvalid_def)
   done
 
-lemma map_to_replies_upd:
-  "map_to_replies ((ksPSpace s)(t \<mapsto> KOReply reply')) = (map_to_replies (ksPSpace s))(t \<mapsto> reply')"
-  apply (rule ext)
-  apply (clarsimp simp: map_comp_def split: option.splits if_splits)
-  done
-
 lemma rf_sr_reply_update:
   "\<lbrakk> (s, s') \<in> rf_sr;
      ko_at' (old_reply :: reply) replyPtr s;
@@ -3033,40 +3052,9 @@ lemma updateReply_tcb_ccorres:
 
 (*
   apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
-
-   apply normalise_obj_at'
-        apply (rule rf_sr_reply_update2, (simp add: typ_heap_simps' creply_relation_def)+)
+  apply normalise_obj_at'
+  apply (rule rf_sr_reply_update2, (simp add: typ_heap_simps' creply_relation_def)+)
 *)
-
-lemma map_to_replies_from_reply_at:
-  "reply_at' p s \<Longrightarrow> map_to_replies (ksPSpace s) p \<noteq> None"
-  unfolding obj_at'_def
-  by clarsimp
-
-lemma reply_at_h_t_valid:
-  "\<lbrakk> reply_at' replyPtr s; (s, s') \<in> rf_sr \<rbrakk> \<Longrightarrow> s' \<Turnstile>\<^sub>c PTR(reply_C) replyPtr"
-  apply (drule cmap_relation_reply)
-  apply (drule map_to_replies_from_reply_at)
-  apply (clarsimp simp add: cmap_relation_def)
-  apply (drule (1) bspec [OF _ domI])
-  apply (clarsimp simp add: dom_def image_def)
-  apply (drule equalityD1)
-  apply (drule subsetD)
-   apply simp
-   apply (rule exI [where x = replyPtr])
-   apply simp
-  apply (clarsimp simp: typ_heap_simps)
-  done
-
-lemma c_guard_abs_reply:
-  "\<forall>s s'. (s, s') \<in> rf_sr \<and> reply_at' (ptr_val p) s \<and> True
-              \<longrightarrow> s' \<Turnstile>\<^sub>c (p :: reply_C ptr)"
-  apply clarsimp
-  apply (drule (1) reply_at_h_t_valid)
-  apply simp
-  done
-
-lemmas ccorres_move_c_guard_reply = ccorres_move_c_guards[OF c_guard_abs_reply]
 
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
@@ -3100,6 +3088,18 @@ lemma reply_unlink_ccorres:
    apply (simp add: getReply_def getObject_def split: option.splits)
   apply (clarsimp simp: st_tcb_at'_def obj_at'_def valid_reply'_def)
   done
+
+
+(* <<< *)
+
+lemma map_to_replies_upd:
+  "map_to_replies ((ksPSpace s)(t \<mapsto> KOReply reply')) = (map_to_replies (ksPSpace s))(t \<mapsto> reply')"
+  apply (rule ext)
+  apply (clarsimp simp: map_comp_def split: option.splits if_splits)
+  done
+
+(* >>> *)
+
 
 lemma reply_pop_ccorres:
   "ccorres dc xfdc
