@@ -3047,7 +3047,7 @@ lemma updateReply_tcb_ccorres:
     (Basic (\<lambda>s. globals_update (t_hrs_'_update
       (hrs_mem_update (heap_update (PTR(tcb_C ptr) &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
   apply (rule ccorres_guard_imp2)
-   apply (rule_tac P=\<top> and P'=\<top> in updateReply_ccorres_lemma4)
+   apply (rule updateReply_ccorres_lemma4)
     apply vcg
    prefer 2
    apply (rule conjI, simp)
