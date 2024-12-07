@@ -3125,7 +3125,7 @@ lemma updateReply_tcb_ccorres:
     hs
     (updateReply reply (replyTCB_update (\<lambda>_. None)))
     (Basic (\<lambda>s. globals_update (t_hrs_'_update
-      (hrs_mem_update (heap_update (Ptr &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
+      (hrs_mem_update (heap_update (PTR(tcb_C ptr) &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
   apply (rule ccorres_guard_imp2)
 
             apply (rule_tac
@@ -3146,7 +3146,12 @@ P=\<top>
         apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
         apply normalise_obj_at'
 
-        apply (rule rf_sr_reply_update2, (simp add: typ_heap_simps' creply_relation_def)+)
+        apply (rule rf_sr_reply_update2)
+apply (simp add: typ_heap_simps' creply_relation_def)
+apply (simp add: typ_heap_simps' creply_relation_def)
+apply (simp add: typ_heap_simps' creply_relation_def)
+
+
 
 apply clarsimp
 
