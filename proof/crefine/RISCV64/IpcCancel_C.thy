@@ -3010,10 +3010,9 @@ lemma rf_sr_reply_update:
      ko_at' (old_reply :: reply) replyPtr s;
      t_hrs_' (globals t) = hrs_mem_update (heap_update (reply_Ptr replyPtr) creply)
                                           (t_hrs_' (globals s'));
-     creply_relation reply creply
-   \<rbrakk>
-  \<Longrightarrow> (s\<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> KOReply reply)\<rparr>,
-       t'\<lparr>globals := globals s'\<lparr>t_hrs_' := t_hrs_' (globals t)\<rparr>\<rparr>) \<in> rf_sr"
+     creply_relation reply creply \<rbrakk>
+   \<Longrightarrow> (s\<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> KOReply reply)\<rparr>,
+        t'\<lparr>globals := globals s'\<lparr>t_hrs_' := t_hrs_' (globals t)\<rparr>\<rparr>) \<in> rf_sr"
   unfolding rf_sr_def state_relation_def cstate_relation_def cpspace_relation_def
   apply (clarsimp simp: Let_def update_replies_map_tos)
   apply (frule_tac ptr=replyPtr in cmap_relation_ko_atD[rotated])
@@ -3033,12 +3032,12 @@ lemmas rf_sr_reply_update2 =
 
 lemma updateReply_tcb_ccorres:
   "ccorres dc xfdc
-    (reply_at' reply)
-    {s. reply' s = reply_Ptr reply}
-    hs
-    (updateReply reply (replyTCB_update (\<lambda>_. None)))
-    (Basic (\<lambda>s. globals_update (t_hrs_'_update
-      (hrs_mem_update (heap_update (PTR(tcb_C ptr) &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
+     (reply_at' reply)
+     {s. reply' s = reply_Ptr reply}
+     hs
+     (updateReply reply (replyTCB_update (\<lambda>_. None)))
+     (Basic (\<lambda>s. globals_update (t_hrs_'_update
+       (hrs_mem_update (heap_update (PTR(tcb_C ptr) &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
   apply (rule ccorres_guard_imp2)
    apply (rule updateReply_ccorres_lemma4)
     apply vcg
