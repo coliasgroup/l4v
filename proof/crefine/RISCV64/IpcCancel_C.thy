@@ -3072,6 +3072,7 @@ lemma updateReply_tcb_ccorres:
    apply (simp add: typ_heap_simps' creply_relation_def)
   apply (auto simp: creply_relation_def)
   done
+
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_objs' and no_0_obj' and pspace_aligned' and pspace_distinct'
