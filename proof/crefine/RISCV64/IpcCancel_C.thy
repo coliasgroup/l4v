@@ -3074,6 +3074,13 @@ lemma updateReply_ccorres_lemma4:
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
 done
 
+(* FIXME: move *)
+lemma map_to_replies_upd:
+  "map_to_replies ((ksPSpace s)(t \<mapsto> KOReply reply')) = (map_to_replies (ksPSpace s))(t \<mapsto> reply')"
+  apply (rule ext)
+  apply (clarsimp simp: map_comp_def split: option.splits if_splits)
+  done
+
 lemma updateReply_tcb_ccorres:
   "ccorres dc xfdc
     (reply_at' reply)
@@ -3099,12 +3106,13 @@ P=\<top>
    apply assumption
   apply clarsimp
 
+
   apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def)
   apply (clarsimp simp: cmachine_state_relation_def carch_state_relation_def cpspace_relation_def
                         refill_buffer_relation_def)
   apply (clarsimp simp: update_replies_map_tos typ_heap_simps')
 
-  apply (simp add: map_to_ctes_upd_tcb_no_ctes map_to_tcbs_upd tcb_cte_cases_def cteSizeBits_def)
+  apply (simp add: map_to_ctes_upd_tcb_no_ctes map_to_replies_upd tcb_cte_cases_def cteSizeBits_def)
   apply (simp add: cep_relations_drop_fun_upd
                    cvariable_relation_upd_const ko_at_projectKO_opt)
   apply (drule ko_at_projectKO_opt)
