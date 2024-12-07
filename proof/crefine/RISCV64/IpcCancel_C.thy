@@ -3014,35 +3014,25 @@ lemma map_to_replies_upd:
 
 lemma rf_sr_reply_update:
   "\<lbrakk> (s, s') \<in> rf_sr;
-     ko_at' reply replyPtr s;
+     ko_at' (old_reply :: reply) replyPtr s;
      t_hrs_' (globals t) = hrs_mem_update (heap_update (reply_Ptr replyPtr) creply)
                                           (t_hrs_' (globals s'));
-     creply_relation reply' creply
+     creply_relation reply creply
    \<rbrakk>
-  \<Longrightarrow> (s\<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> KOReply reply')\<rparr>,
+  \<Longrightarrow> (s\<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> KOReply reply)\<rparr>,
        t'\<lparr>globals := globals s'\<lparr>t_hrs_' := t_hrs_' (globals t)\<rparr>\<rparr>) \<in> rf_sr"
   unfolding rf_sr_def state_relation_def cstate_relation_def cpspace_relation_def
-  apply (clarsimp simp: Let_def update_tcb_map_tos map_to_ctes_upd_tcb_no_ctes
-                        heap_to_user_data_def)
-  apply (frule (1) cmap_relation_ko_atD)
+  apply (clarsimp simp: Let_def update_replies_map_tos)
+  apply (frule_tac ptr=replyPtr in cmap_relation_ko_atD[rotated])
+apply assumption
+
   apply (erule obj_atE')
   apply clarsimp
-  apply (clarsimp simp: map_comp_update projectKO_opt_tcb cvariable_relation_upd_const
-                        typ_heap_simps')
+  apply (clarsimp simp: map_comp_update projectKO_opt_reply typ_heap_simps')
   apply (intro conjI)
-       subgoal by (clarsimp simp: cmap_relation_def map_comp_update projectKO_opts_defs inj_eq)
-      apply (erule iffD1 [OF cmap_relation_cong, OF refl refl, rotated -1])
-      apply simp
-      apply (rule cendpoint_relation_upd_tcb_no_queues, assumption+)
-       subgoal by fastforce
-      subgoal by fastforce
-     apply (erule iffD1 [OF cmap_relation_cong, OF refl refl, rotated -1])
-     apply simp
-     apply (rule cnotification_relation_upd_tcb_no_queues, assumption+)
-      subgoal by fastforce
-     subgoal by fastforce
-    subgoal
-      by (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
+    subgoal by (clarsimp simp: cmap_relation_def split: if_splits)
+    subgoal by (fastforce simp: cmap_relation_def split: if_splits)
+
    subgoal by (clarsimp simp: carch_state_relation_def typ_heap_simps')
   by (simp add: cmachine_state_relation_def)
 
