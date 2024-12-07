@@ -2968,10 +2968,9 @@ lemma updateReply_eq:
 
 lemma obj_at_cslift_reply:
   fixes P :: "reply \<Rightarrow> bool"
-  shows "\<lbrakk>obj_at' P replyPtr s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
-  \<exists>ko ko'. ko_at' ko replyPtr s \<and> P ko \<and>
-        cslift s' (Ptr replyPtr) = Some ko' \<and>
-        creply_relation ko ko'"
+  shows "\<lbrakk>obj_at' P replyPtr s; (s, s') \<in> rf_sr\<rbrakk>
+         \<Longrightarrow> \<exists>ko ko'. ko_at' ko replyPtr s \<and> P ko \<and> cslift s' (Ptr replyPtr) = Some ko'
+                      \<and> creply_relation ko ko'"
   apply (frule obj_at_ko_at')
   apply clarsimp
   apply (frule cmap_relation_reply)
