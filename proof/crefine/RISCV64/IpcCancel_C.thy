@@ -3081,6 +3081,43 @@ lemma map_to_replies_upd:
   apply (clarsimp simp: map_comp_def split: option.splits if_splits)
   done
 
+lemma rf_sr_reply_update:
+  "\<lbrakk> (s, s') \<in> rf_sr;
+     ko_at' reply replyPtr s;
+     t_hrs_' (globals t) = hrs_mem_update (heap_update (reply_Ptr replyPtr) creply)
+                                          (t_hrs_' (globals s'));
+     creply_relation reply' creply
+   \<rbrakk>
+  \<Longrightarrow> (s\<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> KOReply reply')\<rparr>,
+       t'\<lparr>globals := globals s'\<lparr>t_hrs_' := t_hrs_' (globals t)\<rparr>\<rparr>) \<in> rf_sr"
+  unfolding rf_sr_def state_relation_def cstate_relation_def cpspace_relation_def
+  apply (clarsimp simp: Let_def update_tcb_map_tos map_to_ctes_upd_tcb_no_ctes
+                        heap_to_user_data_def)
+  apply (frule (1) cmap_relation_ko_atD)
+  apply (erule obj_atE')
+  apply clarsimp
+  apply (clarsimp simp: map_comp_update projectKO_opt_tcb cvariable_relation_upd_const
+                        typ_heap_simps')
+  apply (intro conjI)
+       subgoal by (clarsimp simp: cmap_relation_def map_comp_update projectKO_opts_defs inj_eq)
+      apply (erule iffD1 [OF cmap_relation_cong, OF refl refl, rotated -1])
+      apply simp
+      apply (rule cendpoint_relation_upd_tcb_no_queues, assumption+)
+       subgoal by fastforce
+      subgoal by fastforce
+     apply (erule iffD1 [OF cmap_relation_cong, OF refl refl, rotated -1])
+     apply simp
+     apply (rule cnotification_relation_upd_tcb_no_queues, assumption+)
+      subgoal by fastforce
+     subgoal by fastforce
+    subgoal
+      by (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
+   subgoal by (clarsimp simp: carch_state_relation_def typ_heap_simps')
+  by (simp add: cmachine_state_relation_def)
+
+lemmas rf_sr_reply_update2 =
+  rf_sr_obj_update_helper[OF rf_sr_reply_update, simplified]
+
 lemma updateReply_tcb_ccorres:
   "ccorres dc xfdc
     (reply_at' reply)
@@ -3105,6 +3142,14 @@ P=\<top>
    apply (rule conjI, simp)
    apply assumption
   apply clarsimp
+
+        apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
+        apply normalise_obj_at'
+
+        apply (rule rf_sr_reply_update2, (simp add: typ_heap_simps' creply_relation_def)+)
+
+apply clarsimp
+
 
 
   apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def)
