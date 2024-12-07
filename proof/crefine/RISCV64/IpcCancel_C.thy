@@ -3055,11 +3055,7 @@ lemma updateReply_tcb_ccorres:
   apply clarsimp
   apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
    apply normalise_obj_at'
-  apply (rule rf_sr_reply_update2)
-     apply (simp add: typ_heap_simps' creply_relation_def)
-    apply (simp add: typ_heap_simps' creply_relation_def)
-   apply (simp add: typ_heap_simps' creply_relation_def)
-  apply (auto simp: creply_relation_def)
+  apply (fastforce intro!: rf_sr_reply_update2 simp: typ_heap_simps' creply_relation_def)
   done
 
 lemma reply_unlink_ccorres:
