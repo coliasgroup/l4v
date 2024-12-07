@@ -2952,6 +2952,28 @@ lemma liftM_getObject_return_reply:
   "ko_at' v p s \<Longrightarrow> liftM f (getObject p) s = return (f (v::reply)) s"
   by (simp add: liftM_def bind_def getObject_return_reply return_def objBits_defs)
 
+lemma updateReply_eq:
+  "\<lbrakk>ko_at' reply replyPtr s; objBits reply < word_bits\<rbrakk>
+   \<Longrightarrow> ((), s\<lparr> ksPSpace := (ksPSpace s)(replyPtr \<mapsto> injectKO (f reply))\<rparr>)
+       \<in> fst (updateReply replyPtr f s)"
+  unfolding updateReply_def
+  apply (clarsimp simp add: in_monad)
+  apply (rule exI)
+  apply (rule exI)
+  apply (rule conjI)
+   apply (clarsimp simp: getReply_def)
+   apply (rule getObject_eq)
+     apply simp
+   apply assumption
+  apply (frule_tac v="f reply" in setObject_eq_variable_size)
+     apply simp
+    apply (simp add: objBits_simps')
+   apply (simp add: obj_at'_def)
+   apply (rule_tac x=reply in exI)
+   apply (simp add: objBits_simps)
+  apply (clarsimp simp: setReply_def)
+  done
+
 lemma updateSchedContext_ccorres_lemma4x:
   "\<lbrakk> \<And>s sc. \<Gamma> \<turnstile> (Q s sc) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(scPtr \<mapsto> injectKOS (g sc))\<rparr>, s') \<in> rf_sr};
      \<And>sc. scSize (g sc) = scSize sc;
@@ -2983,6 +3005,7 @@ lemma updateSchedContext_ccorres_lemma4x:
   done
 
 lemma updateReply_tcb_ccorres:
+(*
   "ccorres dc xfdc
     (reply_at' reply)
     {s. reply' s = reply_Ptr reply}
@@ -2990,6 +3013,42 @@ lemma updateReply_tcb_ccorres:
     (updateReply reply (replyTCB_update (\<lambda>_. None)))
     (Basic (\<lambda>s. globals_update (t_hrs_'_update
       (hrs_mem_update (heap_update (Ptr &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
+*)
+  apply (rule ccorres_from_vcg)
+  apply (rule allI)
+  apply (case_tac "reply_at' reply \<sigma>")
+
+   apply (drule obj_at_ko_at', clarsimp)
+
+
+   apply (rule conseqPre, rule conseqPost)
+      subgoal sorry
+     apply clarsimp
+     apply (rule rev_bexI, rule updateReply_eq)
+        apply assumption
+       apply (clarsimp simp: obj_at_simps)
+      apply simp
+     apply simp
+    apply simp
+   apply clarsimp
+
+, rule updateSchedContext_eq)
+        apply assumption
+       apply (clarsimp simp: obj_at_simps)
+      apply simp
+     apply simp
+    apply simp
+   apply clarsimp
+   apply (drule (1) obj_at_cslift_sc)
+
+(* other case *&)
+  apply simp
+  apply (rule hoare_complete')
+  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+
+
+done
+
   unfolding updateReply_def
   apply (cinitlift reply')
   apply (erule ssubst)
