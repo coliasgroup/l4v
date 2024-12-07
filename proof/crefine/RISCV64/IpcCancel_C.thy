@@ -3127,24 +3127,20 @@ lemma updateReply_tcb_ccorres:
     (Basic (\<lambda>s. globals_update (t_hrs_'_update
       (hrs_mem_update (heap_update (PTR(tcb_C ptr) &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
   apply (rule ccorres_guard_imp2)
-
-            apply (rule_tac P=\<top> and P'=\<top> in updateReply_ccorres_lemma4)
+   apply (rule_tac P=\<top> and P'=\<top> in updateReply_ccorres_lemma4)
     apply vcg
    prefer 2
    apply (rule conjI, simp)
    apply assumption
   apply clarsimp
-
-        apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
-        apply normalise_obj_at'
-
-        apply (rule rf_sr_reply_update2)
-apply (simp add: typ_heap_simps' creply_relation_def)
-apply (simp add: typ_heap_simps' creply_relation_def)
-apply (simp add: typ_heap_simps' creply_relation_def)
-
-subgoal by (auto simp: creply_relation_def)
-done
+  apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
+   apply normalise_obj_at'
+  apply (rule rf_sr_reply_update2)
+     apply (simp add: typ_heap_simps' creply_relation_def)
+    apply (simp add: typ_heap_simps' creply_relation_def)
+   apply (simp add: typ_heap_simps' creply_relation_def)
+  apply (auto simp: creply_relation_def)
+  done
 
 lemma empty_fail_assert_opt:
   "empty_fail (assert_opt opt)"
