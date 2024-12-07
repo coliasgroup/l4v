@@ -2971,6 +2971,9 @@ lemma threadSet_ccorres_lemma4x:
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
   done
 
+(* 000 *)
+
+
 lemma obj_at_cslift_reply:
   fixes P :: "reply \<Rightarrow> bool"
   shows "\<lbrakk>obj_at' P replyPtr s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
@@ -2983,9 +2986,6 @@ lemma obj_at_cslift_reply:
   apply (drule (1) cmap_relation_ko_atD)
   apply fastforce
   done
-
-(* 000 *)
-
 
 lemma map_to_replies_from_reply_at:
   "reply_at' p s \<Longrightarrow> map_to_replies (ksPSpace s) p \<noteq> None"
