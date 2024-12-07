@@ -2920,7 +2920,7 @@ lemma map_to_replies_from_reply_at:
   by clarsimp
 
 lemma reply_at_h_t_valid:
-  "\<lbrakk> reply_at' replyPtr s; (s, s') \<in> rf_sr \<rbrakk> \<Longrightarrow> s' \<Turnstile>\<^sub>c PTR(reply_C) replyPtr"
+  "\<lbrakk> reply_at' replyPtr s; (s, s') \<in> rf_sr \<rbrakk> \<Longrightarrow> s' \<Turnstile>\<^sub>c reply_Ptr replyPtr"
   apply (drule cmap_relation_reply)
   apply (drule map_to_replies_from_reply_at)
   apply (clarsimp simp add: cmap_relation_def)
@@ -2935,8 +2935,8 @@ lemma reply_at_h_t_valid:
   done
 
 lemma c_guard_abs_reply:
-  "\<forall>s s'. (s, s') \<in> rf_sr \<and> reply_at' (ptr_val p) s \<and> True
-              \<longrightarrow> s' \<Turnstile>\<^sub>c (p :: reply_C ptr)"
+  fixes p :: "reply_C ptr"
+  shows "\<forall>s s'. (s, s') \<in> rf_sr \<and> reply_at' (ptr_val p) s \<and> True \<longrightarrow> s' \<Turnstile>\<^sub>c p"
   apply clarsimp
   apply (drule (1) reply_at_h_t_valid)
   apply simp
