@@ -2914,48 +2914,10 @@ lemma reply_remove_tcb_ccorres:
     (replyRemoveTCB tptr) (Call reply_remove_tcb_'proc)"
 sorry (* FIXME RT: reply_remove_tcb_corres *)
 
-lemma obj_at_cslift_reply:
-  fixes P :: "reply \<Rightarrow> bool"
-  shows "\<lbrakk>obj_at' P replyPtr s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
-  \<exists>ko ko'. ko_at' ko replyPtr s \<and> P ko \<and>
-        cslift s' (Ptr replyPtr) = Some ko' \<and>
-        creply_relation ko ko'"
-  apply (frule obj_at_ko_at')
-  apply clarsimp
-  apply (frule cmap_relation_reply)
-  apply (drule (1) cmap_relation_ko_atD)
-  apply fastforce
-  done
 
-lemma map_to_replies_from_reply_at:
-  "reply_at' p s \<Longrightarrow> map_to_replies (ksPSpace s) p \<noteq> None"
-  unfolding obj_at'_def
-  by clarsimp
 
-lemma reply_at_h_t_valid:
-  "\<lbrakk> reply_at' replyPtr s; (s, s') \<in> rf_sr \<rbrakk> \<Longrightarrow> s' \<Turnstile>\<^sub>c PTR(reply_C) replyPtr"
-  apply (drule cmap_relation_reply)
-  apply (drule map_to_replies_from_reply_at)
-  apply (clarsimp simp add: cmap_relation_def)
-  apply (drule (1) bspec [OF _ domI])
-  apply (clarsimp simp add: dom_def image_def)
-  apply (drule equalityD1)
-  apply (drule subsetD)
-   apply simp
-   apply (rule exI [where x = replyPtr])
-   apply simp
-  apply (clarsimp simp: typ_heap_simps)
-  done
 
-lemma c_guard_abs_reply:
-  "\<forall>s s'. (s, s') \<in> rf_sr \<and> reply_at' (ptr_val p) s \<and> True
-              \<longrightarrow> s' \<Turnstile>\<^sub>c (p :: reply_C ptr)"
-  apply clarsimp
-  apply (drule (1) reply_at_h_t_valid)
-  apply simp
-  done
 
-lemmas ccorres_move_c_guard_reply = ccorres_move_c_guards[OF c_guard_abs_reply]
 
 lemma updateReply_eq:
   "\<lbrakk>ko_at' reply replyPtr s\<rbrakk>
@@ -2977,6 +2939,19 @@ lemma updateReply_eq:
    apply (rule_tac x=reply in exI)
    apply (simp add: objBits_simps)
   apply (clarsimp simp: setReply_def)
+  done
+
+lemma obj_at_cslift_reply:
+  fixes P :: "reply \<Rightarrow> bool"
+  shows "\<lbrakk>obj_at' P replyPtr s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
+  \<exists>ko ko'. ko_at' ko replyPtr s \<and> P ko \<and>
+        cslift s' (Ptr replyPtr) = Some ko' \<and>
+        creply_relation ko ko'"
+  apply (frule obj_at_ko_at')
+  apply clarsimp
+  apply (frule cmap_relation_reply)
+  apply (drule (1) cmap_relation_ko_atD)
+  apply fastforce
   done
 
 lemma updateReply_ccorres_lemma4:
@@ -3053,10 +3028,45 @@ lemma updateReply_tcb_ccorres:
    apply (rule conjI, simp)
    apply assumption
   apply clarsimp
-  apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
-   apply normalise_obj_at'
   apply (fastforce intro!: rf_sr_reply_update2 simp: typ_heap_simps' creply_relation_def)
   done
+
+(*
+  apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
+
+   apply normalise_obj_at'
+        apply (rule rf_sr_reply_update2, (simp add: typ_heap_simps' creply_relation_def)+)
+*)
+
+lemma map_to_replies_from_reply_at:
+  "reply_at' p s \<Longrightarrow> map_to_replies (ksPSpace s) p \<noteq> None"
+  unfolding obj_at'_def
+  by clarsimp
+
+lemma reply_at_h_t_valid:
+  "\<lbrakk> reply_at' replyPtr s; (s, s') \<in> rf_sr \<rbrakk> \<Longrightarrow> s' \<Turnstile>\<^sub>c PTR(reply_C) replyPtr"
+  apply (drule cmap_relation_reply)
+  apply (drule map_to_replies_from_reply_at)
+  apply (clarsimp simp add: cmap_relation_def)
+  apply (drule (1) bspec [OF _ domI])
+  apply (clarsimp simp add: dom_def image_def)
+  apply (drule equalityD1)
+  apply (drule subsetD)
+   apply simp
+   apply (rule exI [where x = replyPtr])
+   apply simp
+  apply (clarsimp simp: typ_heap_simps)
+  done
+
+lemma c_guard_abs_reply:
+  "\<forall>s s'. (s, s') \<in> rf_sr \<and> reply_at' (ptr_val p) s \<and> True
+              \<longrightarrow> s' \<Turnstile>\<^sub>c (p :: reply_C ptr)"
+  apply clarsimp
+  apply (drule (1) reply_at_h_t_valid)
+  apply simp
+  done
+
+lemmas ccorres_move_c_guard_reply = ccorres_move_c_guards[OF c_guard_abs_reply]
 
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
