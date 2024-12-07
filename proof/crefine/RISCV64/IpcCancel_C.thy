@@ -3031,7 +3031,8 @@ apply assumption
   apply (clarsimp simp: map_comp_update projectKO_opt_reply typ_heap_simps')
   apply (intro conjI)
     subgoal by (clarsimp simp: cmap_relation_def split: if_splits)
-    subgoal by (fastforce simp: cmap_relation_def split: if_splits)
+    subgoal
+      by (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
 
    subgoal by (clarsimp simp: carch_state_relation_def typ_heap_simps')
   by (simp add: cmachine_state_relation_def)
