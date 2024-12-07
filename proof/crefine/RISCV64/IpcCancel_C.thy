@@ -2968,7 +2968,7 @@ lemma updateReply_eq:
   apply (rule conjI)
    apply (clarsimp simp: getReply_def)
    apply (rule getObject_eq)
-     apply simp
+    apply simp
    apply assumption
   apply (frule_tac v="f reply" in setObject_eq_variable_size)
      apply simp
@@ -2996,7 +2996,7 @@ lemma updateReply_ccorres_lemma4:
      apply clarsimp
      apply (rule rev_bexI, rule updateReply_eq)
       apply assumption
-       apply (clarsimp simp: obj_at_simps)
+     apply (clarsimp simp: obj_at_simps)
      apply simp
     apply simp
    apply clarsimp
@@ -3004,7 +3004,7 @@ lemma updateReply_ccorres_lemma4:
   apply simp
   apply (rule hoare_complete')
   apply (simp add: cnvalid_def nvalid_def)
-done
+  done
 
 lemma map_to_replies_upd:
   "map_to_replies ((ksPSpace s)(t \<mapsto> KOReply reply')) = (map_to_replies (ksPSpace s))(t \<mapsto> reply')"
@@ -3024,17 +3024,15 @@ lemma rf_sr_reply_update:
   unfolding rf_sr_def state_relation_def cstate_relation_def cpspace_relation_def
   apply (clarsimp simp: Let_def update_replies_map_tos)
   apply (frule_tac ptr=replyPtr in cmap_relation_ko_atD[rotated])
-apply assumption
-
+  apply assumption
   apply (erule obj_atE')
   apply clarsimp
   apply (clarsimp simp: map_comp_update projectKO_opt_reply typ_heap_simps')
   apply (intro conjI)
-    subgoal by (clarsimp simp: cmap_relation_def split: if_splits)
-    subgoal
-      by (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
-
-   subgoal by (clarsimp simp: carch_state_relation_def typ_heap_simps')
+  subgoal by (clarsimp simp: cmap_relation_def split: if_splits)
+  subgoal
+    by (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
+  subgoal by (clarsimp simp: carch_state_relation_def typ_heap_simps')
   by (simp add: cmachine_state_relation_def)
 
 lemmas rf_sr_reply_update2 =
@@ -3095,7 +3093,7 @@ lemma reply_unlink_ccorres:
     apply wp
    apply (simp add: getReply_def getObject_def split: option.splits)
   apply (clarsimp simp: st_tcb_at'_def obj_at'_def valid_reply'_def)
-done
+  done
 
 lemma reply_pop_ccorres:
   "ccorres dc xfdc
