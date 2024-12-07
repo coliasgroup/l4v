@@ -2953,7 +2953,7 @@ lemma liftM_getObject_return_reply:
   by (simp add: liftM_def bind_def getObject_return_reply return_def objBits_defs)
 
 lemma updateReply_eq:
-  "\<lbrakk>ko_at' reply replyPtr s; objBits reply < word_bits\<rbrakk>
+  "\<lbrakk>ko_at' reply replyPtr s\<rbrakk>
    \<Longrightarrow> ((), s\<lparr> ksPSpace := (ksPSpace s)(replyPtr \<mapsto> injectKO (f reply))\<rparr>)
        \<in> fst (updateReply replyPtr f s)"
   unfolding updateReply_def
@@ -3004,7 +3004,60 @@ lemma updateSchedContext_ccorres_lemma4x:
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
   done
 
+
+lemma threadSet_ccorres_lemma4x:
+  "\<lbrakk> \<And>s tcb. \<Gamma> \<turnstile> (Q s tcb) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(thread \<mapsto> injectKOS (F tcb))\<rparr>, s') \<in> rf_sr};
+          \<And>s s' tcb tcb'. \<lbrakk> (s, s') \<in> rf_sr; P tcb; ko_at' tcb thread s;
+                             cslift s' (tcb_ptr_to_ctcb_ptr thread) = Some tcb';
+                             ctcb_relation tcb tcb'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s tcb \<rbrakk>
+         \<Longrightarrow> ccorres dc xfdc (obj_at' (P :: tcb \<Rightarrow> bool) thread and P') R hs (threadSet F thread) c"
+  apply (rule ccorres_from_vcg)
+  apply (rule allI)
+  apply (case_tac "obj_at' P thread \<sigma>")
+   apply (drule obj_at_ko_at', clarsimp)
+   apply (rule conseqPre, rule conseqPost)
+      apply assumption
+     apply clarsimp
+     apply (rule rev_bexI, rule threadSet_eq)
+      apply assumption
+     apply simp
+    apply simp
+   apply clarsimp
+   apply (drule(1) obj_at_cslift_tcb, clarsimp)
+  apply simp
+  apply (rule hoare_complete')
+  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+  done
+
 lemma updateReply_tcb_ccorres:
+  "\<lbrakk> \<And>s reply. \<Gamma> \<turnstile> (Q s reply) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> injectKOS (g reply))\<rparr>, s') \<in> rf_sr};
+          \<And>s s' reply reply'. \<lbrakk> (s, s') \<in> rf_sr; P reply; ko_at' reply replyPtr s;
+                             cslift s' (Ptr replyPtr) = Some reply';
+                             creply_relation reply reply'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s reply \<rbrakk>
+   \<Longrightarrow> ccorres dc xfdc
+         (obj_at' (P :: reply \<Rightarrow> bool) replyPtr and P') R hs
+         (updateReply replyPtr g) c"
+
+  apply (rule ccorres_from_vcg)
+  apply (rule allI)
+  apply (case_tac "obj_at' P replyPtr \<sigma>")
+   apply (drule obj_at_ko_at', clarsimp)
+   apply (rule conseqPre, rule conseqPost)
+      apply assumption
+     apply clarsimp
+     apply (rule rev_bexI, rule updateReply_eq)
+      apply assumption
+       apply (clarsimp simp: obj_at_simps)
+     apply simp
+    apply simp
+   apply (drule (1) obj_at_cslift_reply)
+
+   apply (drule(1) obj_at_cslift_tcb, clarsimp)
+  apply simp
+  apply (rule hoare_complete')
+  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+  done
+
 (*
   "ccorres dc xfdc
     (reply_at' reply)
@@ -3014,6 +3067,7 @@ lemma updateReply_tcb_ccorres:
     (Basic (\<lambda>s. globals_update (t_hrs_'_update
       (hrs_mem_update (heap_update (Ptr &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
 *)
+
   apply (rule ccorres_from_vcg)
   apply (rule allI)
   apply (case_tac "reply_at' reply \<sigma>")
@@ -3032,7 +3086,6 @@ lemma updateReply_tcb_ccorres:
     apply simp
    apply clarsimp
 
-, rule updateSchedContext_eq)
         apply assumption
        apply (clarsimp simp: obj_at_simps)
       apply simp
@@ -3041,7 +3094,7 @@ lemma updateReply_tcb_ccorres:
    apply clarsimp
    apply (drule (1) obj_at_cslift_sc)
 
-(* other case *&)
+(* other case *)
   apply simp
   apply (rule hoare_complete')
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
