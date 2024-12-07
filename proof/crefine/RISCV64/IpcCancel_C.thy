@@ -2914,66 +2914,6 @@ lemma reply_remove_tcb_ccorres:
     (replyRemoveTCB tptr) (Call reply_remove_tcb_'proc)"
 sorry (* FIXME RT: reply_remove_tcb_corres *)
 
-
-(* 000 *)
-
-lemma updateSchedContext_ccorres_lemma4x:
-  "\<lbrakk> \<And>s sc. \<Gamma> \<turnstile> (Q s sc) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(scPtr \<mapsto> injectKOS (g sc))\<rparr>, s') \<in> rf_sr};
-     \<And>sc. scSize (g sc) = scSize sc;
-          \<And>s s' sc sc'. \<lbrakk> (s, s') \<in> rf_sr; P sc; ko_at' sc scPtr s;
-                             cslift s' (Ptr scPtr) = Some sc';
-                             csched_context_relation sc sc'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s sc \<rbrakk>
-   \<Longrightarrow> ccorres dc xfdc
-         (obj_at' (P :: sched_context \<Rightarrow> bool) scPtr and P') R hs
-         (updateSchedContext scPtr g) c"
-  apply (rule ccorres_from_vcg)
-  apply (rule allI)
-  apply (case_tac "obj_at' P scPtr \<sigma>")
-   apply (drule obj_at_ko_at', clarsimp)
-   apply (rule conseqPre, rule conseqPost)
-      apply assumption
-     apply clarsimp
-     apply (rule rev_bexI, rule updateSchedContext_eq)
-        apply assumption
-       apply (clarsimp simp: obj_at_simps)
-      apply simp
-     apply simp
-    apply simp
-   apply clarsimp
-   apply (drule (1) obj_at_cslift_sc)
-  apply fastforce
-  apply simp
-  apply (rule hoare_complete')
-  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-  done
-
-lemma threadSet_ccorres_lemma4x:
-  "\<lbrakk> \<And>s tcb. \<Gamma> \<turnstile> (Q s tcb) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(thread \<mapsto> injectKOS (F tcb))\<rparr>, s') \<in> rf_sr};
-          \<And>s s' tcb tcb'. \<lbrakk> (s, s') \<in> rf_sr; P tcb; ko_at' tcb thread s;
-                             cslift s' (tcb_ptr_to_ctcb_ptr thread) = Some tcb';
-                             ctcb_relation tcb tcb'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s tcb \<rbrakk>
-         \<Longrightarrow> ccorres dc xfdc (obj_at' (P :: tcb \<Rightarrow> bool) thread and P') R hs (threadSet F thread) c"
-  apply (rule ccorres_from_vcg)
-  apply (rule allI)
-  apply (case_tac "obj_at' P thread \<sigma>")
-   apply (drule obj_at_ko_at', clarsimp)
-   apply (rule conseqPre, rule conseqPost)
-      apply assumption
-     apply clarsimp
-     apply (rule rev_bexI, rule threadSet_eq)
-      apply assumption
-     apply simp
-    apply simp
-   apply clarsimp
-   apply (drule(1) obj_at_cslift_tcb, clarsimp)
-  apply simp
-  apply (rule hoare_complete')
-  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-  done
-
-(* 000 *)
-
-
 lemma obj_at_cslift_reply:
   fixes P :: "reply \<Rightarrow> bool"
   shows "\<lbrakk>obj_at' P replyPtr s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
@@ -3016,14 +2956,6 @@ lemma c_guard_abs_reply:
   done
 
 lemmas ccorres_move_c_guard_reply = ccorres_move_c_guards[OF c_guard_abs_reply]
-
-lemmas getObject_return_reply
-    = getObject_return[OF meta_eq_to_obj_eq, OF loadObject_reply,
-                       unfolded objBits_simps, simplified]
-
-lemma liftM_getObject_return_reply:
-  "ko_at' v p s \<Longrightarrow> liftM f (getObject p) s = return (f (v::reply)) s"
-  by (simp add: liftM_def bind_def getObject_return_reply return_def objBits_defs)
 
 lemma updateReply_eq:
   "\<lbrakk>ko_at' reply replyPtr s\<rbrakk>
@@ -3071,10 +3003,9 @@ lemma updateReply_ccorres_lemma4:
    apply (drule (1) obj_at_cslift_reply, clarsimp)
   apply simp
   apply (rule hoare_complete')
-  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+  apply (simp add: cnvalid_def nvalid_def)
 done
 
-(* FIXME: move *)
 lemma map_to_replies_upd:
   "map_to_replies ((ksPSpace s)(t \<mapsto> KOReply reply')) = (map_to_replies (ksPSpace s))(t \<mapsto> reply')"
   apply (rule ext)
@@ -3141,11 +3072,6 @@ lemma updateReply_tcb_ccorres:
    apply (simp add: typ_heap_simps' creply_relation_def)
   apply (auto simp: creply_relation_def)
   done
-
-lemma empty_fail_assert_opt:
-  "empty_fail (assert_opt opt)"
-  by simp
-
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_objs' and no_0_obj' and pspace_aligned' and pspace_distinct'
