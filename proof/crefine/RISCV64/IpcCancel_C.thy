@@ -2980,9 +2980,9 @@ lemma obj_at_cslift_reply:
 
 lemma updateReply_ccorres_lemma4:
   "\<lbrakk> \<And>s reply. \<Gamma> \<turnstile> (Q s reply) c {s'. (s \<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> injectKOS (g reply))\<rparr>, s') \<in> rf_sr};
-          \<And>s s' reply reply'. \<lbrakk> (s, s') \<in> rf_sr; P reply; ko_at' reply replyPtr s;
-                             cslift s' (Ptr replyPtr) = Some reply';
-                             creply_relation reply reply'; P' s ; s' \<in> R\<rbrakk> \<Longrightarrow> s' \<in> Q s reply \<rbrakk>
+     \<And>s s' reply reply'. \<lbrakk> (s, s') \<in> rf_sr; P reply; ko_at' reply replyPtr s;
+                           cslift s' (Ptr replyPtr) = Some reply';
+                           creply_relation reply reply'; P' s; s' \<in> R \<rbrakk> \<Longrightarrow> s' \<in> Q s reply \<rbrakk>
    \<Longrightarrow> ccorres dc xfdc
          (obj_at' (P :: reply \<Rightarrow> bool) replyPtr and P') R hs
          (updateReply replyPtr g) c"
