@@ -3151,6 +3151,7 @@ apply (simp add: typ_heap_simps' creply_relation_def)
 apply (simp add: typ_heap_simps' creply_relation_def)
 apply (simp add: typ_heap_simps' creply_relation_def)
 
+apply (simp add:  creply_relation_def)
 
 
 apply clarsimp
