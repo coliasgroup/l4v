@@ -2972,14 +2972,14 @@ lemma threadSet_ccorres_lemma4x:
   done
 
 lemma obj_at_cslift_reply:
-  fixes P :: "tcb \<Rightarrow> bool"
-  shows "\<lbrakk>obj_at' P thread s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
-  \<exists>ko ko'. ko_at' ko thread s \<and> P ko \<and>
-        cslift s' (tcb_ptr_to_ctcb_ptr thread) = Some ko' \<and>
-        ctcb_relation ko ko'"
+  fixes P :: "reply \<Rightarrow> bool"
+  shows "\<lbrakk>obj_at' P replyPtr s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
+  \<exists>ko ko'. ko_at' ko replyPtr s \<and> P ko \<and>
+        cslift s' (Ptr replyPtr) = Some ko' \<and>
+        creply_relation ko ko'"
   apply (frule obj_at_ko_at')
   apply clarsimp
-  apply (frule cmap_relation_tcb)
+  apply (frule cmap_relation_reply)
   apply (drule (1) cmap_relation_ko_atD)
   apply fastforce
   done
@@ -3068,19 +3068,10 @@ lemma updateReply_ccorres_lemma4:
      apply simp
     apply simp
    apply clarsimp
-
-   apply (drule (1) obj_at_cslift_reply)
-
-   apply (drule(1) obj_at_cslift_tcb, clarsimp)
+   apply (drule (1) obj_at_cslift_reply, clarsimp)
   apply simp
   apply (rule hoare_complete')
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-
-(* other case *)
-  apply simp
-  apply (rule hoare_complete')
-  apply (simp add: cnvalid_def nvalid_def) (* pretty *)
-sorry
 done
 
 lemma updateReply_tcb_ccorres:
