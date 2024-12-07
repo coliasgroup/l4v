@@ -3151,37 +3151,8 @@ apply (simp add: typ_heap_simps' creply_relation_def)
 apply (simp add: typ_heap_simps' creply_relation_def)
 apply (simp add: typ_heap_simps' creply_relation_def)
 
-apply (simp add:  creply_relation_def)
-
-
-apply clarsimp
-
-
-
-  apply (clarsimp simp: rf_sr_def cstate_relation_def Let_def)
-  apply (clarsimp simp: cmachine_state_relation_def carch_state_relation_def cpspace_relation_def
-                        refill_buffer_relation_def)
-  apply (clarsimp simp: update_replies_map_tos typ_heap_simps')
-
-  apply (simp add: map_to_ctes_upd_tcb_no_ctes map_to_replies_upd tcb_cte_cases_def cteSizeBits_def)
-  apply (simp add: cep_relations_drop_fun_upd
-                   cvariable_relation_upd_const ko_at_projectKO_opt)
-  apply (drule ko_at_projectKO_opt)
-  apply (erule (2) cmap_relation_upd_relI)
-    subgoal by (simp add: ctcb_relation_def)
-   apply assumption
-  apply simp
-
-             apply (rule conseqPre, vcg)
-             apply clarsimp
-             apply (frule (1) obj_at_cslift_tcb)
-             apply (fastforce intro!: rf_sr_tcb_update_no_queue_gen2
-                                simp: typ_heap_simps' tcb_cte_cases_def cteSizeBits_def
-                                      ctcb_relation_def option_to_ctcb_ptr_def)
-            apply (clarsimp simp: ctcb_relation_def option_to_ctcb_ptr_def split: if_splits)
-           apply ceqv
-
-sorry
+subgoal by (auto simp: creply_relation_def)
+done
 
 lemma empty_fail_assert_opt:
   "empty_fail (assert_opt opt)"
