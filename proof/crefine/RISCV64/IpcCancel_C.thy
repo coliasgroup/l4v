@@ -3128,15 +3128,7 @@ lemma updateReply_tcb_ccorres:
       (hrs_mem_update (heap_update (PTR(tcb_C ptr) &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
   apply (rule ccorres_guard_imp2)
 
-            apply (rule_tac
-(*
-Q="\<lambda>s reply. {s'. (s, s') \<in> rf_sr}"
-                        and R=UNIV
-                        and
-*)
-P=\<top>
-                        and P'=\<top>
-                         in updateReply_ccorres_lemma4)
+            apply (rule_tac P=\<top> and P'=\<top> in updateReply_ccorres_lemma4)
     apply vcg
    prefer 2
    apply (rule conjI, simp)
