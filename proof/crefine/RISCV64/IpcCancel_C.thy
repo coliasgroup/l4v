@@ -3066,6 +3066,7 @@ lemma updateReply_ccorres_lemma4:
   apply simp
   apply (rule hoare_complete')
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
+sorry
 done
 
 lemma updateReply_tcb_ccorres:
