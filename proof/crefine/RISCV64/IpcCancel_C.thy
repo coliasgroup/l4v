@@ -3024,7 +3024,7 @@ lemma rf_sr_reply_update:
   unfolding rf_sr_def state_relation_def cstate_relation_def cpspace_relation_def
   apply (clarsimp simp: Let_def update_replies_map_tos)
   apply (frule_tac ptr=replyPtr in cmap_relation_ko_atD[rotated])
-  apply assumption
+   apply assumption
   apply (erule obj_atE')
   apply clarsimp
   apply (clarsimp simp: map_comp_update projectKO_opt_reply typ_heap_simps')
