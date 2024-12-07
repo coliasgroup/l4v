@@ -2971,6 +2971,19 @@ lemma threadSet_ccorres_lemma4x:
   apply (simp add: cnvalid_def nvalid_def) (* pretty *)
   done
 
+lemma obj_at_cslift_reply:
+  fixes P :: "tcb \<Rightarrow> bool"
+  shows "\<lbrakk>obj_at' P thread s; (s, s') \<in> rf_sr\<rbrakk> \<Longrightarrow>
+  \<exists>ko ko'. ko_at' ko thread s \<and> P ko \<and>
+        cslift s' (tcb_ptr_to_ctcb_ptr thread) = Some ko' \<and>
+        ctcb_relation ko ko'"
+  apply (frule obj_at_ko_at')
+  apply clarsimp
+  apply (frule cmap_relation_tcb)
+  apply (drule (1) cmap_relation_ko_atD)
+  apply fastforce
+  done
+
 (* 000 *)
 
 
@@ -3054,6 +3067,7 @@ lemma updateReply_ccorres_lemma4:
        apply (clarsimp simp: obj_at_simps)
      apply simp
     apply simp
+   apply clarsimp
 
    apply (drule (1) obj_at_cslift_reply)
 
