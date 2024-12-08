@@ -2915,7 +2915,7 @@ sorry (* FIXME RT: reply_remove_tcb_corres *)
 
 lemma updateReply_eq:
   "\<lbrakk>ko_at' reply replyPtr s\<rbrakk>
-   \<Longrightarrow> ((), s\<lparr> ksPSpace := (ksPSpace s)(replyPtr \<mapsto> injectKO (f reply))\<rparr>)
+   \<Longrightarrow> ((), s\<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> injectKO (f reply))\<rparr>)
        \<in> fst (updateReply replyPtr f s)"
   unfolding updateReply_def
   apply (clarsimp simp add: in_monad)
