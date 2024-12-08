@@ -2962,6 +2962,11 @@ lemma updateReply_ccorres_lemma4:
   apply (simp add: cnvalid_def nvalid_def)
   done
 
+lemmas updateReply_ccorres_lemma3 = updateReply_ccorres_lemma4[where R=UNIV]
+
+lemmas updateReply_ccorres_lemma2
+    = updateReply_ccorres_lemma3[where P'=\<top>]
+
 lemma rf_sr_reply_update:
   "\<lbrakk> (s, s') \<in> rf_sr;
      ko_at' (old_reply :: reply) replyPtr s;
@@ -2987,24 +2992,6 @@ lemma rf_sr_reply_update:
 lemmas rf_sr_reply_update2 =
   rf_sr_obj_update_helper[OF rf_sr_reply_update, simplified]
 
-lemma updateReply_tcb_ccorres:
-  "ccorres dc xfdc
-     (reply_at' reply)
-     {s. reply' s = reply_Ptr reply}
-     hs
-     (updateReply reply (replyTCB_update (\<lambda>_. None)))
-     (Basic (\<lambda>s. globals_update (t_hrs_'_update
-       (hrs_mem_update (heap_update (PTR(tcb_C ptr) &(reply' s\<rightarrow>[''replyTCB_C''])) NULL))) s))"
-  apply (rule ccorres_guard_imp2)
-   apply (rule updateReply_ccorres_lemma4)
-    apply vcg
-   prefer 2
-   apply (rule conjI, simp)
-   apply assumption
-  apply clarsimp
-  apply (fastforce intro!: rf_sr_reply_update2 simp: typ_heap_simps' creply_relation_def)
-  done
-
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_objs' and no_0_obj' and pspace_aligned' and pspace_distinct'
@@ -3022,7 +3009,15 @@ lemma reply_unlink_ccorres:
          apply (rule ccorres_symb_exec_l)
             apply (rule ccorres_stateAssert)
             apply (rule ccorres_move_c_guard_reply)
-            apply (ctac add: updateReply_tcb_ccorres)
+            apply (rule ccorres_split_nothrow)
+                apply (rule updateReply_ccorres_lemma2[where P=\<top>])
+                 apply vcg
+                apply clarsimp
+                apply (frule (1) obj_at_cslift_reply)
+                apply clarsimp
+                apply (fastforce intro!: rf_sr_reply_update2 simp: typ_heap_simps' creply_relation_def)
+               apply clarsimp
+               apply ceqv
               apply (ctac add: setThreadState_ccorres)
              apply (wpsimp wp: updateReply_valid_objs')
             apply vcg
