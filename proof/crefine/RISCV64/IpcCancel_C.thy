@@ -3021,10 +3021,11 @@ lemma rf_sr_reply_update:
   apply clarsimp
   apply (clarsimp simp: map_comp_update typ_heap_simps')
   apply (intro conjI)
-  apply (clarsimp simp: cmap_relation_def)
-  apply (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
-  apply (clarsimp simp: carch_state_relation_def typ_heap_simps')
-  by (simp add: cmachine_state_relation_def)
+     apply (clarsimp simp: cmap_relation_def)
+    apply (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
+   apply (clarsimp simp: carch_state_relation_def typ_heap_simps')
+  apply (clarsimp simp: cmachine_state_relation_def)
+  done
 
 lemmas rf_sr_reply_update2 =
   rf_sr_obj_update_helper[OF rf_sr_reply_update, simplified]
