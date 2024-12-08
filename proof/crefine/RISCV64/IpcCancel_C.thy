@@ -3048,12 +3048,6 @@ lemma updateReply_tcb_ccorres:
   apply (fastforce intro!: rf_sr_reply_update2 simp: typ_heap_simps' creply_relation_def)
   done
 
-(*
-  apply (frule_tac replyPtr=reply in obj_at_cslift_reply[rotated, where P=\<top>])
-  apply normalise_obj_at'
-  apply (rule rf_sr_reply_update2, (simp add: typ_heap_simps' creply_relation_def)+)
-*)
-
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
     (valid_objs' and no_0_obj' and pspace_aligned' and pspace_distinct'
@@ -3086,18 +3080,6 @@ lemma reply_unlink_ccorres:
    apply (simp add: getReply_def getObject_def split: option.splits)
   apply (clarsimp simp: st_tcb_at'_def obj_at'_def valid_reply'_def)
   done
-
-
-(* <<< *)
-
-lemma map_to_replies_upd:
-  "map_to_replies ((ksPSpace s)(t \<mapsto> KOReply reply')) = (map_to_replies (ksPSpace s))(t \<mapsto> reply')"
-  apply (rule ext)
-  apply (clarsimp simp: map_comp_def split: option.splits if_splits)
-  done
-
-(* >>> *)
-
 
 lemma reply_pop_ccorres:
   "ccorres dc xfdc
