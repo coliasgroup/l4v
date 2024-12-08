@@ -3013,18 +3013,17 @@ lemma rf_sr_reply_update:
      creply_relation reply creply \<rbrakk>
    \<Longrightarrow> (s\<lparr>ksPSpace := (ksPSpace s)(replyPtr \<mapsto> KOReply reply)\<rparr>,
         t'\<lparr>globals := globals s'\<lparr>t_hrs_' := t_hrs_' (globals t)\<rparr>\<rparr>) \<in> rf_sr"
-  unfolding rf_sr_def state_relation_def cstate_relation_def cpspace_relation_def
+  unfolding rf_sr_def cstate_relation_def cpspace_relation_def
   apply (clarsimp simp: Let_def update_replies_map_tos)
-  apply (frule_tac ptr=replyPtr in cmap_relation_ko_atD[rotated])
+  apply (frule cmap_relation_ko_atD[rotated])
    apply assumption
   apply (erule obj_atE')
   apply clarsimp
-  apply (clarsimp simp: map_comp_update projectKO_opt_reply typ_heap_simps')
+  apply (clarsimp simp: map_comp_update typ_heap_simps')
   apply (intro conjI)
-  subgoal by (clarsimp simp: cmap_relation_def split: if_splits)
-  subgoal
-    by (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
-  subgoal by (clarsimp simp: carch_state_relation_def typ_heap_simps')
+  apply (clarsimp simp: cmap_relation_def)
+  apply (clarsimp simp: map_comp_update projectKO_opt_sc typ_heap_simps' refill_buffer_relation_def)
+  apply (clarsimp simp: carch_state_relation_def typ_heap_simps')
   by (simp add: cmachine_state_relation_def)
 
 lemmas rf_sr_reply_update2 =
