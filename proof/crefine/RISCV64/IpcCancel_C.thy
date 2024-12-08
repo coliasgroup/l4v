@@ -2964,8 +2964,7 @@ lemma updateReply_ccorres_lemma4:
 
 lemmas updateReply_ccorres_lemma3 = updateReply_ccorres_lemma4[where R=UNIV]
 
-lemmas updateReply_ccorres_lemma2
-    = updateReply_ccorres_lemma3[where P'=\<top>]
+lemmas updateReply_ccorres_lemma2 = updateReply_ccorres_lemma3[where P'=\<top>]
 
 lemma rf_sr_reply_update:
   "\<lbrakk> (s, s') \<in> rf_sr;
