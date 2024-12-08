@@ -3011,11 +3011,8 @@ lemma reply_unlink_ccorres:
             apply (rule ccorres_split_nothrow)
                 apply (rule updateReply_ccorres_lemma2[where P=\<top>])
                  apply vcg
-                apply clarsimp
                 apply (frule (1) obj_at_cslift_reply)
-                apply clarsimp
                 apply (fastforce intro!: rf_sr_reply_update2 simp: typ_heap_simps' creply_relation_def)
-               apply clarsimp
                apply ceqv
               apply (ctac add: setThreadState_ccorres)
              apply (wpsimp wp: updateReply_valid_objs')
