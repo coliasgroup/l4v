@@ -2988,8 +2988,7 @@ lemma rf_sr_reply_update:
   apply (clarsimp simp: cmachine_state_relation_def)
   done
 
-lemmas rf_sr_reply_update2 =
-  rf_sr_obj_update_helper[OF rf_sr_reply_update, simplified]
+lemmas rf_sr_reply_update2 = rf_sr_obj_update_helper[OF rf_sr_reply_update, simplified]
 
 lemma reply_unlink_ccorres:
   "ccorres dc xfdc
