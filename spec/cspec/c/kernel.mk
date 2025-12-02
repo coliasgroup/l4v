@@ -45,26 +45,13 @@ ifdef CONFIG_OPTIMISATION
   KERNEL_CMAKE_OPTIMISATION := -DKernelOptimisation=${CONFIG_OPTIMISATION}
 endif
 
-ifndef TOOLPREFIX
-  ifndef TRY_TOOLPREFIX
-    ifeq ($(findstring ARM, ${L4V_ARCH}),ARM)
-      TRY_TOOLPREFIX := arm-none-eabi- arm-linux-gnueabi-
-    else ifeq (${L4V_ARCH},RISCV64)
-      TRY_TOOLPREFIX := riscv64-unknown-linux-gnu- riscv64-linux-gnu- riscv64-unknown-elf-
-    else ifeq (${L4V_ARCH},AARCH64)
-      TRY_TOOLPREFIX := aarch64-unknown-linux-gnu- aarch64-linux-gnu-
-    endif
-  endif
-  ifdef TRY_TOOLPREFIX
-    TOOLPREFIX := $(firstword $(strip $(foreach TRY,${TRY_TOOLPREFIX},$(if $(shell which ${TRY}gcc),${TRY},))))
-    ifeq (,${TOOLPREFIX})
-      $(error No gcc cross-compiler found for this L4V_ARCH)
-    endif
-  endif
+ifeq ($(USE_LLVM),1)
+  OBJDUMP := llvm-objdump
+  CPP := cpp
+else
+  OBJDUMP := ${TOOLPREFIX}objdump
+  CPP := ${TOOLPREFIX}cpp
 endif
-
-OBJDUMP := ${TOOLPREFIX}objdump
-CPP := ${TOOLPREFIX}cpp
 
 ifndef UMM_TYPES
   UMM_TYPES := ${KERNEL_BUILD_ROOT}/umm_types.txt
@@ -112,6 +99,14 @@ ifdef INPUT_NUM_DOMAINS
 KERNEL_CMAKE_EXTRA_OPTIONS += -DKernelNumDomains=${INPUT_NUM_DOMAINS}
 endif
 
+ifeq ($(USE_LLVM),1)
+  build_args := -DTRIPLE=${TRIPLE}
+else
+  build_args := \
+    -DCROSS_COMPILER_PREFIX=${TOOLPREFIX} \
+    -DCMAKE_TOOLCHAIN_FILE=${SOURCE_ROOT}/gcc.cmake
+endif
+
 # Initialize the CMake build. We purge the build directory and start again
 # whenever any of the kernel sources change, so that we can reliably pick up
 # changes to the build config.
@@ -120,8 +115,7 @@ ${BUILD_DONE}: ${KERNEL_DEPS} ${CONFIG_DOMAIN_SCHEDULE} ${OVERLAY}
 	@mkdir -p ${KERNEL_BUILD_ROOT}
 	cd ${KERNEL_BUILD_ROOT} && \
 	cmake -C ${CONFIG} \
-		-DCROSS_COMPILER_PREFIX=${TOOLPREFIX} \
-		-DCMAKE_TOOLCHAIN_FILE=${SOURCE_ROOT}/gcc.cmake \
+		${build_args} \
 		-DKernelDomainSchedule=${CONFIG_DOMAIN_SCHEDULE} \
 		-DUMM_TYPES=$(abspath ${UMM_TYPES}) -DCSPEC_DIR=${CSPEC_DIR} \
 		${KERNEL_CMAKE_OPTIMISATION} ${KERNEL_CMAKE_EXTRA_OPTIONS} \
@@ -206,16 +200,5 @@ ${KERNEL_EXPORT_ARTIFACT_PATHS}: ${KERNEL_EXPORT_DIR}/%: ${KERNEL_BUILD_ROOT}/%
 	@mkdir -p ${KERNEL_EXPORT_DIR}
 	cp $< $@
 
-# Also record the toolchain versions used.
-KERNEL_EXPORT_EXTRAS := ${KERNEL_EXPORT_DIR}/gcc.version ${KERNEL_EXPORT_DIR}/binutils.version
-
-${KERNEL_EXPORT_DIR}/gcc.version:
-	@mkdir -p ${KERNEL_EXPORT_DIR}
-	${TOOLPREFIX}gcc --version > $@
-
-${KERNEL_EXPORT_DIR}/binutils.version:
-	@mkdir -p ${KERNEL_EXPORT_DIR}
-	${OBJDUMP} --version > $@
-
-kernel_export: ${KERNEL_EXPORT_ARTIFACT_PATHS} ${KERNEL_EXPORT_EXTRAS}
+kernel_export: ${KERNEL_EXPORT_ARTIFACT_PATHS}
 .PHONY: kernel_build_export
