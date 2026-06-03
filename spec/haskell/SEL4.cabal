@@ -17,8 +17,8 @@ homepage:               http://sel4.systems/
 
 custom-setup
   setup-depends:
-    base  == 4.16.*,
-    Cabal == 3.6.3.*
+    base  == 4.17.*,
+    Cabal == 3.8.1.*
 
 Flag FFI
     description:        Include the C language bindings
@@ -47,7 +47,7 @@ Flag ArchAArch64
 Library
     exposed-modules:        SEL4
                             SEL4.Machine.Target
-    build-depends:          mtl==2.2.*, base==4.16.*, array, containers, transformers
+    build-depends:          mtl==2.2.*, base==4.17.*, array, containers, transformers
 
     if flag(FFI)
     -- FFIBindings currently relies on POSIX signal handlers.  This could
